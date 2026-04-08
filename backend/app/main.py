@@ -6,7 +6,7 @@ from .routers import groups, expenses, balances
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Genovese API", version="0.1.0")
+app = FastAPI(title="Equa API", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -22,4 +22,4 @@ app.include_router(balances.router)
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "app": "genovese"}
+    return {"status": "ok", "app": "equa"}
