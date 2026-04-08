@@ -8,11 +8,25 @@
     <div v-else-if="error" class="text-center py-20 text-red-500">{{ error }}</div>
 
     <div v-else-if="group">
+      <!-- Link home -->
+      <div class="mb-4">
+        <RouterLink to="/" class="text-sm text-gray-400 hover:text-green-600 transition">
+          ← Torna alla home
+        </RouterLink>
+      </div>
+
       <!-- Header -->
       <div class="flex items-center justify-between mb-6">
         <div>
-          <h1 class="text-2xl font-bold text-green-700">🍝 {{ group.name }}</h1>
-          <p v-if="group.description" class="text-gray-500 text-sm mt-1">{{ group.description }}</p>
+          <div class="flex items-center gap-2 mb-1">
+            <svg width="24" height="24" viewBox="0 0 64 64" class="flex-shrink-0">
+              <rect x="8"  y="10" width="48" height="13" rx="6.5" fill="#16a34a"/>
+              <rect x="8"  y="28" width="32" height="13" rx="6.5" fill="#4ade80"/>
+              <rect x="8"  y="46" width="20" height="13" rx="6.5" fill="#86efac"/>
+            </svg>
+            <h1 class="text-2xl font-bold text-green-700">{{ group.name }}</h1>
+          </div>
+          <p v-if="group.description" class="text-gray-500 text-sm">{{ group.description }}</p>
         </div>
         <button @click="copyLink" class="text-sm text-gray-500 hover:text-green-600 border border-gray-300 rounded-lg px-3 py-1.5 transition">
           {{ copied ? '✓ Copiato!' : '🔗 Condividi' }}
@@ -38,7 +52,6 @@
 
       <!-- Tab: Spese -->
       <div v-if="activeTab === 'expenses'">
-        <!-- Bottone aggiungi -->
         <button
           @click="showExpenseForm = !showExpenseForm"
           class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg py-2.5 mb-4 transition"
@@ -46,7 +59,6 @@
           {{ showExpenseForm ? '✕ Annulla' : '+ Aggiungi spesa' }}
         </button>
 
-        <!-- Form aggiungi spesa -->
         <div v-if="showExpenseForm" class="bg-white rounded-2xl shadow p-5 mb-4">
           <h3 class="font-semibold text-gray-800 mb-3">Nuova spesa</h3>
           <div class="space-y-3">
@@ -153,7 +165,6 @@
           </div>
         </div>
 
-        <!-- Lista spese -->
         <div v-if="group.expenses.length === 0" class="text-center py-10 text-gray-400">
           Nessuna spesa ancora. Aggiungine una!
         </div>
@@ -208,6 +219,12 @@
           </div>
         </div>
       </div>
+
+      <!-- Footer donazione -->
+      <div class="mt-10">
+        <DonationFooter />
+      </div>
+
     </div>
   </div>
 </template>
@@ -216,6 +233,7 @@
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { groupsApi, type Group, type Balance } from '../api/groups'
+import DonationFooter from '../components/DonationFooter.vue'
 
 const route = useRoute()
 const groupId = route.params.id as string
