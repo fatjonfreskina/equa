@@ -193,7 +193,7 @@ Equa è sviluppato e mantenuto nel tempo libero, su un server di casa, con amore
 
 Se ti è utile e vuoi offrire un giro:
 
-[![Donate](https://img.shields.io/badge/PayPal-Offrimi%20un%20caffè-00457C?style=flat&logo=paypal)](https://paypal.me/tuonome)
+[![Donate](https://img.shields.io/badge/PayPal-Offrimi%20un%20caffè-00457C?style=flat&logo=paypal)](https://paypal.me/fatjonfreskina)
 
 ---
 
