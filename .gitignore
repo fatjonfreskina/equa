@@ -7,3 +7,5 @@ dist/
 .env.local
 .vscode/
 .idea/
+frontend/.env.development
+frontend/.env.production
