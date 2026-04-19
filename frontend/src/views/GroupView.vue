@@ -1,10 +1,7 @@
 <template>
   <div class="max-w-2xl mx-auto py-8 px-4">
 
-    <!-- Loading -->
     <div v-if="loading" class="text-center py-20 text-gray-400">Caricamento...</div>
-
-    <!-- Errore -->
     <div v-else-if="error" class="text-center py-20 text-red-500">{{ error }}</div>
 
     <div v-else-if="group">
@@ -52,15 +49,26 @@
 
       <!-- Tab: Spese -->
       <div v-if="activeTab === 'expenses'">
+
+        <!-- Totale spese -->
+        <div class="bg-green-50 border border-green-100 rounded-xl px-5 py-3 mb-4 flex items-center justify-between">
+          <span class="text-sm text-green-700 font-medium">Totale spese</span>
+          <span class="text-lg font-bold text-green-700">{{ totalExpenses.toFixed(2) }} {{ group.currency }}</span>
+        </div>
+
+        <!-- Bottone aggiungi -->
         <button
-          @click="showExpenseForm = !showExpenseForm"
+          @click="openNewExpenseForm"
           class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg py-2.5 mb-4 transition"
         >
-          {{ showExpenseForm ? '✕ Annulla' : '+ Aggiungi spesa' }}
+          {{ showExpenseForm && !editingExpenseId ? '✕ Annulla' : '+ Aggiungi spesa' }}
         </button>
 
+        <!-- Form aggiunta / modifica spesa -->
         <div v-if="showExpenseForm" class="bg-white rounded-2xl shadow p-5 mb-4">
-          <h3 class="font-semibold text-gray-800 mb-3">Nuova spesa</h3>
+          <h3 class="font-semibold text-gray-800 mb-3">
+            {{ editingExpenseId ? 'Modifica spesa' : 'Nuova spesa' }}
+          </h3>
           <div class="space-y-3">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Descrizione</label>
@@ -95,8 +103,8 @@
               </select>
             </div>
 
-            <!-- Tipo split -->
-            <div>
+            <!-- Tipo split — nascosto in modifica perché usiamo sempre custom -->
+            <div v-if="!editingExpenseId">
               <label class="block text-sm font-medium text-gray-700 mb-1">Divisione</label>
               <div class="flex gap-2 flex-wrap">
                 <button
@@ -116,7 +124,7 @@
             </div>
 
             <!-- Split: seleziona persone -->
-            <div v-if="expenseForm.splitType === 'subset'" class="space-y-2">
+            <div v-if="expenseForm.splitType === 'subset' && !editingExpenseId" class="space-y-2">
               <p class="text-xs text-gray-500">Seleziona tra chi dividere equamente:</p>
               <div v-for="member in group.members" :key="member.id" class="flex items-center gap-2">
                 <input
@@ -135,7 +143,7 @@
               </p>
             </div>
 
-            <!-- Split personalizzato -->
+            <!-- Split personalizzato (sempre visibile in modifica) -->
             <div v-if="expenseForm.splitType === 'custom'" class="space-y-2">
               <div v-for="member in group.members" :key="member.id" class="flex items-center gap-2">
                 <span class="flex-1 text-sm text-gray-700">{{ member.name }}</span>
@@ -155,16 +163,25 @@
 
             <p v-if="expenseError" class="text-red-500 text-sm">{{ expenseError }}</p>
 
-            <button
-              @click="addExpense"
-              :disabled="expenseLoading"
-              class="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white font-semibold rounded-lg py-2.5 transition"
-            >
-              {{ expenseLoading ? 'Salvataggio...' : 'Salva spesa' }}
-            </button>
+            <div class="flex gap-2">
+              <button
+                @click="cancelExpenseForm"
+                class="flex-1 border border-gray-300 text-gray-600 font-semibold rounded-lg py-2.5 transition hover:bg-gray-50"
+              >
+                Annulla
+              </button>
+              <button
+                @click="saveExpense"
+                :disabled="expenseLoading"
+                class="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white font-semibold rounded-lg py-2.5 transition"
+              >
+                {{ expenseLoading ? 'Salvataggio...' : (editingExpenseId ? 'Aggiorna' : 'Salva') }}
+              </button>
+            </div>
           </div>
         </div>
 
+        <!-- Lista spese -->
         <div v-if="group.expenses.length === 0" class="text-center py-10 text-gray-400">
           Nessuna spesa ancora. Aggiungine una!
         </div>
@@ -172,7 +189,8 @@
           <div
             v-for="expense in [...group.expenses].reverse()"
             :key="expense.id"
-            class="bg-white rounded-2xl shadow px-5 py-4 flex items-center justify-between"
+            class="bg-white rounded-2xl shadow px-5 py-4 flex items-center justify-between cursor-pointer hover:shadow-md transition"
+            @click="openEditExpenseForm(expense)"
           >
             <div>
               <p class="font-medium text-gray-800">{{ expense.description }}</p>
@@ -182,7 +200,10 @@
             </div>
             <div class="flex items-center gap-3">
               <span class="font-bold text-green-700">{{ expense.amount }} {{ group.currency }}</span>
-              <button @click="deleteExpense(expense.id)" class="text-gray-300 hover:text-red-400 transition text-lg">✕</button>
+              <button
+                @click.stop="deleteExpense(expense.id)"
+                class="text-gray-300 hover:text-red-400 transition text-lg"
+              >✕</button>
             </div>
           </div>
         </div>
@@ -214,17 +235,25 @@
       <div v-if="activeTab === 'members'">
         <div class="bg-white rounded-2xl shadow divide-y divide-gray-100">
           <div v-for="member in group.members" :key="member.id" class="px-5 py-3 flex items-center justify-between">
-            <span class="font-medium text-gray-800">{{ member.name }}</span>
-            <span class="text-sm text-gray-400">{{ member.email || '' }}</span>
+            <div>
+              <span class="font-medium text-gray-800">{{ member.name }}</span>
+              <span v-if="member.email" class="text-sm text-gray-400 ml-2">{{ member.email }}</span>
+            </div>
+            <button
+              @click="deleteMember(member.id, member.name)"
+              class="text-gray-300 hover:text-red-400 transition text-lg"
+            >✕</button>
           </div>
         </div>
+        <p class="text-xs text-gray-400 mt-3 text-center">
+          Un partecipante può essere rimosso solo se non è coinvolto in nessuna spesa.
+        </p>
       </div>
 
       <!-- Footer donazione -->
       <div class="mt-10">
         <DonationFooter />
       </div>
-
     </div>
   </div>
 </template>
@@ -232,7 +261,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { groupsApi, type Group, type Balance } from '../api/groups'
+import { groupsApi, type Group, type Balance, type Expense } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
 
 const route = useRoute()
@@ -253,6 +282,7 @@ const tabs = [
 ]
 
 const showExpenseForm = ref(false)
+const editingExpenseId = ref<number | null>(null)
 const expenseLoading = ref(false)
 const expenseError = ref('')
 const expenseForm = reactive({
@@ -269,6 +299,11 @@ const splitTypes = [
   { key: 'subset', label: 'Seleziona persone' },
   { key: 'custom', label: 'Personalizzato' },
 ]
+
+const totalExpenses = computed(() => {
+  if (!group.value) return 0
+  return group.value.expenses.reduce((acc, e) => acc + parseFloat(String(e.amount)), 0)
+})
 
 const splitSum = computed(() => {
   return Object.values(expenseForm.customSplits)
@@ -309,7 +344,46 @@ function memberName(id: number) {
   return group.value?.members.find(m => m.id === id)?.name || 'Sconosciuto'
 }
 
-async function addExpense() {
+function resetExpenseForm() {
+  expenseForm.description = ''
+  expenseForm.amount = ''
+  expenseForm.paid_by_member_id = ''
+  expenseForm.splitType = 'equal'
+  expenseForm.customSplits = {}
+  expenseForm.subsetIds = []
+  expenseError.value = ''
+  editingExpenseId.value = null
+}
+
+function openNewExpenseForm() {
+  if (showExpenseForm.value && !editingExpenseId.value) {
+    showExpenseForm.value = false
+    resetExpenseForm()
+    return
+  }
+  resetExpenseForm()
+  showExpenseForm.value = true
+}
+
+function openEditExpenseForm(expense: Expense) {
+  resetExpenseForm()
+  editingExpenseId.value = expense.id
+  expenseForm.description = expense.description
+  expenseForm.amount = String(expense.amount)
+  expenseForm.paid_by_member_id = expense.paid_by_member_id
+  expenseForm.splitType = 'custom'
+  expense.splits.forEach(s => {
+    expenseForm.customSplits[s.member_id] = String(s.share_amount)
+  })
+  showExpenseForm.value = true
+}
+
+function cancelExpenseForm() {
+  showExpenseForm.value = false
+  resetExpenseForm()
+}
+
+async function saveExpense() {
   expenseError.value = ''
   if (!expenseForm.description.trim()) { expenseError.value = 'Inserisci una descrizione'; return }
   if (!expenseForm.amount || parseFloat(expenseForm.amount) <= 0) { expenseError.value = 'Inserisci un importo valido'; return }
@@ -321,7 +395,17 @@ async function addExpense() {
 
   expenseLoading.value = true
   try {
-    if (expenseForm.splitType === 'equal') {
+    if (editingExpenseId.value) {
+      const splits = Object.entries(expenseForm.customSplits)
+        .filter(([, v]) => parseFloat(v) > 0)
+        .map(([id, v]) => ({ member_id: parseInt(id), share_amount: parseFloat(v) }))
+      await groupsApi.updateExpense(groupId, editingExpenseId.value, {
+        paid_by_member_id: expenseForm.paid_by_member_id as number,
+        description: expenseForm.description.trim(),
+        amount: parseFloat(expenseForm.amount),
+        splits,
+      })
+    } else if (expenseForm.splitType === 'equal') {
       await groupsApi.addExpenseEqual(groupId, {
         paid_by_member_id: expenseForm.paid_by_member_id as number,
         description: expenseForm.description.trim(),
@@ -352,11 +436,7 @@ async function addExpense() {
     }
     await loadGroup()
     showExpenseForm.value = false
-    expenseForm.description = ''
-    expenseForm.amount = ''
-    expenseForm.paid_by_member_id = ''
-    expenseForm.customSplits = {}
-    expenseForm.subsetIds = []
+    resetExpenseForm()
   } catch {
     expenseError.value = 'Errore nel salvataggio. Riprova.'
   } finally {
@@ -368,6 +448,17 @@ async function deleteExpense(expenseId: number) {
   if (!confirm('Eliminare questa spesa?')) return
   await groupsApi.deleteExpense(groupId, expenseId)
   await loadGroup()
+}
+
+async function deleteMember(memberId: number, name: string) {
+  if (!confirm(`Rimuovere ${name} dal gruppo?`)) return
+  try {
+    await groupsApi.deleteMember(groupId, memberId)
+    await loadGroup()
+  } catch (e: any) {
+    const msg = e?.response?.data?.detail || 'Impossibile rimuovere il partecipante.'
+    alert(msg)
+  }
 }
 
 function copyLink() {

@@ -72,6 +72,16 @@ export const groupsApi = {
     splits: Split[]
   }) => client.post<Expense>(`/groups/${groupId}/expenses/`, data),
 
+  updateExpense: (groupId: string, expenseId: number, data: {
+    paid_by_member_id: number
+    description: string
+    amount: number
+    splits: Split[]
+  }) => client.put<Expense>(`/groups/${groupId}/expenses/${expenseId}`, data),
+
+  deleteMember: (groupId: string, memberId: number) =>
+    client.delete(`/groups/${groupId}/members/${memberId}`),
+
   deleteExpense: (groupId: string, expenseId: number) =>
     client.delete(`/groups/${groupId}/expenses/${expenseId}`),
 }

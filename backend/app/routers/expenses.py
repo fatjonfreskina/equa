@@ -144,6 +144,48 @@ def add_expense_subset(group_id: str, expense: schemas.ExpenseCreateSubset, db: 
     db.refresh(db_expense)
     return db_expense
 
+@router.put("/{expense_id}", response_model=schemas.ExpenseOut)
+def update_expense(group_id: str, expense_id: int, expense: schemas.ExpenseCreate, db: Session = Depends(get_db)):
+    db_expense = db.query(models.Expense).filter(
+        models.Expense.id == expense_id,
+        models.Expense.group_id == group_id
+    ).first()
+    if not db_expense:
+        raise HTTPException(status_code=404, detail="Spesa non trovata")
+
+    payer = db.query(models.Member).filter(
+        models.Member.id == expense.paid_by_member_id,
+        models.Member.group_id == group_id
+    ).first()
+    if not payer:
+        raise HTTPException(status_code=400, detail="Il pagante non è membro del gruppo")
+
+    total_splits = sum(s.share_amount for s in expense.splits)
+    if abs(total_splits - expense.amount) > Decimal("0.01"):
+        raise HTTPException(status_code=400, detail="La somma degli split non corrisponde al totale")
+
+    # Aggiorna i campi
+    db_expense.paid_by_member_id = expense.paid_by_member_id
+    db_expense.description = expense.description
+    db_expense.amount = expense.amount
+
+    # Cancella gli split esistenti e reinserisce
+    db.query(models.ExpenseSplit).filter(
+        models.ExpenseSplit.expense_id == expense_id
+    ).delete()
+
+    for split in expense.splits:
+        db_split = models.ExpenseSplit(
+            expense_id=db_expense.id,
+            member_id=split.member_id,
+            share_amount=split.share_amount,
+        )
+        db.add(db_split)
+
+    db.commit()
+    db.refresh(db_expense)
+    return db_expense
+
 @router.delete("/{expense_id}", status_code=204)
 def delete_expense(group_id: str, expense_id: int, db: Session = Depends(get_db)):
     db_expense = db.query(models.Expense).filter(
