@@ -7,7 +7,15 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
-## [1.1.0] - 2026-04-19
+## [1.1.1] Backend - 2026-04-23
+
+### Corretto
+
+- Aggiunto test della connessione al database prima di avviare l'applicazione (fix #7). Aggiunto inoltre pool_recycle a 1800 secondi per riciclare le connessioni ogni 30 minuti, prevenendo timeout inattesi.
+
+---
+
+## [1.1.0] Frontend; [1.1.0] Backend- 2026-04-19
 
 ### Aggiunto
 
@@ -19,7 +27,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
-## [1.0.0] - 2026-04-08
+## [1.0.0] Frontend; [1.0.0] Backend - 2026-04-08
 
 ### Aggiunto
 
