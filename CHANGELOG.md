@@ -7,6 +7,14 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
+## [1.2.0] Backend - 2026-08-22
+
+### Aggiunto
+
+- Nuovo endpoint `POST /groups/{group_id}/members/` per aggiungere partecipanti a un gruppo già esistente, anche a spese già presenti. I nuovi membri non vengono retroattivamente coinvolti nelle spese precedenti, che mantengono lo split salvato al momento della loro creazione.
+
+---
+
 ## [1.1.1] Backend - 2026-04-23
 
 ### Corretto
