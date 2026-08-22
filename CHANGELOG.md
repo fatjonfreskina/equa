@@ -7,6 +7,14 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
+## [1.2.1] Frontend - 2026-08-22
+
+### Corretto
+
+- Form di aggiunta partecipante nella tab "Partecipanti" non era responsive e sfondava lo schermo su mobile. Ora va in colonna sotto i 640px (flex-col sm:flex-row) e gli input possono restringersi correttamente (min-w-0).
+
+---
+
 ## [1.2.0] Backend - 2026-08-22
 
 ### Aggiunto

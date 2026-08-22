@@ -34,10 +34,10 @@
 </template>
 
 <script setup lang="ts">
-import { APP_VERSION } from "../config";
+import { APP_VERSION } from '../config'
 const amounts = [
-  { label: "☕ 1€", value: 1 },
-  { label: "🍕 2€", value: 2 },
-  { label: "🍷 5€", value: 5 },
-];
+  { label: '☕ 1€', value: 1 },
+  { label: '🍕 2€', value: 2 },
+  { label: '🍷 5€', value: 5 },
+]
 </script>

@@ -11,12 +11,8 @@
           </svg>
           <h1 class="text-5xl font-bold text-green-700 tracking-tight">equa</h1>
         </div>
-        <p class="text-xl text-gray-700 font-medium mb-2">
-          Dividi le spese, non le amicizie.
-        </p>
-        <p class="text-sm text-gray-400">
-          Semplice, italiano, e gratis per sempre.
-        </p>
+        <p class="text-xl text-gray-700 font-medium mb-2">Dividi le spese, non le amicizie.</p>
+        <p class="text-sm text-gray-400">Semplice, italiano, e gratis per sempre.</p>
       </div>
 
       <!-- Form crea gruppo -->
@@ -25,9 +21,7 @@
 
         <div class="space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Nome del gruppo</label
-            >
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nome del gruppo</label>
             <input
               v-model="form.name"
               type="text"
@@ -50,9 +44,7 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Valuta</label
-            >
+            <label class="block text-sm font-medium text-gray-700 mb-1">Valuta</label>
             <select
               v-model="form.currency"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
@@ -65,15 +57,9 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Partecipanti</label
-            >
+            <label class="block text-sm font-medium text-gray-700 mb-1">Partecipanti</label>
             <div class="space-y-2">
-              <div
-                v-for="(member, index) in form.members"
-                :key="index"
-                class="flex gap-2"
-              >
+              <div v-for="(member, index) in form.members" :key="index" class="flex gap-2">
                 <input
                   v-model="member.name"
                   type="text"
@@ -104,19 +90,15 @@
             :disabled="loading"
             class="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white font-semibold rounded-lg py-2.5 transition"
           >
-            {{ loading ? "Creazione..." : "Crea gruppo →" }}
+            {{ loading ? 'Creazione...' : 'Crea gruppo →' }}
           </button>
         </div>
       </div>
 
       <!-- Recupera gruppo esistente -->
       <div class="bg-white rounded-2xl shadow p-6 mb-8">
-        <h2 class="text-lg font-semibold text-gray-800 mb-1">
-          Hai già un gruppo?
-        </h2>
-        <p class="text-sm text-gray-400 mb-3">
-          Incolla il link che ti hanno condiviso.
-        </p>
+        <h2 class="text-lg font-semibold text-gray-800 mb-1">Hai già un gruppo?</h2>
+        <p class="text-sm text-gray-400 mb-3">Incolla il link che ti hanno condiviso.</p>
         <div class="flex gap-2">
           <input
             v-model="existingId"
@@ -141,16 +123,12 @@
         <div class="bg-white rounded-xl shadow p-4 text-center">
           <div class="text-2xl mb-1">🔗</div>
           <p class="text-xs font-medium text-gray-700">Basta un link</p>
-          <p class="text-xs text-gray-400 mt-1">
-            Niente app, niente registrazione
-          </p>
+          <p class="text-xs text-gray-400 mt-1">Niente app, niente registrazione</p>
         </div>
         <div class="bg-white rounded-xl shadow p-4 text-center">
           <div class="text-2xl mb-1">⚖️</div>
           <p class="text-xs font-medium text-gray-700">Conti precisi</p>
-          <p class="text-xs text-gray-400 mt-1">
-            Algoritmo che minimizza i pagamenti
-          </p>
+          <p class="text-xs text-gray-400 mt-1">Algoritmo che minimizza i pagamenti</p>
         </div>
         <div class="bg-white rounded-xl shadow p-4 text-center">
           <div class="text-2xl mb-1">❤️</div>
@@ -166,75 +144,75 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue";
-import { useRouter } from "vue-router";
-import { groupsApi } from "../api/groups";
-import DonationFooter from "../components/DonationFooter.vue";
+import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import { groupsApi } from '../api/groups'
+import DonationFooter from '../components/DonationFooter.vue'
 
-const router = useRouter();
+const router = useRouter()
 
-const exampleNames = ["Marco", "Giulia", "Luca", "Sara", "Paolo"];
+const exampleNames = ['Marco', 'Giulia', 'Luca', 'Sara', 'Paolo']
 
 const form = reactive({
-  name: "",
-  description: "",
-  currency: "EUR",
-  members: [{ name: "" }, { name: "" }],
-});
+  name: '',
+  description: '',
+  currency: 'EUR',
+  members: [{ name: '' }, { name: '' }],
+})
 
-const existingId = ref("");
-const loading = ref(false);
-const error = ref("");
-const linkError = ref("");
+const existingId = ref('')
+const loading = ref(false)
+const error = ref('')
+const linkError = ref('')
 
 function addMember() {
-  form.members.push({ name: "" });
+  form.members.push({ name: '' })
 }
 
 function removeMember(index: number) {
-  form.members.splice(index, 1);
+  form.members.splice(index, 1)
 }
 
 async function createGroup() {
-  error.value = "";
+  error.value = ''
 
   if (!form.name.trim()) {
-    error.value = "Dai un nome al gruppo.";
-    return;
+    error.value = 'Dai un nome al gruppo.'
+    return
   }
 
-  const validMembers = form.members.filter((m) => m.name.trim());
+  const validMembers = form.members.filter((m) => m.name.trim())
   if (validMembers.length < 2) {
-    error.value = "Aggiungi almeno 2 partecipanti.";
-    return;
+    error.value = 'Aggiungi almeno 2 partecipanti.'
+    return
   }
 
-  loading.value = true;
+  loading.value = true
   try {
     const response = await groupsApi.create({
       name: form.name.trim(),
       description: form.description.trim() || undefined,
       currency: form.currency,
       members: validMembers,
-    });
-    router.push(`/group/${response.data.id}`);
+    })
+    router.push(`/group/${response.data.id}`)
   } catch {
-    error.value = "Qualcosa è andato storto. Riprova.";
+    error.value = 'Qualcosa è andato storto. Riprova.'
   } finally {
-    loading.value = false;
+    loading.value = false
   }
 }
 
 function goToGroup() {
-  linkError.value = "";
-  const input = existingId.value.trim();
-  if (!input) return;
+  linkError.value = ''
+  const input = existingId.value.trim()
+  if (!input) return
 
-  const match = input.match(/([a-f0-9-]{36})/);
+  const match = input.match(/([a-f0-9-]{36})/)
   if (match) {
-    router.push(`/group/${match[1]}`);
+    router.push(`/group/${match[1]}`)
   } else {
-    linkError.value = "Link o ID non valido.";
+    linkError.value = 'Link o ID non valido.'
   }
 }
 </script>
