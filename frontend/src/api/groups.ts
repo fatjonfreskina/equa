@@ -84,4 +84,7 @@ export const groupsApi = {
 
   deleteExpense: (groupId: string, expenseId: number) =>
     client.delete(`/groups/${groupId}/expenses/${expenseId}`),
+
+  addMember: (groupId: string, data: { name: string; email?: string }) =>
+    client.post<Member>(`/groups/${groupId}/members/`, data),
 }

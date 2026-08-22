@@ -233,6 +233,12 @@
 
       <!-- Tab: Partecipanti -->
       <div v-if="activeTab === 'members'">
+        <div class="bg-white rounded-2xl shadow p-4 mb-4 flex gap-2">
+  <input v-model="newMember.name" placeholder="Nome" class="flex-1 border rounded-lg px-3 py-2 text-sm" />
+  <input v-model="newMember.email" placeholder="Email (opzionale)" class="flex-1 border rounded-lg px-3 py-2 text-sm" />
+  <button @click="addMember" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm">Aggiungi</button>
+</div>
+<p v-if="addMemberError" class="text-xs text-red-400 mb-2">{{ addMemberError }}</p>
         <div class="bg-white rounded-2xl shadow divide-y divide-gray-100">
           <div v-for="member in group.members" :key="member.id" class="px-5 py-3 flex items-center justify-between">
             <div>
@@ -274,6 +280,9 @@ const error = ref('')
 const copied = ref(false)
 const activeTab = ref('expenses')
 const balancesLoading = ref(false)
+
+const newMember = reactive({ name: '', email: '' })
+const addMemberError = ref('')
 
 const tabs = [
   { key: 'expenses', label: '💸 Spese' },
@@ -458,6 +467,25 @@ async function deleteMember(memberId: number, name: string) {
   } catch (e: any) {
     const msg = e?.response?.data?.detail || 'Impossibile rimuovere il partecipante.'
     alert(msg)
+  }
+}
+
+async function addMember() {
+  addMemberError.value = ''
+  if (!newMember.name.trim()) {
+    addMemberError.value = 'Inserisci un nome'
+    return
+  }
+  try {
+    await groupsApi.addMember(groupId, {
+      name: newMember.name.trim(),
+      email: newMember.email.trim() || undefined,
+    })
+    newMember.name = ''
+    newMember.email = ''
+    await loadGroup() // o come si chiama la funzione che ricarica group.value
+  } catch (e: any) {
+    addMemberError.value = e?.response?.data?.detail || 'Errore durante l\'aggiunta'
   }
 }
 
