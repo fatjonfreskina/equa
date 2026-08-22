@@ -1,11 +1,26 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from decimal import Decimal
-from .. import models
+from .. import models, schemas
 from ..database import get_db
 
 router = APIRouter(prefix="/groups/{group_id}/members", tags=["members"])
 
+@router.post("/", response_model=schemas.MemberOut, status_code=201)
+def add_member(group_id: str, member: schemas.MemberCreate, db: Session = Depends(get_db)):
+    db_group = db.query(models.Group).filter(models.Group.id == group_id).first()
+    if not db_group:
+        raise HTTPException(status_code=404, detail="Gruppo non trovato")
+
+    db_member = models.Member(
+        group_id=group_id,
+        name=member.name,
+        email=member.email,
+    )
+    db.add(db_member)
+    db.commit()
+    db.refresh(db_member)
+    return db_member
 
 @router.delete("/{member_id}", status_code=204)
 def delete_member(group_id: str, member_id: int, db: Session = Depends(get_db)):
