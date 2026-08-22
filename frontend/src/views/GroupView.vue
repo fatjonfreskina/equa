@@ -1,13 +1,19 @@
 <template>
   <div class="max-w-2xl mx-auto py-8 px-4">
-
-    <div v-if="loading" class="text-center py-20 text-gray-400">Caricamento...</div>
-    <div v-else-if="error" class="text-center py-20 text-red-500">{{ error }}</div>
+    <div v-if="loading" class="text-center py-20 text-gray-400">
+      Caricamento...
+    </div>
+    <div v-else-if="error" class="text-center py-20 text-red-500">
+      {{ error }}
+    </div>
 
     <div v-else-if="group">
       <!-- Link home -->
       <div class="mb-4">
-        <RouterLink to="/" class="text-sm text-gray-400 hover:text-green-600 transition">
+        <RouterLink
+          to="/"
+          class="text-sm text-gray-400 hover:text-green-600 transition"
+        >
           ← Torna alla home
         </RouterLink>
       </div>
@@ -16,17 +22,48 @@
       <div class="flex items-center justify-between mb-6">
         <div>
           <div class="flex items-center gap-2 mb-1">
-            <svg width="24" height="24" viewBox="0 0 64 64" class="flex-shrink-0">
-              <rect x="8"  y="10" width="48" height="13" rx="6.5" fill="#16a34a"/>
-              <rect x="8"  y="28" width="32" height="13" rx="6.5" fill="#4ade80"/>
-              <rect x="8"  y="46" width="20" height="13" rx="6.5" fill="#86efac"/>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 64 64"
+              class="flex-shrink-0"
+            >
+              <rect
+                x="8"
+                y="10"
+                width="48"
+                height="13"
+                rx="6.5"
+                fill="#16a34a"
+              />
+              <rect
+                x="8"
+                y="28"
+                width="32"
+                height="13"
+                rx="6.5"
+                fill="#4ade80"
+              />
+              <rect
+                x="8"
+                y="46"
+                width="20"
+                height="13"
+                rx="6.5"
+                fill="#86efac"
+              />
             </svg>
             <h1 class="text-2xl font-bold text-green-700">{{ group.name }}</h1>
           </div>
-          <p v-if="group.description" class="text-gray-500 text-sm">{{ group.description }}</p>
+          <p v-if="group.description" class="text-gray-500 text-sm">
+            {{ group.description }}
+          </p>
         </div>
-        <button @click="copyLink" class="text-sm text-gray-500 hover:text-green-600 border border-gray-300 rounded-lg px-3 py-1.5 transition">
-          {{ copied ? '✓ Copiato!' : '🔗 Condividi' }}
+        <button
+          @click="copyLink"
+          class="text-sm text-gray-500 hover:text-green-600 border border-gray-300 rounded-lg px-3 py-1.5 transition"
+        >
+          {{ copied ? "✓ Copiato!" : "🔗 Condividi" }}
         </button>
       </div>
 
@@ -40,7 +77,7 @@
             'pb-2 px-1 text-sm font-medium border-b-2 transition',
             activeTab === tab.key
               ? 'border-green-600 text-green-700'
-              : 'border-transparent text-gray-500 hover:text-gray-700'
+              : 'border-transparent text-gray-500 hover:text-gray-700',
           ]"
         >
           {{ tab.label }}
@@ -49,11 +86,14 @@
 
       <!-- Tab: Spese -->
       <div v-if="activeTab === 'expenses'">
-
         <!-- Totale spese -->
-        <div class="bg-green-50 border border-green-100 rounded-xl px-5 py-3 mb-4 flex items-center justify-between">
+        <div
+          class="bg-green-50 border border-green-100 rounded-xl px-5 py-3 mb-4 flex items-center justify-between"
+        >
           <span class="text-sm text-green-700 font-medium">Totale spese</span>
-          <span class="text-lg font-bold text-green-700">{{ totalExpenses.toFixed(2) }} {{ group.currency }}</span>
+          <span class="text-lg font-bold text-green-700"
+            >{{ totalExpenses.toFixed(2) }} {{ group.currency }}</span
+          >
         </div>
 
         <!-- Bottone aggiungi -->
@@ -61,17 +101,26 @@
           @click="openNewExpenseForm"
           class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg py-2.5 mb-4 transition"
         >
-          {{ showExpenseForm && !editingExpenseId ? '✕ Annulla' : '+ Aggiungi spesa' }}
+          {{
+            showExpenseForm && !editingExpenseId
+              ? "✕ Annulla"
+              : "+ Aggiungi spesa"
+          }}
         </button>
 
         <!-- Form aggiunta / modifica spesa -->
-        <div v-if="showExpenseForm" class="bg-white rounded-2xl shadow p-5 mb-4">
+        <div
+          v-if="showExpenseForm"
+          class="bg-white rounded-2xl shadow p-5 mb-4"
+        >
           <h3 class="font-semibold text-gray-800 mb-3">
-            {{ editingExpenseId ? 'Modifica spesa' : 'Nuova spesa' }}
+            {{ editingExpenseId ? "Modifica spesa" : "Nuova spesa" }}
           </h3>
           <div class="space-y-3">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Descrizione</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Descrizione</label
+              >
               <input
                 v-model="expenseForm.description"
                 type="text"
@@ -80,7 +129,9 @@
               />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Importo ({{ group.currency }})</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Importo ({{ group.currency }})</label
+              >
               <input
                 v-model="expenseForm.amount"
                 type="number"
@@ -91,13 +142,19 @@
               />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Pagato da</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Pagato da</label
+              >
               <select
                 v-model="expenseForm.paid_by_member_id"
                 class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
               >
                 <option disabled value="">Seleziona...</option>
-                <option v-for="member in group.members" :key="member.id" :value="member.id">
+                <option
+                  v-for="member in group.members"
+                  :key="member.id"
+                  :value="member.id"
+                >
                   {{ member.name }}
                 </option>
               </select>
@@ -105,7 +162,9 @@
 
             <!-- Tipo split — nascosto in modifica perché usiamo sempre custom -->
             <div v-if="!editingExpenseId">
-              <label class="block text-sm font-medium text-gray-700 mb-1">Divisione</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Divisione</label
+              >
               <div class="flex gap-2 flex-wrap">
                 <button
                   v-for="type in splitTypes"
@@ -115,7 +174,7 @@
                     'flex-1 py-2 rounded-lg text-sm font-medium border transition',
                     expenseForm.splitType === type.key
                       ? 'bg-green-600 text-white border-green-600'
-                      : 'bg-white text-gray-600 border-gray-300 hover:border-green-400'
+                      : 'bg-white text-gray-600 border-gray-300 hover:border-green-400',
                   ]"
                 >
                   {{ type.label }}
@@ -124,9 +183,18 @@
             </div>
 
             <!-- Split: seleziona persone -->
-            <div v-if="expenseForm.splitType === 'subset' && !editingExpenseId" class="space-y-2">
-              <p class="text-xs text-gray-500">Seleziona tra chi dividere equamente:</p>
-              <div v-for="member in group.members" :key="member.id" class="flex items-center gap-2">
+            <div
+              v-if="expenseForm.splitType === 'subset' && !editingExpenseId"
+              class="space-y-2"
+            >
+              <p class="text-xs text-gray-500">
+                Seleziona tra chi dividere equamente:
+              </p>
+              <div
+                v-for="member in group.members"
+                :key="member.id"
+                class="flex items-center gap-2"
+              >
                 <input
                   type="checkbox"
                   :id="`subset-${member.id}`"
@@ -134,19 +202,37 @@
                   v-model="expenseForm.subsetIds"
                   class="accent-green-600"
                 />
-                <label :for="`subset-${member.id}`" class="text-sm text-gray-700 cursor-pointer">
+                <label
+                  :for="`subset-${member.id}`"
+                  class="text-sm text-gray-700 cursor-pointer"
+                >
                   {{ member.name }}
                 </label>
               </div>
-              <p v-if="expenseForm.subsetIds.length > 0" class="text-xs text-green-600">
-                {{ (parseFloat(expenseForm.amount) / expenseForm.subsetIds.length).toFixed(2) }} {{ group.currency }} a testa
+              <p
+                v-if="expenseForm.subsetIds.length > 0"
+                class="text-xs text-green-600"
+              >
+                {{
+                  (
+                    parseFloat(expenseForm.amount) /
+                    expenseForm.subsetIds.length
+                  ).toFixed(2)
+                }}
+                {{ group.currency }} a testa
               </p>
             </div>
 
             <!-- Split personalizzato (sempre visibile in modifica) -->
             <div v-if="expenseForm.splitType === 'custom'" class="space-y-2">
-              <div v-for="member in group.members" :key="member.id" class="flex items-center gap-2">
-                <span class="flex-1 text-sm text-gray-700">{{ member.name }}</span>
+              <div
+                v-for="member in group.members"
+                :key="member.id"
+                class="flex items-center gap-2"
+              >
+                <span class="flex-1 text-sm text-gray-700">{{
+                  member.name
+                }}</span>
                 <input
                   v-model="expenseForm.customSplits[member.id]"
                   type="number"
@@ -156,12 +242,18 @@
                   class="w-24 border border-gray-300 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
                 />
               </div>
-              <p :class="splitSumOk ? 'text-green-600' : 'text-red-500'" class="text-xs text-right">
-                Totale split: {{ splitSum.toFixed(2) }} / {{ expenseForm.amount || 0 }}
+              <p
+                :class="splitSumOk ? 'text-green-600' : 'text-red-500'"
+                class="text-xs text-right"
+              >
+                Totale split: {{ splitSum.toFixed(2) }} /
+                {{ expenseForm.amount || 0 }}
               </p>
             </div>
 
-            <p v-if="expenseError" class="text-red-500 text-sm">{{ expenseError }}</p>
+            <p v-if="expenseError" class="text-red-500 text-sm">
+              {{ expenseError }}
+            </p>
 
             <div class="flex gap-2">
               <button
@@ -175,14 +267,23 @@
                 :disabled="expenseLoading"
                 class="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white font-semibold rounded-lg py-2.5 transition"
               >
-                {{ expenseLoading ? 'Salvataggio...' : (editingExpenseId ? 'Aggiorna' : 'Salva') }}
+                {{
+                  expenseLoading
+                    ? "Salvataggio..."
+                    : editingExpenseId
+                      ? "Aggiorna"
+                      : "Salva"
+                }}
               </button>
             </div>
           </div>
         </div>
 
         <!-- Lista spese -->
-        <div v-if="group.expenses.length === 0" class="text-center py-10 text-gray-400">
+        <div
+          v-if="group.expenses.length === 0"
+          class="text-center py-10 text-gray-400"
+        >
           Nessuna spesa ancora. Aggiungine una!
         </div>
         <div v-else class="space-y-3">
@@ -195,15 +296,22 @@
             <div>
               <p class="font-medium text-gray-800">{{ expense.description }}</p>
               <p class="text-sm text-gray-500">
-                Pagato da <span class="font-medium">{{ memberName(expense.paid_by_member_id) }}</span>
+                Pagato da
+                <span class="font-medium">{{
+                  memberName(expense.paid_by_member_id)
+                }}</span>
               </p>
             </div>
             <div class="flex items-center gap-3">
-              <span class="font-bold text-green-700">{{ expense.amount }} {{ group.currency }}</span>
+              <span class="font-bold text-green-700"
+                >{{ expense.amount }} {{ group.currency }}</span
+              >
               <button
                 @click.stop="deleteExpense(expense.id)"
                 class="text-gray-300 hover:text-red-400 transition text-lg"
-              >✕</button>
+              >
+                ✕
+              </button>
             </div>
           </div>
         </div>
@@ -211,8 +319,13 @@
 
       <!-- Tab: Bilanci -->
       <div v-if="activeTab === 'balances'">
-        <div v-if="balancesLoading" class="text-center py-10 text-gray-400">Calcolo...</div>
-        <div v-else-if="balances.length === 0" class="text-center py-10 text-gray-400">
+        <div v-if="balancesLoading" class="text-center py-10 text-gray-400">
+          Calcolo...
+        </div>
+        <div
+          v-else-if="balances.length === 0"
+          class="text-center py-10 text-gray-400"
+        >
           Nessun debito! Siete tutti pari 🎉
         </div>
         <div v-else class="space-y-3">
@@ -226,7 +339,9 @@
               <span class="text-gray-400">→</span>
               <span class="font-medium">{{ balance.to_member_name }}</span>
             </div>
-            <span class="font-bold text-red-500">{{ balance.amount }} {{ group.currency }}</span>
+            <span class="font-bold text-red-500"
+              >{{ balance.amount }} {{ group.currency }}</span
+            >
           </div>
         </div>
       </div>
@@ -234,25 +349,49 @@
       <!-- Tab: Partecipanti -->
       <div v-if="activeTab === 'members'">
         <div class="bg-white rounded-2xl shadow p-4 mb-4 flex gap-2">
-  <input v-model="newMember.name" placeholder="Nome" class="flex-1 border rounded-lg px-3 py-2 text-sm" />
-  <input v-model="newMember.email" placeholder="Email (opzionale)" class="flex-1 border rounded-lg px-3 py-2 text-sm" />
-  <button @click="addMember" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm">Aggiungi</button>
-</div>
-<p v-if="addMemberError" class="text-xs text-red-400 mb-2">{{ addMemberError }}</p>
+          <input
+            v-model="newMember.name"
+            placeholder="Nome"
+            class="flex-1 border rounded-lg px-3 py-2 text-sm"
+          />
+          <input
+            v-model="newMember.email"
+            placeholder="Email (opzionale)"
+            class="flex-1 border rounded-lg px-3 py-2 text-sm"
+          />
+          <button
+            @click="addMember"
+            class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm"
+          >
+            Aggiungi
+          </button>
+        </div>
+        <p v-if="addMemberError" class="text-xs text-red-400 mb-2">
+          {{ addMemberError }}
+        </p>
         <div class="bg-white rounded-2xl shadow divide-y divide-gray-100">
-          <div v-for="member in group.members" :key="member.id" class="px-5 py-3 flex items-center justify-between">
+          <div
+            v-for="member in group.members"
+            :key="member.id"
+            class="px-5 py-3 flex items-center justify-between"
+          >
             <div>
               <span class="font-medium text-gray-800">{{ member.name }}</span>
-              <span v-if="member.email" class="text-sm text-gray-400 ml-2">{{ member.email }}</span>
+              <span v-if="member.email" class="text-sm text-gray-400 ml-2">{{
+                member.email
+              }}</span>
             </div>
             <button
               @click="deleteMember(member.id, member.name)"
               class="text-gray-300 hover:text-red-400 transition text-lg"
-            >✕</button>
+            >
+              ✕
+            </button>
           </div>
         </div>
         <p class="text-xs text-gray-400 mt-3 text-center">
-          Un partecipante può essere rimosso solo se non è coinvolto in nessuna spesa.
+          Un partecipante può essere rimosso solo se non è coinvolto in nessuna
+          spesa.
         </p>
       </div>
 
@@ -265,235 +404,262 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
-import { groupsApi, type Group, type Balance, type Expense } from '../api/groups'
-import DonationFooter from '../components/DonationFooter.vue'
+import { ref, reactive, computed, onMounted, watch } from "vue";
+import { useRoute } from "vue-router";
+import {
+  groupsApi,
+  type Group,
+  type Balance,
+  type Expense,
+} from "../api/groups";
+import DonationFooter from "../components/DonationFooter.vue";
 
-const route = useRoute()
-const groupId = route.params.id as string
+const route = useRoute();
+const groupId = route.params.id as string;
 
-const group = ref<Group | null>(null)
-const balances = ref<Balance[]>([])
-const loading = ref(true)
-const error = ref('')
-const copied = ref(false)
-const activeTab = ref('expenses')
-const balancesLoading = ref(false)
+const group = ref<Group | null>(null);
+const balances = ref<Balance[]>([]);
+const loading = ref(true);
+const error = ref("");
+const copied = ref(false);
+const activeTab = ref("expenses");
+const balancesLoading = ref(false);
 
-const newMember = reactive({ name: '', email: '' })
-const addMemberError = ref('')
+const newMember = reactive({ name: "", email: "" });
+const addMemberError = ref("");
 
 const tabs = [
-  { key: 'expenses', label: '💸 Spese' },
-  { key: 'balances', label: '⚖️ Bilanci' },
-  { key: 'members', label: '👥 Partecipanti' },
-]
+  { key: "expenses", label: "💸 Spese" },
+  { key: "balances", label: "⚖️ Bilanci" },
+  { key: "members", label: "👥 Partecipanti" },
+];
 
-const showExpenseForm = ref(false)
-const editingExpenseId = ref<number | null>(null)
-const expenseLoading = ref(false)
-const expenseError = ref('')
+const showExpenseForm = ref(false);
+const editingExpenseId = ref<number | null>(null);
+const expenseLoading = ref(false);
+const expenseError = ref("");
 const expenseForm = reactive({
-  description: '',
-  amount: '',
-  paid_by_member_id: '' as number | string,
-  splitType: 'equal',
+  description: "",
+  amount: "",
+  paid_by_member_id: "" as number | string,
+  splitType: "equal",
   customSplits: {} as Record<number, string>,
   subsetIds: [] as number[],
-})
+});
 
 const splitTypes = [
-  { key: 'equal', label: 'Tutti' },
-  { key: 'subset', label: 'Seleziona persone' },
-  { key: 'custom', label: 'Personalizzato' },
-]
+  { key: "equal", label: "Tutti" },
+  { key: "subset", label: "Seleziona persone" },
+  { key: "custom", label: "Personalizzato" },
+];
 
 const totalExpenses = computed(() => {
-  if (!group.value) return 0
-  return group.value.expenses.reduce((acc, e) => acc + parseFloat(String(e.amount)), 0)
-})
+  if (!group.value) return 0;
+  return group.value.expenses.reduce(
+    (acc, e) => acc + parseFloat(String(e.amount)),
+    0,
+  );
+});
 
 const splitSum = computed(() => {
-  return Object.values(expenseForm.customSplits)
-    .reduce((acc, v) => acc + (parseFloat(v) || 0), 0)
-})
+  return Object.values(expenseForm.customSplits).reduce(
+    (acc, v) => acc + (parseFloat(v) || 0),
+    0,
+  );
+});
 
 const splitSumOk = computed(() => {
-  const amount = parseFloat(expenseForm.amount)
-  return Math.abs(splitSum.value - amount) < 0.02
-})
+  const amount = parseFloat(expenseForm.amount);
+  return Math.abs(splitSum.value - amount) < 0.02;
+});
 
 async function loadGroup() {
   try {
-    const res = await groupsApi.get(groupId)
-    group.value = res.data
+    const res = await groupsApi.get(groupId);
+    group.value = res.data;
   } catch {
-    error.value = 'Gruppo non trovato.'
+    error.value = "Gruppo non trovato.";
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 async function loadBalances() {
-  balancesLoading.value = true
+  balancesLoading.value = true;
   try {
-    const res = await groupsApi.getBalances(groupId)
-    balances.value = res.data
+    const res = await groupsApi.getBalances(groupId);
+    balances.value = res.data;
   } finally {
-    balancesLoading.value = false
+    balancesLoading.value = false;
   }
 }
 
 watch(activeTab, (tab) => {
-  if (tab === 'balances') loadBalances()
-})
+  if (tab === "balances") loadBalances();
+});
 
 function memberName(id: number) {
-  return group.value?.members.find(m => m.id === id)?.name || 'Sconosciuto'
+  return group.value?.members.find((m) => m.id === id)?.name || "Sconosciuto";
 }
 
 function resetExpenseForm() {
-  expenseForm.description = ''
-  expenseForm.amount = ''
-  expenseForm.paid_by_member_id = ''
-  expenseForm.splitType = 'equal'
-  expenseForm.customSplits = {}
-  expenseForm.subsetIds = []
-  expenseError.value = ''
-  editingExpenseId.value = null
+  expenseForm.description = "";
+  expenseForm.amount = "";
+  expenseForm.paid_by_member_id = "";
+  expenseForm.splitType = "equal";
+  expenseForm.customSplits = {};
+  expenseForm.subsetIds = [];
+  expenseError.value = "";
+  editingExpenseId.value = null;
 }
 
 function openNewExpenseForm() {
   if (showExpenseForm.value && !editingExpenseId.value) {
-    showExpenseForm.value = false
-    resetExpenseForm()
-    return
+    showExpenseForm.value = false;
+    resetExpenseForm();
+    return;
   }
-  resetExpenseForm()
-  showExpenseForm.value = true
+  resetExpenseForm();
+  showExpenseForm.value = true;
 }
 
 function openEditExpenseForm(expense: Expense) {
-  resetExpenseForm()
-  editingExpenseId.value = expense.id
-  expenseForm.description = expense.description
-  expenseForm.amount = String(expense.amount)
-  expenseForm.paid_by_member_id = expense.paid_by_member_id
-  expenseForm.splitType = 'custom'
-  expense.splits.forEach(s => {
-    expenseForm.customSplits[s.member_id] = String(s.share_amount)
-  })
-  showExpenseForm.value = true
+  resetExpenseForm();
+  editingExpenseId.value = expense.id;
+  expenseForm.description = expense.description;
+  expenseForm.amount = String(expense.amount);
+  expenseForm.paid_by_member_id = expense.paid_by_member_id;
+  expenseForm.splitType = "custom";
+  expense.splits.forEach((s) => {
+    expenseForm.customSplits[s.member_id] = String(s.share_amount);
+  });
+  showExpenseForm.value = true;
 }
 
 function cancelExpenseForm() {
-  showExpenseForm.value = false
-  resetExpenseForm()
+  showExpenseForm.value = false;
+  resetExpenseForm();
 }
 
 async function saveExpense() {
-  expenseError.value = ''
-  if (!expenseForm.description.trim()) { expenseError.value = 'Inserisci una descrizione'; return }
-  if (!expenseForm.amount || parseFloat(expenseForm.amount) <= 0) { expenseError.value = 'Inserisci un importo valido'; return }
-  if (!expenseForm.paid_by_member_id) { expenseError.value = 'Seleziona chi ha pagato'; return }
-  if (expenseForm.splitType === 'custom' && !splitSumOk.value) {
-    expenseError.value = 'La somma degli split non corrisponde al totale'
-    return
+  expenseError.value = "";
+  if (!expenseForm.description.trim()) {
+    expenseError.value = "Inserisci una descrizione";
+    return;
+  }
+  if (!expenseForm.amount || parseFloat(expenseForm.amount) <= 0) {
+    expenseError.value = "Inserisci un importo valido";
+    return;
+  }
+  if (!expenseForm.paid_by_member_id) {
+    expenseError.value = "Seleziona chi ha pagato";
+    return;
+  }
+  if (expenseForm.splitType === "custom" && !splitSumOk.value) {
+    expenseError.value = "La somma degli split non corrisponde al totale";
+    return;
   }
 
-  expenseLoading.value = true
+  expenseLoading.value = true;
   try {
     if (editingExpenseId.value) {
       const splits = Object.entries(expenseForm.customSplits)
         .filter(([, v]) => parseFloat(v) > 0)
-        .map(([id, v]) => ({ member_id: parseInt(id), share_amount: parseFloat(v) }))
+        .map(([id, v]) => ({
+          member_id: parseInt(id),
+          share_amount: parseFloat(v),
+        }));
       await groupsApi.updateExpense(groupId, editingExpenseId.value, {
         paid_by_member_id: expenseForm.paid_by_member_id as number,
         description: expenseForm.description.trim(),
         amount: parseFloat(expenseForm.amount),
         splits,
-      })
-    } else if (expenseForm.splitType === 'equal') {
+      });
+    } else if (expenseForm.splitType === "equal") {
       await groupsApi.addExpenseEqual(groupId, {
         paid_by_member_id: expenseForm.paid_by_member_id as number,
         description: expenseForm.description.trim(),
         amount: parseFloat(expenseForm.amount),
-      })
-    } else if (expenseForm.splitType === 'subset') {
+      });
+    } else if (expenseForm.splitType === "subset") {
       if (expenseForm.subsetIds.length === 0) {
-        expenseError.value = 'Seleziona almeno una persona'
-        expenseLoading.value = false
-        return
+        expenseError.value = "Seleziona almeno una persona";
+        expenseLoading.value = false;
+        return;
       }
       await groupsApi.addExpenseSubset(groupId, {
         paid_by_member_id: expenseForm.paid_by_member_id as number,
         description: expenseForm.description.trim(),
         amount: parseFloat(expenseForm.amount),
         member_ids: expenseForm.subsetIds,
-      })
+      });
     } else {
       const splits = Object.entries(expenseForm.customSplits)
         .filter(([, v]) => parseFloat(v) > 0)
-        .map(([id, v]) => ({ member_id: parseInt(id), share_amount: parseFloat(v) }))
+        .map(([id, v]) => ({
+          member_id: parseInt(id),
+          share_amount: parseFloat(v),
+        }));
       await groupsApi.addExpense(groupId, {
         paid_by_member_id: expenseForm.paid_by_member_id as number,
         description: expenseForm.description.trim(),
         amount: parseFloat(expenseForm.amount),
         splits,
-      })
+      });
     }
-    await loadGroup()
-    showExpenseForm.value = false
-    resetExpenseForm()
+    await loadGroup();
+    showExpenseForm.value = false;
+    resetExpenseForm();
   } catch {
-    expenseError.value = 'Errore nel salvataggio. Riprova.'
+    expenseError.value = "Errore nel salvataggio. Riprova.";
   } finally {
-    expenseLoading.value = false
+    expenseLoading.value = false;
   }
 }
 
 async function deleteExpense(expenseId: number) {
-  if (!confirm('Eliminare questa spesa?')) return
-  await groupsApi.deleteExpense(groupId, expenseId)
-  await loadGroup()
+  if (!confirm("Eliminare questa spesa?")) return;
+  await groupsApi.deleteExpense(groupId, expenseId);
+  await loadGroup();
 }
 
 async function deleteMember(memberId: number, name: string) {
-  if (!confirm(`Rimuovere ${name} dal gruppo?`)) return
+  if (!confirm(`Rimuovere ${name} dal gruppo?`)) return;
   try {
-    await groupsApi.deleteMember(groupId, memberId)
-    await loadGroup()
+    await groupsApi.deleteMember(groupId, memberId);
+    await loadGroup();
   } catch (e: any) {
-    const msg = e?.response?.data?.detail || 'Impossibile rimuovere il partecipante.'
-    alert(msg)
+    const msg =
+      e?.response?.data?.detail || "Impossibile rimuovere il partecipante.";
+    alert(msg);
   }
 }
 
 async function addMember() {
-  addMemberError.value = ''
+  addMemberError.value = "";
   if (!newMember.name.trim()) {
-    addMemberError.value = 'Inserisci un nome'
-    return
+    addMemberError.value = "Inserisci un nome";
+    return;
   }
   try {
     await groupsApi.addMember(groupId, {
       name: newMember.name.trim(),
       email: newMember.email.trim() || undefined,
-    })
-    newMember.name = ''
-    newMember.email = ''
-    await loadGroup() // o come si chiama la funzione che ricarica group.value
+    });
+    newMember.name = "";
+    newMember.email = "";
+    await loadGroup(); // o come si chiama la funzione che ricarica group.value
   } catch (e: any) {
-    addMemberError.value = e?.response?.data?.detail || 'Errore durante l\'aggiunta'
+    addMemberError.value =
+      e?.response?.data?.detail || "Errore durante l'aggiunta";
   }
 }
 
 function copyLink() {
-  navigator.clipboard.writeText(window.location.href)
-  copied.value = true
-  setTimeout(() => copied.value = false, 2000)
+  navigator.clipboard.writeText(window.location.href);
+  copied.value = true;
+  setTimeout(() => (copied.value = false), 2000);
 }
 
-onMounted(loadGroup)
+onMounted(loadGroup);
 </script>
