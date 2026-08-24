@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base
-from . import models
 from .routers import groups, expenses, balances, members
 import os
 
@@ -10,7 +9,7 @@ origins = [o.strip() for o in allow_origins.split(",") if o.strip()]
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Equa API", version="1.2.0")
+app = FastAPI(title="Equa API", version="1.3.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -24,6 +23,7 @@ app.include_router(groups.router)
 app.include_router(expenses.router)
 app.include_router(balances.router)
 app.include_router(members.router)
+
 
 @app.get("/health")
 def health():
