@@ -7,6 +7,16 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
+## [1.3.0] Frontend; Backend - 2026-08-24
+
+### Aggiunto
+
+- Modifica dell'email dei partecipanti direttamente dalla tab "Partecipanti".
+- Form di aggiunta partecipante richiudibile per una visualizzazione piu compatta.
+- Configurazione pre-commit con Black, Ruff e Prettier per formattazione e linting automatici.
+
+---
+
 ## [1.2.1] Frontend - 2026-08-22
 
 ### Corretto
