@@ -253,7 +253,18 @@
 
       <!-- Tab: Partecipanti -->
       <div v-if="activeTab === 'members'">
-        <div class="bg-white rounded-2xl shadow p-4 mb-4 flex flex-col sm:flex-row gap-2">
+        <!-- Bottone toggle, stesso pattern della tab Spese -->
+        <button
+          @click="toggleAddMemberForm"
+          class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg py-2.5 mb-4 transition"
+        >
+          {{ showAddMemberForm ? '✕ Annulla' : '+ Aggiungi partecipante' }}
+        </button>
+
+        <div
+          v-if="showAddMemberForm"
+          class="bg-white rounded-2xl shadow p-4 mb-4 flex flex-col sm:flex-row gap-2"
+        >
           <input
             v-model="newMember.name"
             placeholder="Nome"
@@ -271,22 +282,54 @@
             Aggiungi
           </button>
         </div>
-        <p v-if="addMemberError" class="text-xs text-red-400 mb-2">
-          {{ addMemberError }}
-        </p>
+        <p v-if="addMemberError" class="text-xs text-red-400 mb-2">{{ addMemberError }}</p>
+
         <div class="bg-white rounded-2xl shadow divide-y divide-gray-100">
           <div
             v-for="member in group.members"
             :key="member.id"
-            class="px-5 py-3 flex items-center justify-between"
+            class="px-5 py-3 flex items-center justify-between gap-3"
           >
-            <div>
+            <div class="min-w-0 flex-1">
               <span class="font-medium text-gray-800">{{ member.name }}</span>
-              <span v-if="member.email" class="text-sm text-gray-400 ml-2">{{ member.email }}</span>
+
+              <span
+                v-if="editingEmailId !== member.id"
+                @click="startEditEmail(member)"
+                class="text-sm text-gray-400 ml-2 cursor-pointer hover:text-green-600 transition"
+              >
+                {{ member.email || '+ aggiungi email' }}
+              </span>
+
+              <div v-else class="flex items-center gap-2 mt-1">
+                <input
+                  v-model="editingEmailValue"
+                  type="email"
+                  placeholder="email@esempio.com"
+                  class="min-w-0 flex-1 border rounded-lg px-2 py-1 text-sm"
+                  @keyup.enter="saveEmail(member.id)"
+                  @keyup.esc="cancelEditEmail"
+                />
+                <button
+                  @click="saveEmail(member.id)"
+                  class="text-green-600 hover:text-green-700 text-sm font-medium px-1"
+                >
+                  Salva
+                </button>
+                <button
+                  @click="cancelEditEmail"
+                  class="text-gray-400 hover:text-gray-600 text-sm px-1"
+                >
+                  Annulla
+                </button>
+              </div>
             </div>
+
+            <!-- il bottone elimina sparisce mentre stai editando l'email di QUESTO membro -->
             <button
+              v-if="editingEmailId !== member.id"
               @click="deleteMember(member.id, member.name)"
-              class="text-gray-300 hover:text-red-400 transition text-lg"
+              class="text-gray-300 hover:text-red-400 transition text-lg shrink-0"
             >
               ✕
             </button>
@@ -344,6 +387,10 @@ const expenseForm = reactive({
   subsetIds: [] as number[],
 })
 
+const showAddMemberForm = ref(false)
+const editingEmailId = ref<number | null>(null)
+const editingEmailValue = ref('')
+
 const splitTypes = [
   { key: 'equal', label: 'Tutti' },
   { key: 'subset', label: 'Seleziona persone' },
@@ -391,6 +438,35 @@ watch(activeTab, (tab) => {
 
 function memberName(id: number) {
   return group.value?.members.find((m) => m.id === id)?.name || 'Sconosciuto'
+}
+
+function toggleAddMemberForm() {
+  showAddMemberForm.value = !showAddMemberForm.value
+  if (!showAddMemberForm.value) {
+    newMember.name = ''
+    newMember.email = ''
+    addMemberError.value = ''
+  }
+}
+
+function startEditEmail(member: { id: number; email?: string | null }) {
+  editingEmailId.value = member.id
+  editingEmailValue.value = member.email || ''
+}
+
+function cancelEditEmail() {
+  editingEmailId.value = null
+  editingEmailValue.value = ''
+}
+
+async function saveEmail(memberId: number) {
+  try {
+    await groupsApi.updateMember(groupId, memberId, { email: editingEmailValue.value.trim() })
+    editingEmailId.value = null
+    await loadGroup()
+  } catch (e: any) {
+    alert(e?.response?.data?.detail || "Errore durante l'aggiornamento dell'email")
+  }
 }
 
 function resetExpenseForm() {
@@ -538,7 +614,8 @@ async function addMember() {
     })
     newMember.name = ''
     newMember.email = ''
-    await loadGroup() // o come si chiama la funzione che ricarica group.value
+    showAddMemberForm.value = false
+    await loadGroup()
   } catch (e: any) {
     addMemberError.value = e?.response?.data?.detail || "Errore durante l'aggiunta"
   }

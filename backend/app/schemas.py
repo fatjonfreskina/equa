@@ -5,9 +5,11 @@ from decimal import Decimal
 
 # --- Member ---
 
+
 class MemberCreate(BaseModel):
     name: str
     email: Optional[str] = None
+
 
 class MemberOut(BaseModel):
     id: int
@@ -17,11 +19,19 @@ class MemberOut(BaseModel):
     class Config:
         from_attributes = True
 
+
+class MemberUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[str] = None
+
+
 # --- Expense Split ---
+
 
 class SplitCreate(BaseModel):
     member_id: int
     share_amount: Decimal
+
 
 class SplitOut(BaseModel):
     member_id: int
@@ -30,13 +40,16 @@ class SplitOut(BaseModel):
     class Config:
         from_attributes = True
 
+
 # --- Expense ---
+
 
 class ExpenseCreate(BaseModel):
     paid_by_member_id: int
     description: str
     amount: Decimal
     splits: List[SplitCreate]
+
 
 class ExpenseOut(BaseModel):
     id: int
@@ -49,24 +62,29 @@ class ExpenseOut(BaseModel):
     class Config:
         from_attributes = True
 
+
 class ExpenseCreateSubset(BaseModel):
     paid_by_member_id: int
     description: str
     amount: Decimal
     member_ids: List[int]
 
+
 class ExpenseCreateEqual(BaseModel):
     paid_by_member_id: int
     description: str
     amount: Decimal
 
+
 # --- Group ---
+
 
 class GroupCreate(BaseModel):
     name: str
     description: Optional[str] = None
     currency: str = "EUR"
     members: List[MemberCreate]
+
 
 class GroupOut(BaseModel):
     id: str
@@ -80,7 +98,9 @@ class GroupOut(BaseModel):
     class Config:
         from_attributes = True
 
+
 # --- Balance ---
+
 
 class Balance(BaseModel):
     from_member_id: int

@@ -100,4 +100,7 @@ export const groupsApi = {
 
   addMember: (groupId: string, data: { name: string; email?: string }) =>
     client.post<Member>(`/groups/${groupId}/members/`, data),
+
+  updateMember: (groupId: string, memberId: number, data: { name?: string; email?: string }) =>
+    client.patch<Member>(`/groups/${groupId}/members/${memberId}`, data),
 }
