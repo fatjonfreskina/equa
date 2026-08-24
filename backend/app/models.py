@@ -1,11 +1,13 @@
 import uuid
 from datetime import datetime
-from sqlalchemy import Column, String, Integer, Numeric, DateTime, ForeignKey, Text
+from sqlalchemy import Column, String, Integer, Numeric, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from .database import Base
 
+
 def generate_uuid():
     return str(uuid.uuid4())
+
 
 class Group(Base):
     __tablename__ = "groups"
@@ -16,8 +18,12 @@ class Group(Base):
     currency = Column(String(3), nullable=False, default="EUR")
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    members = relationship("Member", back_populates="group", cascade="all, delete-orphan")
-    expenses = relationship("Expense", back_populates="group", cascade="all, delete-orphan")
+    members = relationship(
+        "Member", back_populates="group", cascade="all, delete-orphan"
+    )
+    expenses = relationship(
+        "Expense", back_populates="group", cascade="all, delete-orphan"
+    )
 
 
 class Member(Base):
@@ -30,7 +36,9 @@ class Member(Base):
 
     group = relationship("Group", back_populates="members")
     expenses_paid = relationship("Expense", back_populates="paid_by")
-    splits = relationship("ExpenseSplit", back_populates="member", cascade="all, delete-orphan")
+    splits = relationship(
+        "ExpenseSplit", back_populates="member", cascade="all, delete-orphan"
+    )
 
 
 class Expense(Base):
@@ -45,7 +53,9 @@ class Expense(Base):
 
     group = relationship("Group", back_populates="expenses")
     paid_by = relationship("Member", back_populates="expenses_paid")
-    splits = relationship("ExpenseSplit", back_populates="expense", cascade="all, delete-orphan")
+    splits = relationship(
+        "ExpenseSplit", back_populates="expense", cascade="all, delete-orphan"
+    )
 
 
 class ExpenseSplit(Base):

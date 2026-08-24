@@ -34,13 +34,15 @@ def calculate_balances(group: models.Group) -> List[schemas.Balance]:
         debt_id, debt_amt = debtors[j]
 
         amount = min(cred_amt, debt_amt)
-        transactions.append(schemas.Balance(
-            from_member_id=debt_id,
-            from_member_name=member_names[debt_id],
-            to_member_id=cred_id,
-            to_member_name=member_names[cred_id],
-            amount=round(amount, 2),
-        ))
+        transactions.append(
+            schemas.Balance(
+                from_member_id=debt_id,
+                from_member_name=member_names[debt_id],
+                to_member_id=cred_id,
+                to_member_name=member_names[cred_id],
+                amount=round(amount, 2),
+            )
+        )
 
         creditors[i] = (cred_id, cred_amt - amount)
         debtors[j] = (debt_id, debt_amt - amount)
