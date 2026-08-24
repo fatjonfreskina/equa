@@ -25,7 +25,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
-## [1.2.0] Backend - 2026-08-22
+## [1.2.0] Frontend; Backend - 2026-08-22
 
 ### Aggiunto
 
@@ -41,7 +41,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
-## [1.1.0] Frontend; [1.1.0] Backend- 2026-04-19
+## [1.1.0] Frontend; [1.1.0] Backend - 2026-04-19
 
 ### Aggiunto
 
