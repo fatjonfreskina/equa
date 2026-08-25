@@ -11,7 +11,6 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ### Aggiunto
 
-- La lista delle spese mostra fino a circa cinque elementi alla volta e diventa scorrevole quando il gruppo contiene più spese.
 - Il pulsante "Condividi" nell'header apre il pannello con WhatsApp, condivisione nativa e copia del link.
 
 ### Corretto
