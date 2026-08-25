@@ -141,6 +141,22 @@
         </button>
       </div>
 
+      <div
+        v-if="!savedLocally"
+        class="mb-6 flex items-center justify-between gap-3 rounded-xl border border-green-100 bg-green-50 px-4 py-3"
+      >
+        <p class="text-sm text-green-800">
+          Ritrova questo gruppo dalla home su questo dispositivo.
+        </p>
+        <button
+          type="button"
+          class="shrink-0 text-sm font-semibold text-green-700 underline underline-offset-2 hover:text-green-800"
+          @click="saveGroupLocally"
+        >
+          Salva gruppo
+        </button>
+      </div>
+
       <!-- Tabs -->
       <div class="flex gap-2 mb-6 border-b border-gray-200">
         <button
@@ -458,6 +474,7 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { groupsApi, type Group, type Balance, type Expense } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
+import { isRecentGroup, saveRecentGroup } from '../utils/recentGroups'
 
 const route = useRoute()
 const router = useRouter()
@@ -469,6 +486,7 @@ const loading = ref(true)
 const error = ref('')
 const copied = ref(false)
 const showShareDialog = ref(route.query.created === '1')
+const savedLocally = ref(route.query.created === '1' || isRecentGroup(groupId))
 const activeTab = ref('expenses')
 const balancesLoading = ref(false)
 
@@ -533,6 +551,10 @@ async function loadGroup() {
   try {
     const res = await groupsApi.get(groupId)
     group.value = res.data
+    if (route.query.created === '1' || savedLocally.value) {
+      saveRecentGroup(res.data)
+      savedLocally.value = true
+    }
   } catch {
     error.value = 'Gruppo non trovato.'
   } finally {
@@ -775,6 +797,12 @@ function closeShareDialog() {
   if (route.query.created === '1') {
     router.replace({ query: { ...route.query, created: undefined } })
   }
+}
+
+function saveGroupLocally() {
+  if (!group.value) return
+  saveRecentGroup(group.value)
+  savedLocally.value = true
 }
 
 onMounted(loadGroup)

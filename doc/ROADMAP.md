@@ -349,11 +349,11 @@ Esempio di messaggio:
 
 **Checklist**
 
-- [ ] Salvare UUID, nome, valuta e ultimo accesso.
-- [ ] Mostrare i gruppi recenti nella home.
-- [ ] Consentire apertura e rimozione singola.
-- [ ] Consentire cancellazione completa della cronologia.
-- [ ] Informare che i dati restano sul dispositivo.
+- [x] Salvare UUID, nome, valuta e ultimo accesso.
+- [x] Mostrare i gruppi recenti nella home.
+- [x] Consentire apertura e rimozione singola.
+- [x] Consentire cancellazione completa della cronologia.
+- [x] Informare che i dati restano sul dispositivo.
 
 Salvare nel browser, senza account:
 

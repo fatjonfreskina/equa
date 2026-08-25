@@ -95,6 +95,50 @@
         </div>
       </div>
 
+      <!-- Gruppi salvati sul dispositivo -->
+      <section v-if="recentGroups.length" class="bg-white rounded-2xl shadow p-6 mb-4">
+        <div class="flex items-start justify-between gap-3 mb-1">
+          <div>
+            <h2 class="text-lg font-semibold text-gray-800">I tuoi gruppi recenti</h2>
+            <p class="text-sm text-gray-400">Salvati solo su questo dispositivo.</p>
+          </div>
+          <button
+            type="button"
+            class="shrink-0 text-xs font-medium text-gray-400 hover:text-red-500 transition"
+            @click="clearHistory"
+          >
+            Cancella tutto
+          </button>
+        </div>
+        <div class="mt-4 space-y-2">
+          <div
+            v-for="group in recentGroups"
+            :key="group.id"
+            class="flex items-center gap-2 rounded-xl border border-gray-100 p-3 transition hover:border-green-200 hover:bg-green-50"
+          >
+            <button
+              type="button"
+              class="min-w-0 flex-1 text-left"
+              @click="openRecentGroup(group.id)"
+            >
+              <p class="truncate font-medium text-gray-800">{{ group.name }}</p>
+              <p class="mt-0.5 text-xs text-gray-400">
+                {{ group.memberCount }} partecipanti · {{ group.expenseCount }} spese ·
+                {{ formatLastAccess(group.lastAccessedAt) }}
+              </p>
+            </button>
+            <button
+              type="button"
+              class="shrink-0 px-1 text-lg text-gray-300 transition hover:text-red-400"
+              :aria-label="`Rimuovi ${group.name} dai gruppi recenti`"
+              @click="removeRecentGroup(group.id)"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      </section>
+
       <!-- Recupera gruppo esistente -->
       <div class="bg-white rounded-2xl shadow p-6 mb-8">
         <h2 class="text-lg font-semibold text-gray-800 mb-1">Hai già un gruppo?</h2>
@@ -148,6 +192,12 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { groupsApi } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
+import {
+  clearRecentGroups as clearStoredRecentGroups,
+  getRecentGroups,
+  removeRecentGroup as removeStoredRecentGroup,
+  type RecentGroup,
+} from '../utils/recentGroups'
 
 const router = useRouter()
 
@@ -164,6 +214,7 @@ const existingId = ref('')
 const loading = ref(false)
 const error = ref('')
 const linkError = ref('')
+const recentGroups = ref<RecentGroup[]>(getRecentGroups())
 
 function addMember() {
   form.members.push({ name: '' })
@@ -214,5 +265,23 @@ function goToGroup() {
   } else {
     linkError.value = 'Link o ID non valido.'
   }
+}
+
+function openRecentGroup(groupId: string) {
+  router.push(`/group/${groupId}`)
+}
+
+function removeRecentGroup(groupId: string) {
+  recentGroups.value = removeStoredRecentGroup(groupId)
+}
+
+function clearHistory() {
+  if (!confirm('Cancellare tutti i gruppi salvati su questo dispositivo?')) return
+  clearStoredRecentGroups()
+  recentGroups.value = []
+}
+
+function formatLastAccess(lastAccessedAt: string) {
+  return new Intl.DateTimeFormat('it-IT', { dateStyle: 'medium' }).format(new Date(lastAccessedAt))
 }
 </script>

@@ -7,6 +7,15 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
+## [1.4.2] Frontend - 2026-08-25
+
+### Aggiunto
+
+- Cronologia locale dei gruppi: i gruppi creati vengono salvati sul dispositivo e i gruppi ricevuti possono essere salvati volontariamente.
+- Sezione "I tuoi gruppi recenti" nella home, con apertura rapida, rimozione singola e cancellazione completa della cronologia.
+
+---
+
 ## [1.4.1] Frontend; Backend - 2026-08-25
 
 ### Aggiunto
