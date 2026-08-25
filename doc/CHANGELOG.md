@@ -7,6 +7,15 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
+## [1.4.0] Frontend; Backend - 2026-08-25
+
+### Aggiunto
+
+- Dopo la creazione di un gruppo viene mostrato un promemoria per condividere e conservare il link di accesso.
+- Il promemoria offre condivisione nativa, messaggio WhatsApp precompilato, copia del link e URL visibile per la copia manuale.
+
+---
+
 ## [1.3.0] Frontend; Backend - 2026-08-24
 
 ### Aggiunto

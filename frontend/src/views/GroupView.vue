@@ -6,6 +6,111 @@
     </div>
 
     <div v-else-if="group">
+      <!-- Promemoria mostrato solo subito dopo la creazione del gruppo -->
+      <div
+        v-if="showShareReminder"
+        class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 p-4"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="share-reminder-title"
+        @click.self="dismissShareReminder"
+      >
+        <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <p class="text-2xl" aria-hidden="true">🔗</p>
+              <h2 id="share-reminder-title" class="mt-2 text-xl font-bold text-gray-800">
+                Condividi il link del gruppo
+              </h2>
+            </div>
+            <button
+              type="button"
+              class="text-2xl leading-none text-gray-400 hover:text-gray-700"
+              aria-label="Chiudi promemoria condivisione"
+              @click="dismissShareReminder"
+            >
+              ×
+            </button>
+          </div>
+          <p class="mt-3 text-sm leading-6 text-gray-600">
+            Invialo ai partecipanti e conservalo in una chat: senza il link non sarà possibile
+            ritrovare questo gruppo su un altro dispositivo.
+          </p>
+          <div class="mt-5 grid gap-2 sm:grid-cols-2">
+            <a
+              :href="whatsAppShareUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700"
+            >
+              <svg
+                aria-hidden="true"
+                class="h-5 w-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M20.5 11.6a8.4 8.4 0 0 1-12.4 7.3L3.5 20l1.2-4.4A8.4 8.4 0 1 1 20.5 11.6Z"
+                />
+                <path
+                  d="M9.1 7.8c.2-.5.5-.5.8-.5h.4c.3 0 .5.1.6.4l.7 1.7c.1.3.1.5-.1.7l-.5.6c.5.9 1.2 1.6 2.1 2.1l.6-.5c.2-.2.5-.2.7-.1l1.7.7c.3.1.4.3.4.6v.4c0 .3-.1.6-.5.8-.4.2-1 .3-1.5.1-3-.9-5.4-3.3-6.3-6.3-.2-.5-.1-1.1.1-1.5Z"
+                />
+              </svg>
+              WhatsApp
+            </a>
+            <button
+              type="button"
+              class="flex items-center justify-center gap-2 rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+              @click="shareGroup"
+            >
+              <svg
+                aria-hidden="true"
+                class="h-5 w-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="18" cy="5" r="2.5" />
+                <circle cx="6" cy="12" r="2.5" />
+                <circle cx="18" cy="19" r="2.5" />
+                <path d="m8.2 10.8 7.5-4.4M8.2 13.2l7.5 4.4" />
+              </svg>
+              Condividi…
+            </button>
+            <button
+              type="button"
+              class="flex items-center justify-center gap-2 rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 sm:col-span-2"
+              @click="copyLink"
+            >
+              <svg
+                aria-hidden="true"
+                class="h-5 w-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="9" y="9" width="10" height="10" rx="2" />
+                <path d="M15 9V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" />
+              </svg>
+              {{ copied ? '✓ Link copiato' : 'Copia il link' }}
+            </button>
+          </div>
+          <p class="mt-4 break-all rounded-lg bg-gray-50 p-3 text-xs text-gray-500">
+            {{ groupLink }}
+          </p>
+        </div>
+      </div>
+
       <!-- Link home -->
       <div class="mb-4">
         <RouterLink to="/" class="text-sm text-gray-400 hover:text-green-600 transition">
@@ -350,11 +455,12 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { groupsApi, type Group, type Balance, type Expense } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
 
 const route = useRoute()
+const router = useRouter()
 const groupId = route.params.id as string
 
 const group = ref<Group | null>(null)
@@ -362,6 +468,7 @@ const balances = ref<Balance[]>([])
 const loading = ref(true)
 const error = ref('')
 const copied = ref(false)
+const showShareReminder = ref(route.query.created === '1')
 const activeTab = ref('expenses')
 const balancesLoading = ref(false)
 
@@ -401,6 +508,17 @@ const totalExpenses = computed(() => {
   if (!group.value) return 0
   return group.value.expenses.reduce((acc, e) => acc + parseFloat(String(e.amount)), 0)
 })
+
+const groupLink = computed(() => new URL(`/group/${groupId}`, window.location.origin).toString())
+
+const shareMessage = computed(() => {
+  if (!group.value) return groupLink.value
+  return `Ho creato il gruppo "${group.value.name}" su Equa. Aprilo qui per aggiungere o controllare le spese: ${groupLink.value}`
+})
+
+const whatsAppShareUrl = computed(
+  () => `https://wa.me/?text=${encodeURIComponent(shareMessage.value)}`,
+)
 
 const splitSum = computed(() => {
   return Object.values(expenseForm.customSplits).reduce((acc, v) => acc + (parseFloat(v) || 0), 0)
@@ -621,10 +739,38 @@ async function addMember() {
   }
 }
 
-function copyLink() {
-  navigator.clipboard.writeText(window.location.href)
-  copied.value = true
-  setTimeout(() => (copied.value = false), 2000)
+async function copyLink() {
+  try {
+    await navigator.clipboard.writeText(groupLink.value)
+    copied.value = true
+    setTimeout(() => (copied.value = false), 2000)
+  } catch {
+    // Il link resta visibile nel promemoria e può essere copiato manualmente.
+  }
+}
+
+async function shareGroup() {
+  if (!navigator.share) {
+    await copyLink()
+    return
+  }
+
+  try {
+    await navigator.share({
+      title: group.value?.name || 'Gruppo Equa',
+      text: shareMessage.value,
+      url: groupLink.value,
+    })
+  } catch {
+    // La chiusura del foglio di condivisione non è un errore da mostrare all'utente.
+  }
+}
+
+function dismissShareReminder() {
+  showShareReminder.value = false
+  if (route.query.created === '1') {
+    router.replace({ query: { ...route.query, created: undefined } })
+  }
 }
 
 onMounted(loadGroup)

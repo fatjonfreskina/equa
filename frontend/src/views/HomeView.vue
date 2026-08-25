@@ -195,7 +195,7 @@ async function createGroup() {
       currency: form.currency,
       members: validMembers,
     })
-    router.push(`/group/${response.data.id}`)
+    router.push({ path: `/group/${response.data.id}`, query: { created: '1' } })
   } catch {
     error.value = 'Qualcosa è andato storto. Riprova.'
   } finally {
