@@ -8,12 +8,12 @@
     <div v-else-if="group">
       <!-- Promemoria mostrato solo subito dopo la creazione del gruppo -->
       <div
-        v-if="showShareReminder"
+        v-if="showShareDialog"
         class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 p-4"
         role="dialog"
         aria-modal="true"
         aria-labelledby="share-reminder-title"
-        @click.self="dismissShareReminder"
+        @click.self="closeShareDialog"
       >
         <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
           <div class="flex items-start justify-between gap-4">
@@ -27,7 +27,7 @@
               type="button"
               class="text-2xl leading-none text-gray-400 hover:text-gray-700"
               aria-label="Chiudi promemoria condivisione"
-              @click="dismissShareReminder"
+              @click="closeShareDialog"
             >
               ×
             </button>
@@ -119,25 +119,25 @@
       </div>
 
       <!-- Header -->
-      <div class="flex items-center justify-between mb-6">
-        <div>
+      <div class="mb-6 flex items-start justify-between gap-4">
+        <div class="min-w-0 flex-1">
           <div class="flex items-center gap-2 mb-1">
             <svg width="24" height="24" viewBox="0 0 64 64" class="flex-shrink-0">
               <rect x="8" y="10" width="48" height="13" rx="6.5" fill="#16a34a" />
               <rect x="8" y="28" width="32" height="13" rx="6.5" fill="#4ade80" />
               <rect x="8" y="46" width="20" height="13" rx="6.5" fill="#86efac" />
             </svg>
-            <h1 class="text-2xl font-bold text-green-700">{{ group.name }}</h1>
+            <h1 class="break-words text-2xl font-bold text-green-700">{{ group.name }}</h1>
           </div>
           <p v-if="group.description" class="text-gray-500 text-sm">
             {{ group.description }}
           </p>
         </div>
         <button
-          @click="copyLink"
-          class="text-sm text-gray-500 hover:text-green-600 border border-gray-300 rounded-lg px-3 py-1.5 transition"
+          @click="openShareDialog"
+          class="shrink-0 rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-500 transition hover:text-green-600"
         >
-          {{ copied ? '✓ Copiato!' : '🔗 Condividi' }}
+          🔗 Condividi
         </button>
       </div>
 
@@ -468,7 +468,7 @@ const balances = ref<Balance[]>([])
 const loading = ref(true)
 const error = ref('')
 const copied = ref(false)
-const showShareReminder = ref(route.query.created === '1')
+const showShareDialog = ref(route.query.created === '1')
 const activeTab = ref('expenses')
 const balancesLoading = ref(false)
 
@@ -766,8 +766,12 @@ async function shareGroup() {
   }
 }
 
-function dismissShareReminder() {
-  showShareReminder.value = false
+function openShareDialog() {
+  showShareDialog.value = true
+}
+
+function closeShareDialog() {
+  showShareDialog.value = false
   if (route.query.created === '1') {
     router.replace({ query: { ...route.query, created: undefined } })
   }

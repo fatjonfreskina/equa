@@ -7,6 +7,19 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
+## [1.4.1] Frontend; Backend - 2026-08-25
+
+### Aggiunto
+
+- La lista delle spese mostra fino a circa cinque elementi alla volta e diventa scorrevole quando il gruppo contiene più spese.
+- Il pulsante "Condividi" nell'header apre il pannello con WhatsApp, condivisione nativa e copia del link.
+
+### Corretto
+
+- Nell'header del gruppo, su mobile i titoli lunghi vanno a capo nello spazio disponibile senza sovrapporsi al pulsante di condivisione, che resta sulla stessa riga.
+
+---
+
 ## [1.4.0] Frontend; Backend - 2026-08-25
 
 ### Aggiunto

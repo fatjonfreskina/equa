@@ -999,6 +999,7 @@ Prima di procedere servono analisi legale, sicurezza, costi e domanda reale degl
 - [ ] Centralizzare gli stati di rete.
 - [ ] Aggiungere accessibilita a pulsanti icon-only, tab e form.
 - [ ] Sostituire caratteri testuali come `X` con icone accessibili e label.
+- [x] Evitare sovrapposizioni tra titoli lunghi e azioni nell'header del gruppo.
 - [ ] Gestire focus dopo apertura e chiusura dei form.
 - [ ] Aggiornare il titolo della pagina per ogni gruppo.
 - [ ] Aggiungere test dei componenti e dei flussi principali.
