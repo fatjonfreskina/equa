@@ -477,9 +477,9 @@ Il messaggio deve contenere:
 
 **Checklist**
 
-- [ ] Definire gli stati `pending`, `confirmed` e `cancelled`.
-- [ ] Progettare la tabella `settlements`.
-- [ ] Gestire la rigenerazione dei saldi dopo modifiche alle spese.
+- [x] Definire gli stati `pending`, `confirmed` e `cancelled`.
+- [x] Progettare la tabella `settlements`.
+- [x] Gestire la rigenerazione dei saldi dopo modifiche alle spese.
 - [ ] Conservare lo storico delle conferme precedenti.
 
 Aggiungere lo stato di una transazione:
@@ -489,6 +489,8 @@ Aggiungere lo stato di una transazione:
 - `cancelled`: annullata o corretta.
 
 Per la prima versione puo bastare una conferma locale o condivisa, ma la versione persistente richiedera nuove entita backend.
+
+La prima versione persistente usa l'identità scelta localmente sul dispositivo per attribuire una segnalazione o una conferma. Non costituisce autenticazione: finché non esistono token personali, il gruppo opera su fiducia tra i partecipanti. Riaprire i conti annulla i pagamenti della chiusura corrente, che vengono rigenerati al prossimo avvio della chiusura.
 
 #### Modello dati suggerito
 
@@ -509,17 +511,19 @@ Le transazioni dovrebbero essere rigenerate quando cambiano le spese, mantenendo
 
 **Checklist**
 
-- [ ] Mostrare stato "In corso".
+- [x] Mostrare stato "In corso".
 - [ ] Mostrare stato "Quasi chiuso".
 - [ ] Mostrare stato "Tutti i pagamenti confermati".
 - [ ] Creare il riepilogo finale del gruppo.
-- [ ] Consentire la riapertura quando necessario.
+- [x] Consentire la riapertura quando necessario.
 
 Mostrare una sintesi:
 
 - `In corso`;
 - `Quasi chiuso`;
 - `Tutti i pagamenti confermati`.
+
+La prima versione può bloccare spese e partecipanti durante la chiusura dei conti e consentire una riapertura esplicita. Lo stato "Tutti i pagamenti confermati" richiede invece gli stati persistenti delle singole transazioni.
 
 Quando tutti i saldi sono chiusi, mostrare una schermata breve con:
 

@@ -6,13 +6,23 @@ from ..database import get_db
 router = APIRouter(prefix="/groups/{group_id}/members", tags=["members"])
 
 
+def get_editable_group(group_id: str, db: Session):
+    db_group = db.query(models.Group).filter(models.Group.id == group_id).first()
+    if not db_group:
+        raise HTTPException(status_code=404, detail="Gruppo non trovato")
+    if db_group.status != "active":
+        raise HTTPException(
+            status_code=409,
+            detail="I partecipanti sono bloccati durante la chiusura dei conti",
+        )
+    return db_group
+
+
 @router.post("/", response_model=schemas.MemberOut, status_code=201)
 def add_member(
     group_id: str, member: schemas.MemberCreate, db: Session = Depends(get_db)
 ):
-    db_group = db.query(models.Group).filter(models.Group.id == group_id).first()
-    if not db_group:
-        raise HTTPException(status_code=404, detail="Gruppo non trovato")
+    get_editable_group(group_id, db)
 
     db_member = models.Member(
         group_id=group_id,
@@ -32,9 +42,7 @@ def update_member(
     payload: schemas.MemberUpdate,
     db: Session = Depends(get_db),
 ):
-    db_group = db.query(models.Group).filter(models.Group.id == group_id).first()
-    if not db_group:
-        raise HTTPException(status_code=404, detail="Gruppo non trovato")
+    get_editable_group(group_id, db)
 
     member = (
         db.query(models.Member)
@@ -56,9 +64,7 @@ def update_member(
 
 @router.delete("/{member_id}", status_code=204)
 def delete_member(group_id: str, member_id: int, db: Session = Depends(get_db)):
-    db_group = db.query(models.Group).filter(models.Group.id == group_id).first()
-    if not db_group:
-        raise HTTPException(status_code=404, detail="Gruppo non trovato")
+    get_editable_group(group_id, db)
 
     member = (
         db.query(models.Member)

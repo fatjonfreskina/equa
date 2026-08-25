@@ -4,6 +4,8 @@
 
 **Equa** è un'app web italiana per dividere le spese in gruppo — senza abbonamenti, senza tracciamento, senza rotture di scatole. Basta un link.
 
+**Provalo online:** [equa.fatjonfreskina.com](http://equa.fatjonfreskina.com/)
+
 ---
 
 ## Perché Equa?

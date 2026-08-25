@@ -157,6 +157,66 @@
         </button>
       </div>
 
+      <section
+        :class="[
+          'mb-6 rounded-xl border px-4 py-4',
+          group.status === 'active'
+            ? 'border-blue-100 bg-blue-50'
+            : group.status === 'closing'
+              ? 'border-amber-100 bg-amber-50'
+              : 'border-green-100 bg-green-50',
+        ]"
+      >
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="font-semibold text-gray-800">{{ groupStatusTitle }}</p>
+            <p class="mt-1 text-sm text-gray-600">{{ groupStatusDescription }}</p>
+          </div>
+          <span
+            :class="[
+              'shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold',
+              group.status === 'active'
+                ? 'bg-blue-100 text-blue-700'
+                : group.status === 'closing'
+                  ? 'bg-amber-100 text-amber-700'
+                  : 'bg-green-100 text-green-700',
+            ]"
+          >
+            {{ groupStatusLabel }}
+          </span>
+        </div>
+        <p v-if="statusError" class="mt-3 text-sm text-red-600">{{ statusError }}</p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <button
+            v-if="group.status === 'active'"
+            type="button"
+            :disabled="statusLoading || group.expenses.length === 0"
+            class="rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+            @click="startClosing"
+          >
+            {{ statusLoading ? 'Aggiornamento...' : 'Chiudiamo i conti' }}
+          </button>
+          <button
+            v-if="group.status === 'closing'"
+            type="button"
+            :disabled="statusLoading"
+            class="rounded-lg bg-green-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-green-700 disabled:bg-gray-300"
+            @click="closeGroup"
+          >
+            {{ statusLoading ? 'Aggiornamento...' : 'Segna come chiuso' }}
+          </button>
+          <button
+            v-if="group.status !== 'active'"
+            type="button"
+            :disabled="statusLoading"
+            class="rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-white disabled:bg-gray-100"
+            @click="reopenGroup"
+          >
+            Riapri conti
+          </button>
+        </div>
+      </section>
+
       <!-- Tabs -->
       <div class="flex gap-2 mb-6 border-b border-gray-200">
         <button
@@ -188,6 +248,7 @@
 
         <!-- Bottone aggiungi -->
         <button
+          v-if="group.status === 'active'"
           @click="openNewExpenseForm"
           class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg py-2.5 mb-4 transition"
         >
@@ -325,7 +386,10 @@
           <div
             v-for="expense in [...group.expenses].reverse()"
             :key="expense.id"
-            class="bg-white rounded-2xl shadow px-5 py-4 flex items-center justify-between cursor-pointer hover:shadow-md transition"
+            :class="[
+              'bg-white rounded-2xl shadow px-5 py-4 flex items-center justify-between transition',
+              group.status === 'active' ? 'cursor-pointer hover:shadow-md' : '',
+            ]"
             @click="openEditExpenseForm(expense)"
           >
             <div>
@@ -340,6 +404,7 @@
                 >{{ expense.amount }} {{ group.currency }}</span
               >
               <button
+                v-if="group.status === 'active'"
                 @click.stop="deleteExpense(expense.id)"
                 class="text-gray-300 hover:text-red-400 transition text-lg"
               >
@@ -352,7 +417,69 @@
 
       <!-- Tab: Bilanci -->
       <div v-if="activeTab === 'balances'">
+        <div
+          v-if="group.status === 'closing'"
+          class="mb-4 rounded-xl border border-amber-100 bg-amber-50 p-4"
+        >
+          <label class="block text-sm font-medium text-amber-900" for="current-member"
+            >Quale partecipante sei?</label
+          >
+          <select
+            id="current-member"
+            v-model="currentMemberId"
+            class="mt-2 w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-gray-700"
+            @change="saveCurrentMember"
+          >
+            <option :value="null">Seleziona il tuo nome per aggiornare un pagamento</option>
+            <option v-for="member in group.members" :key="member.id" :value="member.id">
+              {{ member.name }}
+            </option>
+          </select>
+          <p class="mt-2 text-xs text-amber-800">
+            La scelta resta solo su questo dispositivo e non è un'autenticazione.
+          </p>
+        </div>
         <div v-if="balancesLoading" class="text-center py-10 text-gray-400">Calcolo...</div>
+        <div v-else-if="group.status === 'closing'" class="space-y-3">
+          <p v-if="settlementError" class="text-sm text-red-600">{{ settlementError }}</p>
+          <div
+            v-for="settlement in settlements"
+            :key="settlement.id"
+            class="rounded-2xl bg-white px-5 py-4 shadow"
+          >
+            <div class="flex items-center justify-between gap-3">
+              <div class="min-w-0 text-gray-700">
+                <span class="font-medium">{{ memberName(settlement.from_member_id) }}</span>
+                <span class="mx-2 text-gray-400">→</span>
+                <span class="font-medium">{{ memberName(settlement.to_member_id) }}</span>
+              </div>
+              <span class="shrink-0 font-bold text-red-500"
+                >{{ settlement.amount }} {{ group.currency }}</span
+              >
+            </div>
+            <p class="mt-2 text-sm text-gray-500">{{ settlementLabel(settlement) }}</p>
+            <button
+              v-if="currentMemberId === settlement.from_member_id && !settlement.reported_at"
+              class="mt-3 rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white disabled:bg-gray-300"
+              :disabled="settlementLoading"
+              @click="reportSettlement(settlement.id)"
+            >
+              Ho pagato
+            </button>
+            <button
+              v-else-if="
+                currentMemberId === settlement.to_member_id &&
+                settlement.reported_at &&
+                settlement.status === 'pending'
+              "
+              class="mt-3 rounded-lg bg-green-600 px-3 py-2 text-sm font-semibold text-white disabled:bg-gray-300"
+              :disabled="settlementLoading"
+              @click="confirmSettlement(settlement.id)"
+            >
+              Conferma ricezione
+            </button>
+          </div>
+        </div>
         <div v-else-if="balances.length === 0" class="text-center py-10 text-gray-400">
           Nessun debito! Siete tutti pari 🎉
         </div>
@@ -374,8 +501,15 @@
 
       <!-- Tab: Partecipanti -->
       <div v-if="activeTab === 'members'">
+        <p
+          v-if="group.status !== 'active'"
+          class="mb-4 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800"
+        >
+          I partecipanti non possono essere modificati durante la chiusura dei conti.
+        </p>
         <!-- Bottone toggle, stesso pattern della tab Spese -->
         <button
+          v-if="group.status === 'active'"
           @click="toggleAddMemberForm"
           class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg py-2.5 mb-4 transition"
         >
@@ -383,7 +517,7 @@
         </button>
 
         <div
-          v-if="showAddMemberForm"
+          v-if="showAddMemberForm && group.status === 'active'"
           class="bg-white rounded-2xl shadow p-4 mb-4 flex flex-col sm:flex-row gap-2"
         >
           <input
@@ -416,13 +550,19 @@
 
               <span
                 v-if="editingEmailId !== member.id"
-                @click="startEditEmail(member)"
-                class="text-sm text-gray-400 ml-2 cursor-pointer hover:text-green-600 transition"
+                @click="group.status === 'active' && startEditEmail(member)"
+                :class="[
+                  'ml-2 text-sm text-gray-400 transition',
+                  group.status === 'active' ? 'cursor-pointer hover:text-green-600' : '',
+                ]"
               >
                 {{ member.email || '+ aggiungi email' }}
               </span>
 
-              <div v-else class="flex items-center gap-2 mt-1">
+              <div
+                v-else-if="editingEmailId === member.id && group.status === 'active'"
+                class="flex items-center gap-2 mt-1"
+              >
                 <input
                   v-model="editingEmailValue"
                   type="email"
@@ -448,7 +588,7 @@
 
             <!-- il bottone elimina sparisce mentre stai editando l'email di QUESTO membro -->
             <button
-              v-if="editingEmailId !== member.id"
+              v-if="editingEmailId !== member.id && group.status === 'active'"
               @click="deleteMember(member.id, member.name)"
               class="text-gray-300 hover:text-red-400 transition text-lg shrink-0"
             >
@@ -472,7 +612,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { groupsApi, type Group, type Balance, type Expense } from '../api/groups'
+import { groupsApi, type Group, type Balance, type Expense, type Settlement } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
 import { isRecentGroup, saveRecentGroup } from '../utils/recentGroups'
 
@@ -489,6 +629,12 @@ const showShareDialog = ref(route.query.created === '1')
 const savedLocally = ref(route.query.created === '1' || isRecentGroup(groupId))
 const activeTab = ref('expenses')
 const balancesLoading = ref(false)
+const settlements = ref<Settlement[]>([])
+const settlementLoading = ref(false)
+const settlementError = ref('')
+const currentMemberId = ref<number | null>(getCurrentMember())
+const statusLoading = ref(false)
+const statusError = ref('')
 
 const newMember = reactive({ name: '', email: '' })
 const addMemberError = ref('')
@@ -525,6 +671,28 @@ const splitTypes = [
 const totalExpenses = computed(() => {
   if (!group.value) return 0
   return group.value.expenses.reduce((acc, e) => acc + parseFloat(String(e.amount)), 0)
+})
+
+const groupStatusLabel = computed(() => {
+  if (group.value?.status === 'closing') return 'Chiusura conti'
+  if (group.value?.status === 'closed') return 'Conti chiusi'
+  return 'In corso'
+})
+
+const groupStatusTitle = computed(() => {
+  if (group.value?.status === 'closing') return 'I conti sono bloccati'
+  if (group.value?.status === 'closed') return 'Questo gruppo è chiuso'
+  return 'Quando la vacanza è finita, chiudete i conti'
+})
+
+const groupStatusDescription = computed(() => {
+  if (group.value?.status === 'closing') {
+    return 'Spese e partecipanti non possono essere modificati finché state verificando i saldi.'
+  }
+  if (group.value?.status === 'closed') {
+    return 'Il riepilogo resta disponibile in sola lettura. Puoi riaprire i conti se serve una correzione.'
+  }
+  return 'Blocca spese e partecipanti per verificare i saldi senza modifiche involontarie.'
 })
 
 const groupLink = computed(() => new URL(`/group/${groupId}`, window.location.origin).toString())
@@ -567,6 +735,10 @@ async function loadBalances() {
   try {
     const res = await groupsApi.getBalances(groupId)
     balances.value = res.data
+    if (group.value?.status === 'closing') {
+      const settlementsResponse = await groupsApi.getSettlements(groupId)
+      settlements.value = settlementsResponse.data
+    }
   } finally {
     balancesLoading.value = false
   }
@@ -621,6 +793,7 @@ function resetExpenseForm() {
 }
 
 function openNewExpenseForm() {
+  if (group.value?.status !== 'active') return
   if (showExpenseForm.value && !editingExpenseId.value) {
     showExpenseForm.value = false
     resetExpenseForm()
@@ -631,6 +804,7 @@ function openNewExpenseForm() {
 }
 
 function openEditExpenseForm(expense: Expense) {
+  if (group.value?.status !== 'active') return
   resetExpenseForm()
   editingExpenseId.value = expense.id
   expenseForm.description = expense.description
@@ -725,12 +899,14 @@ async function saveExpense() {
 }
 
 async function deleteExpense(expenseId: number) {
+  if (group.value?.status !== 'active') return
   if (!confirm('Eliminare questa spesa?')) return
   await groupsApi.deleteExpense(groupId, expenseId)
   await loadGroup()
 }
 
 async function deleteMember(memberId: number, name: string) {
+  if (group.value?.status !== 'active') return
   if (!confirm(`Rimuovere ${name} dal gruppo?`)) return
   try {
     await groupsApi.deleteMember(groupId, memberId)
@@ -742,6 +918,7 @@ async function deleteMember(memberId: number, name: string) {
 }
 
 async function addMember() {
+  if (group.value?.status !== 'active') return
   addMemberError.value = ''
   if (!newMember.name.trim()) {
     addMemberError.value = 'Inserisci un nome'
@@ -803,6 +980,95 @@ function saveGroupLocally() {
   if (!group.value) return
   saveRecentGroup(group.value)
   savedLocally.value = true
+}
+
+function getCurrentMember() {
+  try {
+    const value = localStorage.getItem(`equa.current-member.${groupId}`)
+    return value ? Number(value) : null
+  } catch {
+    return null
+  }
+}
+
+function saveCurrentMember() {
+  try {
+    if (currentMemberId.value)
+      localStorage.setItem(`equa.current-member.${groupId}`, String(currentMemberId.value))
+    else localStorage.removeItem(`equa.current-member.${groupId}`)
+  } catch {
+    // L'app resta utilizzabile se lo storage locale non è disponibile.
+  }
+}
+
+function settlementLabel(settlement: Settlement) {
+  if (settlement.status === 'confirmed')
+    return `Ricezione confermata da ${memberName(settlement.confirmed_by_member_id!)}`
+  if (settlement.reported_at)
+    return `Pagamento segnalato da ${memberName(settlement.reported_by_member_id!)}`
+  return 'Da pagare'
+}
+
+async function reportSettlement(settlementId: number) {
+  if (!currentMemberId.value) return
+  settlementLoading.value = true
+  settlementError.value = ''
+  try {
+    await groupsApi.reportSettlement(groupId, settlementId, currentMemberId.value)
+    await loadBalances()
+  } catch (e: any) {
+    settlementError.value =
+      e?.response?.data?.detail || 'Non è stato possibile segnalare il pagamento.'
+  } finally {
+    settlementLoading.value = false
+  }
+}
+
+async function confirmSettlement(settlementId: number) {
+  if (!currentMemberId.value) return
+  settlementLoading.value = true
+  settlementError.value = ''
+  try {
+    await groupsApi.confirmSettlement(groupId, settlementId, currentMemberId.value)
+    await loadBalances()
+  } catch (e: any) {
+    settlementError.value =
+      e?.response?.data?.detail || 'Non è stato possibile confermare il pagamento.'
+  } finally {
+    settlementLoading.value = false
+  }
+}
+
+async function updateGroupStatus(status: Group['status']) {
+  statusError.value = ''
+  statusLoading.value = true
+  try {
+    const response = await groupsApi.updateStatus(groupId, status)
+    group.value = response.data
+    showExpenseForm.value = false
+    showAddMemberForm.value = false
+    cancelEditEmail()
+  } catch (e: any) {
+    statusError.value =
+      e?.response?.data?.detail || 'Non è stato possibile aggiornare lo stato del gruppo.'
+  } finally {
+    statusLoading.value = false
+  }
+}
+
+function startClosing() {
+  if (!confirm('Bloccare spese e partecipanti per iniziare la chiusura dei conti?')) return
+  updateGroupStatus('closing')
+}
+
+function closeGroup() {
+  if (!confirm('Segnare il gruppo come chiuso? Potrai riaprirlo se serve una correzione.')) return
+  updateGroupStatus('closed')
+}
+
+function reopenGroup() {
+  if (!confirm('Riaprire i conti? Spese e partecipanti torneranno modificabili.')) return
+  updateGroupStatus('active')
 }
 
 onMounted(loadGroup)

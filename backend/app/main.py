@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base
-from .routers import groups, expenses, balances, members
+from .routers import groups, expenses, balances, members, settlements
 import os
 
 allow_origins = os.getenv("ALLOW_ORIGINS", "")
@@ -23,6 +23,7 @@ app.include_router(groups.router)
 app.include_router(expenses.router)
 app.include_router(balances.router)
 app.include_router(members.router)
+app.include_router(settlements.router)
 
 
 @app.get("/health")

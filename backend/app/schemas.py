@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Literal, Optional, List
 from datetime import datetime
 from decimal import Decimal
 
@@ -91,12 +91,17 @@ class GroupOut(BaseModel):
     name: str
     description: Optional[str] = None
     currency: str
+    status: Literal["active", "closing", "closed"]
     created_at: datetime
     members: List[MemberOut]
     expenses: List[ExpenseOut]
 
     class Config:
         from_attributes = True
+
+
+class GroupStatusUpdate(BaseModel):
+    status: Literal["active", "closing", "closed"]
 
 
 # --- Balance ---
@@ -108,3 +113,22 @@ class Balance(BaseModel):
     to_member_id: int
     to_member_name: str
     amount: Decimal
+
+
+class SettlementAction(BaseModel):
+    member_id: int
+
+
+class SettlementOut(BaseModel):
+    id: int
+    from_member_id: int
+    to_member_id: int
+    amount: Decimal
+    status: Literal["pending", "confirmed", "cancelled"]
+    reported_by_member_id: Optional[int] = None
+    reported_at: Optional[datetime] = None
+    confirmed_by_member_id: Optional[int] = None
+    confirmed_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True

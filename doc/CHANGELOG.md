@@ -7,6 +7,19 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
+## [Non rilasciato] Frontend; Backend
+
+### Aggiunto
+
+- Flusso di chiusura dei conti con stati `In corso`, `Chiusura conti` e `Conti chiusi`, più riapertura esplicita quando serve una correzione.
+- Pagamenti persistenti generati dai saldi: chi paga può segnalare il pagamento e chi riceve può confermarlo dal proprio dispositivo.
+
+### Corretto
+
+- Durante la chiusura dei conti il backend rifiuta modifiche a spese e partecipanti, evitando che i saldi cambino involontariamente.
+
+---
+
 ## [1.4.2] Frontend - 2026-08-25
 
 ### Aggiunto
