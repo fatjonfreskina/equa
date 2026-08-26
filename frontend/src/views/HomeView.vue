@@ -189,6 +189,7 @@ import { useRouter } from 'vue-router'
 import { groupsApi } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
 import equaLogo from '../assets/equa-logo.svg'
+import { trackEvent } from '../utils/analytics'
 import {
   clearRecentGroups as clearStoredRecentGroups,
   getRecentGroups,
@@ -243,6 +244,7 @@ async function createGroup() {
       currency: form.currency,
       members: validMembers,
     })
+    trackEvent('group_created')
     router.push({ path: `/group/${response.data.id}`, query: { created: '1' } })
   } catch {
     error.value = 'Qualcosa è andato storto. Riprova.'
@@ -265,6 +267,7 @@ function goToGroup() {
 }
 
 function openRecentGroup(groupId: string) {
+  trackEvent('group_opened_from_recent')
   router.push(`/group/${groupId}`)
 }
 

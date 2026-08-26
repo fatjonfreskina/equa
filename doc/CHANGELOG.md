@@ -11,6 +11,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ### Aggiunto
 
+- Integrazione Umami Cloud opzionale per pageview anonimizzate e gli eventi aggregati del funnel: gruppi, spese, condivisione, chiusura, pagamenti e donazioni.
 - Asset SVG del logo condiviso tra l'app e la testata del README.
 - Base di test automatici: pytest per il calcolo dei bilanci, Vitest per le utility frontend e hook pre-commit per le suite interessate dalle modifiche.
 - Flusso di chiusura dei conti con stati `In corso`, `Chiusura conti` e `Conti chiusi`, più riapertura esplicita quando serve una correzione.

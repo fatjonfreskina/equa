@@ -41,6 +41,7 @@
               :href="whatsAppShareUrl"
               target="_blank"
               rel="noopener noreferrer"
+              @click="trackEvent('share_whatsapp')"
               class="flex items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700"
             >
               <svg
@@ -130,6 +131,7 @@
             href="https://paypal.me/fatjonfreskina/2EUR"
             target="_blank"
             rel="noopener noreferrer"
+            @click="trackEvent('donation_clicked')"
             class="mt-5 block rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700"
             >☕ Offri un caffè (2 €)</a
           >
@@ -669,6 +671,7 @@ import { groupsApi, type Group, type Balance, type Expense, type Settlement } fr
 import DonationFooter from '../components/DonationFooter.vue'
 import { isRecentGroup, saveRecentGroup } from '../utils/recentGroups'
 import equaLogo from '../assets/equa-logo.svg'
+import { trackEvent } from '../utils/analytics'
 
 const route = useRoute()
 const router = useRouter()
@@ -949,6 +952,7 @@ async function saveExpense() {
       })
     }
     await loadGroup()
+    if (!editingExpenseId.value) trackEvent('expense_created')
     showExpenseForm.value = false
     resetExpenseForm()
   } catch {
@@ -1002,6 +1006,7 @@ async function copyLink() {
   try {
     await navigator.clipboard.writeText(groupLink.value)
     copied.value = true
+    trackEvent('share_copied')
     setTimeout(() => (copied.value = false), 2000)
   } catch {
     // Il link resta visibile nel promemoria e può essere copiato manualmente.
@@ -1026,6 +1031,7 @@ async function shareGroup() {
 }
 
 function openShareDialog() {
+  trackEvent('share_opened')
   showShareDialog.value = true
 }
 
@@ -1076,6 +1082,7 @@ async function reportSettlement(settlementId: number) {
   settlementError.value = ''
   try {
     await groupsApi.reportSettlement(groupId, settlementId, currentMemberId.value)
+    trackEvent('settlement_reported')
     await loadBalances()
   } catch (e: any) {
     settlementError.value =
@@ -1091,6 +1098,7 @@ async function confirmSettlement(settlementId: number) {
   settlementError.value = ''
   try {
     await groupsApi.confirmSettlement(groupId, settlementId, currentMemberId.value)
+    trackEvent('settlement_confirmed')
     await loadBalances()
   } catch (e: any) {
     settlementError.value =
@@ -1106,7 +1114,11 @@ async function updateGroupStatus(status: Group['status']) {
   try {
     const response = await groupsApi.updateStatus(groupId, status)
     group.value = response.data
-    if (status === 'closed') showCelebration.value = true
+    if (status === 'closing') trackEvent('closing_started')
+    if (status === 'closed') {
+      showCelebration.value = true
+      trackEvent('group_closed')
+    }
     showExpenseForm.value = false
     showAddMemberForm.value = false
     cancelEditEmail()

@@ -117,6 +117,7 @@ Vue 3 · TypeScript · Vite · Tailwind CSS · FastAPI · SQLAlchemy · MySQL
 - [Changelog](doc/CHANGELOG.md)
 - [Strategia e comandi di test](doc/TESTING.md)
 - [Migrazioni database](backend/migrations/README.md)
+- [Metriche anonime](doc/ANALYTICS.md)
 
 ## Supporta Equa
 

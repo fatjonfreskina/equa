@@ -19,12 +19,14 @@
           :key="amount.label"
           :href="`https://paypal.me/fatjonfreskina/${amount.value}EUR`"
           target="_blank"
+          @click="trackEvent('donation_clicked')"
           class="inline-block bg-green-50 hover:bg-green-100 text-green-700 font-medium rounded-lg px-2.5 py-1 transition border border-green-200"
           >{{ amount.label }}</a
         >
         <a
           href="https://paypal.me/fatjonfreskina"
           target="_blank"
+          @click="trackEvent('donation_clicked')"
           class="inline-block bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium rounded-lg px-2.5 py-1 transition border border-gray-200"
           >Libero</a
         >
@@ -35,6 +37,7 @@
 
 <script setup lang="ts">
 import { APP_VERSION } from '../config'
+import { trackEvent } from '../utils/analytics'
 const amounts = [
   { label: '☕ 2€', value: 2 },
   { label: '🍕 3€', value: 3 },
