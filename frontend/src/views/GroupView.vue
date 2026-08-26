@@ -154,11 +154,7 @@
       <div class="mb-6 flex items-start justify-between gap-4">
         <div class="min-w-0 flex-1">
           <div class="flex items-center gap-2 mb-1">
-            <svg width="24" height="24" viewBox="0 0 64 64" class="flex-shrink-0">
-              <rect x="8" y="10" width="48" height="13" rx="6.5" fill="#16a34a" />
-              <rect x="8" y="28" width="32" height="13" rx="6.5" fill="#4ade80" />
-              <rect x="8" y="46" width="20" height="13" rx="6.5" fill="#86efac" />
-            </svg>
+            <img :src="equaLogo" alt="" width="24" height="24" class="flex-shrink-0" />
             <h1 class="break-words text-2xl font-bold text-green-700">{{ group.name }}</h1>
           </div>
           <p v-if="group.description" class="text-gray-500 text-sm">
@@ -672,6 +668,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { groupsApi, type Group, type Balance, type Expense, type Settlement } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
 import { isRecentGroup, saveRecentGroup } from '../utils/recentGroups'
+import equaLogo from '../assets/equa-logo.svg'
 
 const route = useRoute()
 const router = useRouter()

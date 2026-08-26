@@ -11,6 +11,8 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ### Aggiunto
 
+- Asset SVG del logo condiviso tra l'app e la testata del README.
+- Base di test automatici: pytest per il calcolo dei bilanci, Vitest per le utility frontend e hook pre-commit per le suite interessate dalle modifiche.
 - Flusso di chiusura dei conti con stati `In corso`, `Chiusura conti` e `Conti chiusi`, più riapertura esplicita quando serve una correzione.
 - Pagamenti persistenti generati dai saldi: chi paga può segnalare il pagamento e chi riceve può confermarlo dal proprio dispositivo.
 - Invito alla chiusura visibile nella tab Bilanci solo quando è rilevante, selezione locale del partecipante compatta e popup finale di celebrazione con donazione facoltativa.

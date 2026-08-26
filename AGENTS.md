@@ -38,6 +38,7 @@
 - Backend: da root, esegui `python -m compileall -q backend/app` per un controllo di sintassi minimo.
 - Prima del handoff, esegui `git diff --check` e segnala migrazioni DB o passi di deploy necessari.
 - Non dichiarare verifiche manuali, mobile o di database come completate se non sono state eseguite.
+- Unit test: da implementare quando vengono introdotte logiche complesse o bugfix critici. Usa `python -m pytest backend/tests` e `npm run test:run` per backend e frontend.
 
 ## Git
 

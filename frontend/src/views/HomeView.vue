@@ -4,11 +4,7 @@
       <!-- Hero -->
       <div class="text-center mb-10">
         <div class="flex items-center justify-center gap-3 mb-3">
-          <svg width="48" height="48" viewBox="0 0 64 64" class="flex-shrink-0">
-            <rect x="8" y="10" width="48" height="13" rx="6.5" fill="#16a34a" />
-            <rect x="8" y="28" width="32" height="13" rx="6.5" fill="#4ade80" />
-            <rect x="8" y="46" width="20" height="13" rx="6.5" fill="#86efac" />
-          </svg>
+          <img :src="equaLogo" alt="" width="48" height="48" class="flex-shrink-0" />
           <h1 class="text-5xl font-bold text-green-700 tracking-tight">equa</h1>
         </div>
         <p class="text-xl text-gray-700 font-medium mb-2">Dividi le spese, non le amicizie.</p>
@@ -192,6 +188,7 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { groupsApi } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
+import equaLogo from '../assets/equa-logo.svg'
 import {
   clearRecentGroups as clearStoredRecentGroups,
   getRecentGroups,
