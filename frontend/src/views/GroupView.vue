@@ -111,6 +111,38 @@
         </div>
       </div>
 
+      <div
+        v-if="showCelebration"
+        class="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4 sm:items-center"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="celebration-title"
+        @click.self="showCelebration = false"
+      >
+        <div class="w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-xl">
+          <p class="text-4xl" aria-hidden="true">🎉</p>
+          <h2 id="celebration-title" class="mt-3 text-xl font-bold text-gray-800">Conti chiusi!</h2>
+          <p class="mt-2 text-sm leading-6 text-gray-600">
+            Avete chiuso i conti di {{ group.name }}. Se Equa vi è stata utile, puoi offrirci un
+            caffè per mantenerla gratuita.
+          </p>
+          <a
+            href="https://paypal.me/fatjonfreskina/2EUR"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mt-5 block rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700"
+            >☕ Offri un caffè (2 €)</a
+          >
+          <button
+            type="button"
+            class="mt-3 text-sm text-gray-500 hover:text-gray-700"
+            @click="showCelebration = false"
+          >
+            Non ora
+          </button>
+        </div>
+      </div>
+
       <!-- Link home -->
       <div class="mb-4">
         <RouterLink to="/" class="text-sm text-gray-400 hover:text-green-600 transition">
@@ -158,13 +190,12 @@
       </div>
 
       <section
+        v-if="group.status !== 'active'"
         :class="[
           'mb-6 rounded-xl border px-4 py-4',
-          group.status === 'active'
-            ? 'border-blue-100 bg-blue-50'
-            : group.status === 'closing'
-              ? 'border-amber-100 bg-amber-50'
-              : 'border-green-100 bg-green-50',
+          group.status === 'closing'
+            ? 'border-amber-100 bg-amber-50'
+            : 'border-green-100 bg-green-50',
         ]"
       >
         <div class="flex items-start justify-between gap-4">
@@ -175,11 +206,9 @@
           <span
             :class="[
               'shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold',
-              group.status === 'active'
-                ? 'bg-blue-100 text-blue-700'
-                : group.status === 'closing'
-                  ? 'bg-amber-100 text-amber-700'
-                  : 'bg-green-100 text-green-700',
+              group.status === 'closing'
+                ? 'bg-amber-100 text-amber-700'
+                : 'bg-green-100 text-green-700',
             ]"
           >
             {{ groupStatusLabel }}
@@ -187,15 +216,6 @@
         </div>
         <p v-if="statusError" class="mt-3 text-sm text-red-600">{{ statusError }}</p>
         <div class="mt-4 flex flex-wrap gap-2">
-          <button
-            v-if="group.status === 'active'"
-            type="button"
-            :disabled="statusLoading || group.expenses.length === 0"
-            class="rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
-            @click="startClosing"
-          >
-            {{ statusLoading ? 'Aggiornamento...' : 'Chiudiamo i conti' }}
-          </button>
           <button
             v-if="group.status === 'closing'"
             type="button"
@@ -206,7 +226,6 @@
             {{ statusLoading ? 'Aggiornamento...' : 'Segna come chiuso' }}
           </button>
           <button
-            v-if="group.status !== 'active'"
             type="button"
             :disabled="statusLoading"
             class="rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-white disabled:bg-gray-100"
@@ -421,20 +440,38 @@
           v-if="group.status === 'closing'"
           class="mb-4 rounded-xl border border-amber-100 bg-amber-50 p-4"
         >
-          <label class="block text-sm font-medium text-amber-900" for="current-member"
-            >Quale partecipante sei?</label
+          <div
+            v-if="currentMemberId && !showMemberPicker"
+            class="flex items-center justify-between gap-3"
           >
-          <select
-            id="current-member"
-            v-model="currentMemberId"
-            class="mt-2 w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-gray-700"
-            @change="saveCurrentMember"
-          >
-            <option :value="null">Seleziona il tuo nome per aggiornare un pagamento</option>
-            <option v-for="member in group.members" :key="member.id" :value="member.id">
-              {{ member.name }}
-            </option>
-          </select>
+            <p class="text-sm text-amber-900">
+              Stai agendo come <strong>{{ currentMemberName }}</strong
+              >.
+            </p>
+            <button
+              type="button"
+              class="shrink-0 text-sm font-semibold text-amber-800 underline"
+              @click="showMemberPicker = true"
+            >
+              Cambia
+            </button>
+          </div>
+          <template v-else>
+            <label class="block text-sm font-medium text-amber-900" for="current-member"
+              >Quale partecipante sei?</label
+            >
+            <select
+              id="current-member"
+              v-model="currentMemberId"
+              class="mt-2 w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-gray-700"
+              @change="saveCurrentMember"
+            >
+              <option :value="null">Seleziona il tuo nome per aggiornare un pagamento</option>
+              <option v-for="member in group.members" :key="member.id" :value="member.id">
+                {{ member.name }}
+              </option>
+            </select>
+          </template>
           <p class="mt-2 text-xs text-amber-800">
             La scelta resta solo su questo dispositivo e non è un'autenticazione.
           </p>
@@ -484,6 +521,22 @@
           Nessun debito! Siete tutti pari 🎉
         </div>
         <div v-else class="space-y-3">
+          <section
+            v-if="group.status === 'active'"
+            class="rounded-xl border border-blue-100 bg-blue-50 p-4"
+          >
+            <p class="font-semibold text-blue-900">Avete finito con le spese?</p>
+            <p class="mt-1 text-sm text-blue-800">
+              Blocca il gruppo per verificare e chiudere i pagamenti.
+            </p>
+            <button
+              type="button"
+              class="mt-3 rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+              @click="startClosing"
+            >
+              Chiudiamo i conti
+            </button>
+          </section>
           <div
             v-for="(balance, i) in balances"
             :key="i"
@@ -505,7 +558,11 @@
           v-if="group.status !== 'active'"
           class="mb-4 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800"
         >
-          I partecipanti non possono essere modificati durante la chiusura dei conti.
+          {{
+            group.status === 'closed'
+              ? 'Il gruppo è chiuso: i partecipanti sono in sola lettura.'
+              : 'I partecipanti non possono essere modificati durante la chiusura dei conti.'
+          }}
         </p>
         <!-- Bottone toggle, stesso pattern della tab Spese -->
         <button
@@ -633,6 +690,8 @@ const settlements = ref<Settlement[]>([])
 const settlementLoading = ref(false)
 const settlementError = ref('')
 const currentMemberId = ref<number | null>(getCurrentMember())
+const showMemberPicker = ref(!currentMemberId.value)
+const showCelebration = ref(false)
 const statusLoading = ref(false)
 const statusError = ref('')
 
@@ -694,6 +753,10 @@ const groupStatusDescription = computed(() => {
   }
   return 'Blocca spese e partecipanti per verificare i saldi senza modifiche involontarie.'
 })
+
+const currentMemberName = computed(() =>
+  currentMemberId.value ? memberName(currentMemberId.value) : '',
+)
 
 const groupLink = computed(() => new URL(`/group/${groupId}`, window.location.origin).toString())
 
@@ -999,13 +1062,14 @@ function saveCurrentMember() {
   } catch {
     // L'app resta utilizzabile se lo storage locale non è disponibile.
   }
+  showMemberPicker.value = !currentMemberId.value
 }
 
 function settlementLabel(settlement: Settlement) {
   if (settlement.status === 'confirmed')
     return `Ricezione confermata da ${memberName(settlement.confirmed_by_member_id!)}`
   if (settlement.reported_at)
-    return `Pagamento segnalato da ${memberName(settlement.reported_by_member_id!)}`
+    return `Pagamento segnalato da ${memberName(settlement.reported_by_member_id!)}. In attesa che ${memberName(settlement.to_member_id)} confermi la ricezione.`
   return 'Da pagare'
 }
 
@@ -1045,9 +1109,11 @@ async function updateGroupStatus(status: Group['status']) {
   try {
     const response = await groupsApi.updateStatus(groupId, status)
     group.value = response.data
+    if (status === 'closed') showCelebration.value = true
     showExpenseForm.value = false
     showAddMemberForm.value = false
     cancelEditEmail()
+    if (activeTab.value === 'balances') await loadBalances()
   } catch (e: any) {
     statusError.value =
       e?.response?.data?.detail || 'Non è stato possibile aggiornare lo stato del gruppo.'

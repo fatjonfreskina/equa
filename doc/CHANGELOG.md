@@ -7,16 +7,20 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
-## [Non rilasciato] Frontend; Backend
+## [1.4.3] Frontend; Backend
 
 ### Aggiunto
 
 - Flusso di chiusura dei conti con stati `In corso`, `Chiusura conti` e `Conti chiusi`, più riapertura esplicita quando serve una correzione.
 - Pagamenti persistenti generati dai saldi: chi paga può segnalare il pagamento e chi riceve può confermarlo dal proprio dispositivo.
+- Invito alla chiusura visibile nella tab Bilanci solo quando è rilevante, selezione locale del partecipante compatta e popup finale di celebrazione con donazione facoltativa.
 
 ### Corretto
 
+- Suggerimenti di donazione aggiornati a 2 €, 3 € e 5 €.
 - Durante la chiusura dei conti il backend rifiuta modifiche a spese e partecipanti, evitando che i saldi cambino involontariamente.
+- I messaggi della chiusura distinguono correttamente il gruppo in chiusura dal gruppo già chiuso e indicano quando si attende la conferma del creditore.
+- Dopo l'avvio della chiusura, la tab Bilanci ricarica subito i pagamenti da confermare senza richiedere una navigazione o un refresh manuale.
 
 ---
 
