@@ -1,0 +1,33 @@
+# Dependencies & Package Managers
+**/node_modules/
+**/__pycache__/
+**/.venv/
+**/venv/
+**/.pytest_cache/
+**/.mypy_cache/
+**/poetry.lock
+**/package-lock.json
+**/yarn.lock
+
+# Build & Compilation Outputs
+**/dist/
+**/build/
+**/out/
+
+# Environment and Secrets
+**.env
+**.env.*
+
+# Static Assets and Media (Massive Token Wasters)
+**/assets/
+**/public/
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.svg
+**/*.ico
+
+# Test Coverage & Logs
+**/htmlcov/
+**/.coverage
+**/*.log
