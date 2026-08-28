@@ -546,7 +546,7 @@
           </p>
         </div>
         <section
-          v-if="!balancesLoading && group.status === 'active' && currentMemberId"
+          v-if="!balancesLoading && group.status !== 'closed' && currentMemberId"
           class="mb-4 border-y border-gray-200 bg-white px-4 py-4"
         >
           <div class="flex flex-wrap items-baseline justify-between gap-2">
@@ -857,7 +857,10 @@ import { useRoute, useRouter } from 'vue-router'
 import { groupsApi, type Group, type Balance, type Expense, type Settlement } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
 import { buildClosingSummary } from '../utils/closingSummary'
-import { calculatePersonalBalanceSummary } from '../utils/personalBalanceSummary'
+import {
+  calculatePersonalBalanceSummary,
+  calculatePersonalSettlementSummary,
+} from '../utils/personalBalanceSummary'
 import { isRecentGroup, saveRecentGroup } from '../utils/recentGroups'
 import equaLogo from '../assets/equa-logo.svg'
 import { trackEvent } from '../utils/analytics'
@@ -951,7 +954,9 @@ const currentMemberName = computed(() =>
 
 const personalBalance = computed(() =>
   currentMemberId.value
-    ? calculatePersonalBalanceSummary(balances.value, currentMemberId.value)
+    ? group.value?.status === 'closing'
+      ? calculatePersonalSettlementSummary(settlements.value, currentMemberId.value)
+      : calculatePersonalBalanceSummary(balances.value, currentMemberId.value)
     : calculatePersonalBalanceSummary([], 0),
 )
 

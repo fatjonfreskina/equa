@@ -1,4 +1,4 @@
-import type { Balance } from '../api/groups'
+import type { Balance, Settlement } from '../api/groups'
 
 export interface PersonalBalanceSummary {
   amountToPay: number
@@ -37,4 +37,21 @@ export function calculatePersonalBalanceSummary(
     ...personalBalances,
     netAmount: personalBalances.amountToReceive - personalBalances.amountToPay,
   }
+}
+
+export function calculatePersonalSettlementSummary(
+  settlements: Settlement[],
+  memberId: number,
+): PersonalBalanceSummary {
+  const pendingBalances: Balance[] = settlements
+    .filter((settlement) => settlement.status === 'pending')
+    .map((settlement) => ({
+      from_member_id: settlement.from_member_id,
+      from_member_name: '',
+      to_member_id: settlement.to_member_id,
+      to_member_name: '',
+      amount: settlement.amount,
+    }))
+
+  return calculatePersonalBalanceSummary(pendingBalances, memberId)
 }

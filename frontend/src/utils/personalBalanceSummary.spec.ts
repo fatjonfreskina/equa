@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import type { Balance } from '../api/groups'
-import { calculatePersonalBalanceSummary } from './personalBalanceSummary'
+import type { Balance, Settlement } from '../api/groups'
+import {
+  calculatePersonalBalanceSummary,
+  calculatePersonalSettlementSummary,
+} from './personalBalanceSummary'
 
 const balances: Balance[] = [
   {
@@ -43,6 +46,42 @@ describe('calculatePersonalBalanceSummary', () => {
       amountToReceive: 0,
       netAmount: 0,
       outgoingPayments: 0,
+      incomingPayments: 0,
+    })
+  })
+})
+
+describe('calculatePersonalSettlementSummary', () => {
+  it('excludes confirmed and cancelled payments from the personal summary', () => {
+    const settlements: Settlement[] = [
+      {
+        id: 1,
+        from_member_id: 1,
+        to_member_id: 2,
+        amount: '20.50',
+        status: 'pending',
+      },
+      {
+        id: 2,
+        from_member_id: 3,
+        to_member_id: 1,
+        amount: '8.25',
+        status: 'confirmed',
+      },
+      {
+        id: 3,
+        from_member_id: 1,
+        to_member_id: 3,
+        amount: '4.00',
+        status: 'cancelled',
+      },
+    ]
+
+    expect(calculatePersonalSettlementSummary(settlements, 1)).toEqual({
+      amountToPay: 20.5,
+      amountToReceive: 0,
+      netAmount: -20.5,
+      outgoingPayments: 1,
       incomingPayments: 0,
     })
   })

@@ -32,6 +32,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ### Corretto
 
+- Il riepilogo personale resta visibile durante la chiusura e considera solo i pagamenti non ancora confermati.
 - Suggerimenti di donazione aggiornati a 2 €, 3 € e 5 €.
 - Durante la chiusura dei conti il backend rifiuta modifiche a spese e partecipanti, evitando che i saldi cambino involontariamente.
 - I messaggi della chiusura distinguono correttamente il gruppo in chiusura dal gruppo già chiuso e indicano quando si attende la conferma del creditore.
