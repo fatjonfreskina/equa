@@ -23,6 +23,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 ### Modificato
 
 - Lockfile resi disponibili a Codex e dipendenza `cryptography` fissata a una versione esplicita.
+- Il link di donazione mostrato alla chiusura dei conti ora lascia libero l'importo.
 
 ### Corretto
 

@@ -128,7 +128,7 @@
             caffè per mantenerla gratuita.
           </p>
           <a
-            href="https://paypal.me/fatjonfreskina/2EUR"
+            href="https://paypal.me/fatjonfreskina"
             target="_blank"
             rel="noopener noreferrer"
             @click="trackEvent('donation_clicked')"
