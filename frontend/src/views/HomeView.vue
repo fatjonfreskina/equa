@@ -95,7 +95,14 @@
       <section v-if="recentGroups.length" class="bg-white rounded-2xl shadow p-6 mb-4">
         <div class="flex items-start justify-between gap-3 mb-1">
           <div>
-            <h2 class="text-lg font-semibold text-gray-800">I tuoi gruppi recenti</h2>
+            <div class="flex flex-wrap items-center gap-2">
+              <h2 class="text-lg font-semibold text-gray-800">I tuoi gruppi recenti</h2>
+              <span
+                class="rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700"
+              >
+                Novità
+              </span>
+            </div>
             <p class="text-sm text-gray-400">Salvati solo su questo dispositivo.</p>
           </div>
           <button

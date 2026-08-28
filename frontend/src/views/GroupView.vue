@@ -128,12 +128,12 @@
             caffè per mantenerla gratuita.
           </p>
           <a
-            href="https://paypal.me/fatjonfreskina/2EUR"
+            href="https://paypal.me/fatjonfreskina"
             target="_blank"
             rel="noopener noreferrer"
             @click="trackEvent('donation_clicked')"
             class="mt-5 block rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700"
-            >☕ Offri un caffè (2 €)</a
+            >☕ Offri un caffè</a
           >
           <button
             type="button"
@@ -175,9 +175,16 @@
         v-if="!savedLocally"
         class="mb-6 flex items-center justify-between gap-3 rounded-xl border border-green-100 bg-green-50 px-4 py-3"
       >
-        <p class="text-sm text-green-800">
-          Ritrova questo gruppo dalla home su questo dispositivo.
-        </p>
+        <div class="min-w-0">
+          <span
+            class="inline-block rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700"
+          >
+            Novità
+          </span>
+          <p class="mt-1 text-sm text-green-800">
+            Ritrova questo gruppo dalla home su questo dispositivo.
+          </p>
+        </div>
         <button
           type="button"
           class="shrink-0 text-sm font-semibold text-green-700 underline underline-offset-2 hover:text-green-800"
@@ -523,7 +530,14 @@
             v-if="group.status === 'active'"
             class="rounded-xl border border-blue-100 bg-blue-50 p-4"
           >
-            <p class="font-semibold text-blue-900">Avete finito con le spese?</p>
+            <div class="flex flex-wrap items-center gap-2">
+              <p class="font-semibold text-blue-900">Avete finito con le spese?</p>
+              <span
+                class="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700"
+              >
+                Beta
+              </span>
+            </div>
             <p class="mt-1 text-sm text-blue-800">
               Blocca il gruppo per verificare e chiudere i pagamenti.
             </p>
