@@ -35,7 +35,7 @@ La roadmap e ordinata per impatto e dipendenze, non per data rigida. Le funziona
 ### Bilanci e chiusura dei debiti
 
 - [x] Permettere di identificare il partecipante sul dispositivo.
-- [ ] Mostrare il riepilogo personale "devi pagare/ricevere".
+- [x] Mostrare il riepilogo personale "devi pagare/ricevere".
 - [ ] Generare promemoria condivisibili.
 - [x] Generare un riepilogo di chiusura condivisibile e versionato.
 - [x] Introdurre lo stato dei pagamenti.
@@ -441,11 +441,11 @@ La scelta viene salvata solo sul dispositivo e puo essere modificata in seguito.
 
 **Checklist**
 
-- [ ] Mostrare totale da pagare.
-- [ ] Mostrare totale da ricevere.
-- [ ] Mostrare saldo netto personale.
-- [ ] Mostrare il numero di pagamenti in entrata e in uscita.
-- [ ] Lasciare disponibile la lista globale dei bilanci.
+- [x] Mostrare totale da pagare.
+- [x] Mostrare totale da ricevere.
+- [x] Mostrare saldo netto personale.
+- [x] Mostrare il numero di pagamenti in entrata e in uscita.
+- [x] Lasciare disponibile la lista globale dei bilanci.
 
 In cima alla tab Bilanci mostrare:
 
@@ -1102,7 +1102,7 @@ Prima di procedere servono analisi legale, sicurezza, costi e domanda reale degl
 ### Release C: Il gruppo si chiude
 
 - [x] Selezione "chi sono".
-- [ ] Riepilogo personale.
+- [x] Riepilogo personale.
 - [ ] Promemoria condivisibili.
 - [x] Riepilogo WhatsApp della chiusura.
 - [x] Stato dei pagamenti.

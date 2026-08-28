@@ -20,12 +20,15 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 - Flusso di chiusura dei conti con stati `In corso`, `Chiusura conti` e `Conti chiusi`, più riapertura esplicita quando serve una correzione.
 - Pagamenti persistenti generati dai saldi: chi paga può segnalare il pagamento e chi riceve può confermarlo dal proprio dispositivo.
 - Invito alla chiusura visibile nella tab Bilanci solo quando è rilevante, selezione locale del partecipante compatta e popup finale di celebrazione con donazione facoltativa.
+- Selezione locale `Tu chi sei nel gruppo?` disponibile nella tab Partecipanti mentre la vacanza è in corso e riutilizzata durante la chiusura dei conti.
+- Riepilogo personale nella tab Bilanci con importi da pagare e ricevere, saldo netto e numero di pagamenti per l'identità scelta sul dispositivo.
 
 ### Modificato
 
 - Lockfile resi disponibili a Codex e dipendenza `cryptography` fissata a una versione esplicita.
 - Il link di donazione mostrato alla chiusura dei conti ora lascia libero l'importo.
 - L'azione `Aggiungi email` dei partecipanti viene nascosta quando il gruppo è in chiusura o chiuso.
+- La gestione email dei partecipanti resta disponibile nel codice ma viene temporaneamente nascosta nell'interfaccia.
 
 ### Corretto
 
