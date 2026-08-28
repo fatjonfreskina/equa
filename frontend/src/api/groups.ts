@@ -26,6 +26,7 @@ export interface Group {
   description?: string
   currency: string
   status: 'active' | 'closing' | 'closed'
+  closing_count: number
   created_at: string
   members: Member[]
   expenses: Expense[]

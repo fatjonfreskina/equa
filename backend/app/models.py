@@ -17,6 +17,7 @@ class Group(Base):
     description = Column(String(500), nullable=True)
     currency = Column(String(3), nullable=False, default="EUR")
     status = Column(String(20), nullable=False, default="active")
+    closing_count = Column(Integer, nullable=False, default=0)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     members = relationship(

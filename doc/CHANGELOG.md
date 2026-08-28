@@ -13,6 +13,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 - Setup e manutenzione riproducibili dell'ambiente Codex Cloud con Python 3.12, Node.js 20 e dipendenze di sviluppo.
 - Badge `Novità` per gruppi recenti e salvataggio locale, e badge `Beta` per il flusso di chiusura dei conti.
+- Riepilogo WhatsApp con emoji generato all'avvio della chiusura, con totale spese, pagamenti richiesti, link al gruppo e versione per i cicli successivi al primo.
 - Integrazione Umami Cloud opzionale per pageview anonimizzate e gli eventi aggregati del funnel: gruppi, spese, condivisione, chiusura, pagamenti e donazioni.
 - Asset SVG del logo condiviso tra l'app e la testata del README.
 - Base di test automatici: pytest per il calcolo dei bilanci, Vitest per le utility frontend e hook pre-commit per le suite interessate dalle modifiche.
@@ -24,6 +25,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 - Lockfile resi disponibili a Codex e dipendenza `cryptography` fissata a una versione esplicita.
 - Il link di donazione mostrato alla chiusura dei conti ora lascia libero l'importo.
+- L'azione `Aggiungi email` dei partecipanti viene nascosta quando il gruppo è in chiusura o chiuso.
 
 ### Corretto
 

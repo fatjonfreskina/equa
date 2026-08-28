@@ -92,6 +92,7 @@ class GroupOut(BaseModel):
     description: Optional[str] = None
     currency: str
     status: Literal["active", "closing", "closed"]
+    closing_count: int
     created_at: datetime
     members: List[MemberOut]
     expenses: List[ExpenseOut]

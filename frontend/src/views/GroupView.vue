@@ -145,6 +145,62 @@
         </div>
       </div>
 
+      <div
+        v-if="showClosingSummary"
+        class="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4 sm:items-center"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="closing-summary-title"
+        @click.self="showClosingSummary = false"
+      >
+        <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <span
+                class="inline-block rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700"
+              >
+                Beta
+              </span>
+              <h2 id="closing-summary-title" class="mt-2 text-xl font-bold text-gray-800">
+                Condividi il riepilogo
+              </h2>
+            </div>
+            <button
+              type="button"
+              class="text-2xl leading-none text-gray-400 hover:text-gray-700"
+              aria-label="Chiudi riepilogo"
+              @click="showClosingSummary = false"
+            >
+              ×
+            </button>
+          </div>
+          <p class="mt-2 text-sm leading-6 text-gray-600">
+            Invia al gruppo le somme da pagare e il link per aggiornare i pagamenti.
+          </p>
+          <div
+            class="mt-4 max-h-64 overflow-y-auto whitespace-pre-wrap rounded-lg bg-gray-50 p-3 text-sm leading-6 text-gray-700"
+          >
+            {{ closingSummaryMessage }}
+          </div>
+          <a
+            :href="closingSummaryWhatsAppUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mt-4 flex items-center justify-center rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700"
+            @click="trackEvent('closing_summary_whatsapp')"
+          >
+            Condividi su WhatsApp
+          </a>
+          <button
+            type="button"
+            class="mt-3 w-full text-sm text-gray-500 hover:text-gray-700"
+            @click="showClosingSummary = false"
+          >
+            Non ora
+          </button>
+        </div>
+      </div>
+
       <!-- Link home -->
       <div class="mb-4">
         <RouterLink to="/" class="text-sm text-gray-400 hover:text-green-600 transition">
@@ -221,6 +277,14 @@
         </div>
         <p v-if="statusError" class="mt-3 text-sm text-red-600">{{ statusError }}</p>
         <div class="mt-4 flex flex-wrap gap-2">
+          <button
+            v-if="group.status === 'closing'"
+            type="button"
+            class="rounded-lg border border-amber-300 bg-white px-3 py-2 text-sm font-semibold text-amber-800 transition hover:bg-amber-100"
+            @click="showClosingSummary = true"
+          >
+            Condividi riepilogo
+          </button>
           <button
             v-if="group.status === 'closing'"
             type="button"
@@ -618,7 +682,7 @@
               <span class="font-medium text-gray-800">{{ member.name }}</span>
 
               <span
-                v-if="editingEmailId !== member.id"
+                v-if="editingEmailId !== member.id && (member.email || group.status === 'active')"
                 @click="group.status === 'active' && startEditEmail(member)"
                 :class="[
                   'ml-2 text-sm text-gray-400 transition',
@@ -683,6 +747,7 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { groupsApi, type Group, type Balance, type Expense, type Settlement } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
+import { buildClosingSummary } from '../utils/closingSummary'
 import { isRecentGroup, saveRecentGroup } from '../utils/recentGroups'
 import equaLogo from '../assets/equa-logo.svg'
 import { trackEvent } from '../utils/analytics'
@@ -706,6 +771,7 @@ const settlementError = ref('')
 const currentMemberId = ref<number | null>(getCurrentMember())
 const showMemberPicker = ref(!currentMemberId.value)
 const showCelebration = ref(false)
+const showClosingSummary = ref(false)
 const statusLoading = ref(false)
 const statusError = ref('')
 
@@ -781,6 +847,14 @@ const shareMessage = computed(() => {
 
 const whatsAppShareUrl = computed(
   () => `https://wa.me/?text=${encodeURIComponent(shareMessage.value)}`,
+)
+
+const closingSummaryMessage = computed(() =>
+  group.value ? buildClosingSummary(group.value, balances.value, groupLink.value) : '',
+)
+
+const closingSummaryWhatsAppUrl = computed(
+  () => `https://wa.me/?text=${encodeURIComponent(closingSummaryMessage.value)}`,
 )
 
 const splitSum = computed(() => {
@@ -1137,17 +1211,19 @@ async function updateGroupStatus(status: Group['status']) {
     showAddMemberForm.value = false
     cancelEditEmail()
     if (activeTab.value === 'balances') await loadBalances()
+    return true
   } catch (e: any) {
     statusError.value =
       e?.response?.data?.detail || 'Non è stato possibile aggiornare lo stato del gruppo.'
+    return false
   } finally {
     statusLoading.value = false
   }
 }
 
-function startClosing() {
+async function startClosing() {
   if (!confirm('Bloccare spese e partecipanti per iniziare la chiusura dei conti?')) return
-  updateGroupStatus('closing')
+  if (await updateGroupStatus('closing')) showClosingSummary.value = true
 }
 
 function closeGroup() {

@@ -68,6 +68,7 @@ def update_group_status(
     if payload.status == "closing":
         from .balances import calculate_balances
 
+        db_group.closing_count += 1
         for balance in calculate_balances(db_group):
             db.add(
                 models.Settlement(

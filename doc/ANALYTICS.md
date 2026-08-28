@@ -11,6 +11,7 @@ Equa usa facoltativamente Umami Cloud per misurare l'uso aggregato del prodotto.
 - `expense_created` dopo il salvataggio riuscito di una nuova spesa;
 - `share_opened`, `share_whatsapp` e `share_copied` per le modalità di condivisione del link;
 - `closing_started` dopo l'avvio riuscito della chiusura dei conti;
+- `closing_summary_whatsapp` quando viene aperto WhatsApp con il riepilogo dei conti;
 - `settlement_reported` e `settlement_confirmed` dopo la segnalazione e la conferma di un pagamento;
 - `group_closed` dopo la chiusura riuscita dei conti.
 - `donation_clicked` quando viene aperto il link di donazione.

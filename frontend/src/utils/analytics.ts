@@ -41,6 +41,7 @@ export function trackEvent(
     | 'share_whatsapp'
     | 'share_copied'
     | 'closing_started'
+    | 'closing_summary_whatsapp'
     | 'settlement_reported'
     | 'settlement_confirmed'
     | 'group_closed'
