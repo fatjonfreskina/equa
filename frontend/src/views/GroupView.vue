@@ -545,6 +545,65 @@
             La scelta resta solo su questo dispositivo e non è un'autenticazione.
           </p>
         </div>
+        <section
+          v-if="!balancesLoading && group.status !== 'closed' && currentMemberId"
+          class="mb-4 border-y border-gray-200 bg-white px-4 py-4"
+        >
+          <div class="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 class="font-semibold text-gray-800">Il tuo riepilogo</h2>
+            <p class="text-xs text-gray-500">Come {{ currentMemberName }}</p>
+          </div>
+          <div class="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-3">
+            <div>
+              <p class="text-xs text-gray-500">Devi pagare</p>
+              <p class="mt-1 font-semibold text-red-600">
+                {{ formatGroupAmount(personalBalance.amountToPay) }}
+              </p>
+              <p class="mt-0.5 text-xs text-gray-400">
+                {{ paymentCountLabel(personalBalance.outgoingPayments) }}
+              </p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500">Devi ricevere</p>
+              <p class="mt-1 font-semibold text-green-700">
+                {{ formatGroupAmount(personalBalance.amountToReceive) }}
+              </p>
+              <p class="mt-0.5 text-xs text-gray-400">
+                {{ paymentCountLabel(personalBalance.incomingPayments) }}
+              </p>
+            </div>
+            <div
+              class="col-span-2 border-t border-gray-100 pt-3 sm:col-span-1 sm:border-t-0 sm:pt-0"
+            >
+              <p class="text-xs text-gray-500">Saldo netto</p>
+              <p
+                :class="[
+                  'mt-1 font-semibold',
+                  personalBalance.netAmount > 0
+                    ? 'text-green-700'
+                    : personalBalance.netAmount < 0
+                      ? 'text-red-600'
+                      : 'text-gray-700',
+                ]"
+              >
+                {{ formatSignedGroupAmount(personalBalance.netAmount) }}
+              </p>
+            </div>
+          </div>
+        </section>
+        <div
+          v-else-if="!balancesLoading && group.status === 'active'"
+          class="mb-4 flex items-center justify-between gap-3 border-y border-gray-200 bg-white px-4 py-3"
+        >
+          <p class="text-sm text-gray-600">Scegli chi sei per vedere il tuo riepilogo.</p>
+          <button
+            type="button"
+            class="shrink-0 text-sm font-semibold text-green-700 underline underline-offset-2"
+            @click="activeTab = 'members'"
+          >
+            Vai a Partecipanti
+          </button>
+        </div>
         <div v-if="balancesLoading" class="text-center py-10 text-gray-400">Calcolo...</div>
         <div v-else-if="group.status === 'closing'" class="space-y-3">
           <p v-if="settlementError" class="text-sm text-red-600">{{ settlementError }}</p>
@@ -555,9 +614,9 @@
           >
             <div class="flex items-center justify-between gap-3">
               <div class="min-w-0 text-gray-700">
-                <span class="font-medium">{{ memberName(settlement.from_member_id) }}</span>
+                <span class="font-medium">{{ displayMemberName(settlement.from_member_id) }}</span>
                 <span class="mx-2 text-gray-400">→</span>
-                <span class="font-medium">{{ memberName(settlement.to_member_id) }}</span>
+                <span class="font-medium">{{ displayMemberName(settlement.to_member_id) }}</span>
               </div>
               <span class="shrink-0 font-bold text-red-500"
                 >{{ settlement.amount }} {{ group.currency }}</span
@@ -619,9 +678,9 @@
             class="bg-white rounded-2xl shadow px-5 py-4 flex items-center justify-between"
           >
             <div class="flex items-center gap-2 text-gray-700">
-              <span class="font-medium">{{ balance.from_member_name }}</span>
+              <span class="font-medium">{{ displayMemberName(balance.from_member_id) }}</span>
               <span class="text-gray-400">→</span>
-              <span class="font-medium">{{ balance.to_member_name }}</span>
+              <span class="font-medium">{{ displayMemberName(balance.to_member_id) }}</span>
             </div>
             <span class="font-bold text-red-500">{{ balance.amount }} {{ group.currency }}</span>
           </div>
@@ -630,6 +689,47 @@
 
       <!-- Tab: Partecipanti -->
       <div v-if="activeTab === 'members'">
+        <div
+          v-if="group.status === 'active'"
+          class="mb-4 rounded-xl border border-green-100 bg-green-50 p-4"
+        >
+          <div
+            v-if="currentMemberId && !showMemberPicker"
+            class="flex items-center justify-between gap-3"
+          >
+            <p class="text-sm text-green-900">
+              In questo gruppo sei <strong>{{ currentMemberName }}</strong
+              >.
+            </p>
+            <button
+              type="button"
+              class="shrink-0 text-sm font-semibold text-green-800 underline"
+              @click="showMemberPicker = true"
+            >
+              Cambia
+            </button>
+          </div>
+          <template v-else>
+            <label class="block text-sm font-medium text-green-900" for="active-current-member">
+              Tu chi sei nel gruppo?
+            </label>
+            <select
+              id="active-current-member"
+              v-model="currentMemberId"
+              class="mt-2 w-full rounded-lg border border-green-200 bg-white px-3 py-2 text-sm text-gray-700"
+              @change="saveCurrentMember"
+            >
+              <option :value="null">Seleziona il tuo nome</option>
+              <option v-for="member in group.members" :key="member.id" :value="member.id">
+                {{ member.name }}
+              </option>
+            </select>
+          </template>
+          <p class="mt-2 text-xs text-green-800">
+            La scelta resta solo su questo dispositivo e non è un'autenticazione.
+          </p>
+        </div>
+
         <p
           v-if="group.status !== 'active'"
           class="mb-4 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800"
@@ -659,6 +759,7 @@
             class="min-w-0 flex-1 border rounded-lg px-3 py-2 text-sm"
           />
           <input
+            v-if="emailManagementEnabled"
             v-model="newMember.email"
             placeholder="Email (opzionale)"
             class="min-w-0 flex-1 border rounded-lg px-3 py-2 text-sm"
@@ -682,7 +783,11 @@
               <span class="font-medium text-gray-800">{{ member.name }}</span>
 
               <span
-                v-if="editingEmailId !== member.id && (member.email || group.status === 'active')"
+                v-if="
+                  emailManagementEnabled &&
+                  editingEmailId !== member.id &&
+                  (member.email || group.status === 'active')
+                "
                 @click="group.status === 'active' && startEditEmail(member)"
                 :class="[
                   'ml-2 text-sm text-gray-400 transition',
@@ -693,7 +798,11 @@
               </span>
 
               <div
-                v-else-if="editingEmailId === member.id && group.status === 'active'"
+                v-else-if="
+                  emailManagementEnabled &&
+                  editingEmailId === member.id &&
+                  group.status === 'active'
+                "
                 class="flex items-center gap-2 mt-1"
               >
                 <input
@@ -748,6 +857,10 @@ import { useRoute, useRouter } from 'vue-router'
 import { groupsApi, type Group, type Balance, type Expense, type Settlement } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
 import { buildClosingSummary } from '../utils/closingSummary'
+import {
+  calculatePersonalBalanceSummary,
+  calculatePersonalSettlementSummary,
+} from '../utils/personalBalanceSummary'
 import { isRecentGroup, saveRecentGroup } from '../utils/recentGroups'
 import equaLogo from '../assets/equa-logo.svg'
 import { trackEvent } from '../utils/analytics'
@@ -755,6 +868,7 @@ import { trackEvent } from '../utils/analytics'
 const route = useRoute()
 const router = useRouter()
 const groupId = route.params.id as string
+const emailManagementEnabled = false
 
 const group = ref<Group | null>(null)
 const balances = ref<Balance[]>([])
@@ -838,6 +952,14 @@ const currentMemberName = computed(() =>
   currentMemberId.value ? memberName(currentMemberId.value) : '',
 )
 
+const personalBalance = computed(() =>
+  currentMemberId.value
+    ? group.value?.status === 'closing'
+      ? calculatePersonalSettlementSummary(settlements.value, currentMemberId.value)
+      : calculatePersonalBalanceSummary(balances.value, currentMemberId.value)
+    : calculatePersonalBalanceSummary([], 0),
+)
+
 const groupLink = computed(() => new URL(`/group/${groupId}`, window.location.origin).toString())
 
 const shareMessage = computed(() => {
@@ -870,6 +992,13 @@ async function loadGroup() {
   try {
     const res = await groupsApi.get(groupId)
     group.value = res.data
+    if (
+      currentMemberId.value &&
+      !res.data.members.some((member) => member.id === currentMemberId.value)
+    ) {
+      currentMemberId.value = null
+      saveCurrentMember()
+    }
     if (route.query.created === '1' || savedLocally.value) {
       saveRecentGroup(res.data)
       savedLocally.value = true
@@ -901,6 +1030,26 @@ watch(activeTab, (tab) => {
 
 function memberName(id: number) {
   return group.value?.members.find((m) => m.id === id)?.name || 'Sconosciuto'
+}
+
+function displayMemberName(id: number) {
+  return currentMemberId.value === id ? 'Tu' : memberName(id)
+}
+
+function formatGroupAmount(amount: number) {
+  return new Intl.NumberFormat('it-IT', {
+    style: 'currency',
+    currency: group.value?.currency || 'EUR',
+  }).format(amount)
+}
+
+function formatSignedGroupAmount(amount: number) {
+  if (amount === 0) return formatGroupAmount(amount)
+  return `${amount > 0 ? '+' : '-'}${formatGroupAmount(Math.abs(amount))}`
+}
+
+function paymentCountLabel(count: number) {
+  return count === 1 ? '1 pagamento' : `${count} pagamenti`
 }
 
 function toggleAddMemberForm() {
