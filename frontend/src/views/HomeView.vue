@@ -99,7 +99,10 @@
       <section v-if="recentGroups.length" class="bg-white rounded-2xl shadow p-6 mb-4">
         <div class="flex items-start justify-between gap-3 mb-1">
           <div>
-            <h2 class="text-lg font-semibold text-gray-800">I tuoi gruppi recenti</h2>
+            <div class="flex flex-wrap items-center gap-2">
+              <h2 class="text-lg font-semibold text-gray-800">I tuoi gruppi recenti</h2>
+              <FeatureBadge variant="new" />
+            </div>
             <p class="text-sm text-gray-400">Salvati solo su questo dispositivo.</p>
           </div>
           <button
@@ -192,6 +195,7 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { groupsApi } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
+import FeatureBadge from '../components/FeatureBadge.vue'
 import {
   clearRecentGroups as clearStoredRecentGroups,
   getRecentGroups,

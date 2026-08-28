@@ -145,9 +145,12 @@
         v-if="!savedLocally"
         class="mb-6 flex items-center justify-between gap-3 rounded-xl border border-green-100 bg-green-50 px-4 py-3"
       >
-        <p class="text-sm text-green-800">
-          Ritrova questo gruppo dalla home su questo dispositivo.
-        </p>
+        <div class="min-w-0">
+          <FeatureBadge variant="new" />
+          <p class="mt-1 text-sm text-green-800">
+            Ritrova questo gruppo dalla home su questo dispositivo.
+          </p>
+        </div>
         <button
           type="button"
           class="shrink-0 text-sm font-semibold text-green-700 underline underline-offset-2 hover:text-green-800"
@@ -170,7 +173,10 @@
               : 'border-transparent text-gray-500 hover:text-gray-700',
           ]"
         >
-          {{ tab.label }}
+          <span class="inline-flex items-center gap-1.5">
+            {{ tab.label }}
+            <FeatureBadge v-if="tab.key === 'balances'" variant="beta" />
+          </span>
         </button>
       </div>
 
@@ -474,6 +480,7 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { groupsApi, type Group, type Balance, type Expense } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
+import FeatureBadge from '../components/FeatureBadge.vue'
 import { isRecentGroup, saveRecentGroup } from '../utils/recentGroups'
 
 const route = useRoute()
