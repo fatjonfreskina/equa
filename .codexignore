@@ -5,10 +5,6 @@
 **/venv/
 **/.pytest_cache/
 **/.mypy_cache/
-**/poetry.lock
-**/package-lock.json
-**/yarn.lock
-
 # Build & Compilation Outputs
 **/dist/
 **/build/
