@@ -40,8 +40,23 @@
 - Non dichiarare verifiche manuali, mobile o di database come completate se non sono state eseguite.
 - Unit test: da implementare quando vengono introdotte logiche complesse o bugfix critici. Usa `python -m pytest backend/tests` e `npm run test:run` per backend e frontend.
 
+## Formattazione
+
+- Backend: dalla root, esegui `python -m black backend` e `python -m ruff check --fix backend`.
+- Frontend: dalla root, esegui `npx --prefix frontend prettier --write "frontend/src/**/*.{ts,vue,js}"`.
+- Per eseguire formatter e controlli configurati nel pre-commit su tutto il repository, usa `python -m pre_commit run --all-files`.
+
+## Codex Cloud
+
+- L'ambiente remoto usa Linux e avvia i comandi dalla root del repository.
+- Configura Python 3.12 e Node.js 20, poi usa `bash scripts/codex-cloud/setup.sh` come setup script.
+- Usa `bash scripts/codex-cloud/maintenance.sh` come maintenance script per riallineare le dipendenze nei container in cache.
+- L'ambiente standard non richiede credenziali MySQL: avvia database e servizi completi solo per task di integrazione che lo richiedono esplicitamente.
+- Mantieni disattivato l'accesso Internet durante la fase agente salvo necessità specifiche; in quel caso limita domini e metodi allo stretto necessario.
+
 ## Git
 
 - Lavora sul branch richiesto dall'utente; se serve crearne uno, usa nomi descrittivi come `feature-...` o `bugfix-...`.
 - Prima di cambiare branch, controlla `git status --short` e preserva modifiche non correlate.
 - Non usare `git reset --hard`, `git checkout --` o comandi distruttivi senza autorizzazione esplicita.
+- Apri i branch partendo da `release-candidate`, se eseguito in Codex Cloud, apri le pull request verso `release-candidate` e non verso `main`.

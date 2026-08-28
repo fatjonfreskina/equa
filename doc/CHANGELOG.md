@@ -7,16 +7,21 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
-## [1.4.3] Frontend; Backend
+## [1.4.3] Frontend; Backend [Non rilasciato]
 
 ### Aggiunto
 
+- Setup e manutenzione riproducibili dell'ambiente Codex Cloud con Python 3.12, Node.js 20 e dipendenze di sviluppo.
 - Integrazione Umami Cloud opzionale per pageview anonimizzate e gli eventi aggregati del funnel: gruppi, spese, condivisione, chiusura, pagamenti e donazioni.
 - Asset SVG del logo condiviso tra l'app e la testata del README.
 - Base di test automatici: pytest per il calcolo dei bilanci, Vitest per le utility frontend e hook pre-commit per le suite interessate dalle modifiche.
 - Flusso di chiusura dei conti con stati `In corso`, `Chiusura conti` e `Conti chiusi`, più riapertura esplicita quando serve una correzione.
 - Pagamenti persistenti generati dai saldi: chi paga può segnalare il pagamento e chi riceve può confermarlo dal proprio dispositivo.
 - Invito alla chiusura visibile nella tab Bilanci solo quando è rilevante, selezione locale del partecipante compatta e popup finale di celebrazione con donazione facoltativa.
+
+### Modificato
+
+- Lockfile resi disponibili a Codex e dipendenza `cryptography` fissata a una versione esplicita.
 
 ### Corretto
 
