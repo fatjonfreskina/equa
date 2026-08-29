@@ -604,9 +604,41 @@
             Vai a Partecipanti
           </button>
         </div>
+        <section
+          v-if="!balancesLoading && group.status === 'active' && group.expenses.length > 0"
+          class="mb-4 rounded-xl border border-blue-100 bg-blue-50 p-4"
+        >
+          <div class="flex flex-wrap items-center gap-2">
+            <p class="font-semibold text-blue-900">Avete finito con le spese?</p>
+            <span
+              class="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700"
+            >
+              Beta
+            </span>
+          </div>
+          <p class="mt-1 text-sm text-blue-800">
+            Blocca il gruppo per verificare e chiudere i pagamenti.
+          </p>
+          <button
+            type="button"
+            class="mt-3 rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+            @click="startClosing"
+          >
+            Chiudiamo i conti
+          </button>
+        </section>
         <div v-if="balancesLoading" class="text-center py-10 text-gray-400">Calcolo...</div>
-        <div v-else-if="group.status === 'closing'" class="space-y-3">
+        <div v-else-if="group.status !== 'active'" class="space-y-3">
           <p v-if="settlementError" class="text-sm text-red-600">{{ settlementError }}</p>
+          <p
+            v-else-if="group.status === 'closed' && settlements.length > 0"
+            class="text-center py-4 text-green-700"
+          >
+            Tutti i pagamenti sono stati confermati. Conti chiusi 🎉
+          </p>
+          <p v-if="settlements.length === 0" class="text-center py-6 text-gray-400">
+            Nessun pagamento necessario: siete già tutti pari.
+          </p>
           <div
             v-for="settlement in settlements"
             :key="settlement.id"
@@ -649,29 +681,6 @@
           Nessun debito! Siete tutti pari 🎉
         </div>
         <div v-else class="space-y-3">
-          <section
-            v-if="group.status === 'active'"
-            class="rounded-xl border border-blue-100 bg-blue-50 p-4"
-          >
-            <div class="flex flex-wrap items-center gap-2">
-              <p class="font-semibold text-blue-900">Avete finito con le spese?</p>
-              <span
-                class="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700"
-              >
-                Beta
-              </span>
-            </div>
-            <p class="mt-1 text-sm text-blue-800">
-              Blocca il gruppo per verificare e chiudere i pagamenti.
-            </p>
-            <button
-              type="button"
-              class="mt-3 rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
-              @click="startClosing"
-            >
-              Chiudiamo i conti
-            </button>
-          </section>
           <div
             v-for="(balance, i) in balances"
             :key="i"
@@ -1015,7 +1024,7 @@ async function loadBalances() {
   try {
     const res = await groupsApi.getBalances(groupId)
     balances.value = res.data
-    if (group.value?.status === 'closing') {
+    if (group.value?.status !== 'active') {
       const settlementsResponse = await groupsApi.getSettlements(groupId)
       settlements.value = settlementsResponse.data
     }

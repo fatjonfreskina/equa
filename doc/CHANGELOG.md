@@ -7,7 +7,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
-## [1.4.3] Frontend; Backend [Non rilasciato]
+## [1.5.0] Frontend; Backend - 2026-08-26
 
 ### Aggiunto
 
@@ -32,6 +32,10 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ### Corretto
 
+- I gruppi già in pari possono avviare e completare il flusso di chiusura dalla tab Bilanci.
+- Nei gruppi chiusi la tab Bilanci mostra lo storico dei pagamenti confermati invece di riproporre i saldi originari come debiti aperti.
+- L'eliminazione di un partecipante coinvolto nello storico dei pagamenti viene rifiutata esplicitamente, evitando errori di integrità del database.
+- Aggiunti gli script di rollback mancanti per le migrazioni `001` e `002`.
 - Il riepilogo personale resta visibile durante la chiusura e considera solo i pagamenti non ancora confermati.
 - Suggerimenti di donazione aggiornati a 2 €, 3 € e 5 €.
 - Durante la chiusura dei conti il backend rifiuta modifiche a spese e partecipanti, evitando che i saldi cambino involontariamente.

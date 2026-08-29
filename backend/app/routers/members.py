@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from .. import models, schemas
 from ..database import get_db
@@ -103,6 +104,25 @@ def delete_member(group_id: str, member_id: int, db: Session = Depends(get_db)):
         raise HTTPException(
             status_code=400,
             detail="Impossibile eliminare: il membro è coinvolto in una o più spese",
+        )
+
+    in_settlement = (
+        db.query(models.Settlement)
+        .filter(
+            models.Settlement.group_id == group_id,
+            or_(
+                models.Settlement.from_member_id == member_id,
+                models.Settlement.to_member_id == member_id,
+                models.Settlement.reported_by_member_id == member_id,
+                models.Settlement.confirmed_by_member_id == member_id,
+            ),
+        )
+        .first()
+    )
+    if in_settlement:
+        raise HTTPException(
+            status_code=400,
+            detail="Impossibile eliminare: il membro è coinvolto nello storico dei pagamenti",
         )
 
     db.delete(member)
