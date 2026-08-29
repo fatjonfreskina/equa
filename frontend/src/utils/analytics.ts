@@ -1,4 +1,4 @@
-type UmamiPayload = { url: string; title: string }
+type UmamiPayload = { website: string; url: string; title: string }
 
 declare global {
   interface Window {
@@ -29,7 +29,7 @@ export function initAnalytics() {
 }
 
 export function trackPageview(path: '/' | '/group') {
-  track({ url: path, title: path === '/' ? 'Equa' : 'Gruppo Equa' })
+  track({ website: websiteId, url: path, title: path === '/' ? 'Equa' : 'Gruppo Equa' })
 }
 
 export function trackEvent(

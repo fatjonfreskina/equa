@@ -7,7 +7,15 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
-## [1.5.0] Frontend; Backend - 2026-08-26
+## [1.5.1] Frontend - 2026-08-29
+
+### Corretto
+
+- Le pageview manuali inviate a Umami includono l'identificatore obbligatorio del sito, evitando risposte `400 Bad Request` in produzione.
+
+---
+
+## [1.5.0] Frontend; Backend - 2026-08-29
 
 ### Aggiunto
 
