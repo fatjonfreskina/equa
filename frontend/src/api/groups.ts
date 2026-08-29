@@ -25,6 +25,8 @@ export interface Group {
   name: string
   description?: string
   currency: string
+  status: 'active' | 'closing' | 'closed'
+  closing_count: number
   created_at: string
   members: Member[]
   expenses: Expense[]
@@ -38,6 +40,18 @@ export interface Balance {
   amount: string
 }
 
+export interface Settlement {
+  id: number
+  from_member_id: number
+  to_member_id: number
+  amount: string
+  status: 'pending' | 'confirmed' | 'cancelled'
+  reported_by_member_id?: number | null
+  reported_at?: string | null
+  confirmed_by_member_id?: number | null
+  confirmed_at?: string | null
+}
+
 export const groupsApi = {
   create: (data: {
     name: string
@@ -48,9 +62,24 @@ export const groupsApi = {
 
   get: (id: string) => client.get<Group>(`/groups/${id}`),
 
+  updateStatus: (id: string, status: Group['status']) =>
+    client.patch<Group>(`/groups/${id}/status`, { status }),
+
   delete: (id: string) => client.delete(`/groups/${id}`),
 
   getBalances: (id: string) => client.get<Balance[]>(`/groups/${id}/balances/`),
+
+  getSettlements: (id: string) => client.get<Settlement[]>(`/groups/${id}/settlements/`),
+
+  reportSettlement: (groupId: string, settlementId: number, memberId: number) =>
+    client.patch<Settlement>(`/groups/${groupId}/settlements/${settlementId}/report`, {
+      member_id: memberId,
+    }),
+
+  confirmSettlement: (groupId: string, settlementId: number, memberId: number) =>
+    client.patch<Settlement>(`/groups/${groupId}/settlements/${settlementId}/confirm`, {
+      member_id: memberId,
+    }),
 
   addExpenseEqual: (
     groupId: string,

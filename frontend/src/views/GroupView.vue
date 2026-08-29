@@ -41,6 +41,7 @@
               :href="whatsAppShareUrl"
               target="_blank"
               rel="noopener noreferrer"
+              @click="trackEvent('share_whatsapp')"
               class="flex items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700"
             >
               <svg
@@ -111,6 +112,95 @@
         </div>
       </div>
 
+      <div
+        v-if="showCelebration"
+        class="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4 sm:items-center"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="celebration-title"
+        @click.self="showCelebration = false"
+      >
+        <div class="w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-xl">
+          <p class="text-4xl" aria-hidden="true">🎉</p>
+          <h2 id="celebration-title" class="mt-3 text-xl font-bold text-gray-800">Conti chiusi!</h2>
+          <p class="mt-2 text-sm leading-6 text-gray-600">
+            Avete chiuso i conti di {{ group.name }}. Se Equa vi è stata utile, puoi offrirci un
+            caffè per mantenerla gratuita.
+          </p>
+          <a
+            href="https://paypal.me/fatjonfreskina"
+            target="_blank"
+            rel="noopener noreferrer"
+            @click="trackEvent('donation_clicked')"
+            class="mt-5 block rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700"
+            >☕ Offri un caffè</a
+          >
+          <button
+            type="button"
+            class="mt-3 text-sm text-gray-500 hover:text-gray-700"
+            @click="showCelebration = false"
+          >
+            Non ora
+          </button>
+        </div>
+      </div>
+
+      <div
+        v-if="showClosingSummary"
+        class="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4 sm:items-center"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="closing-summary-title"
+        @click.self="showClosingSummary = false"
+      >
+        <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <span
+                class="inline-block rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700"
+              >
+                Beta
+              </span>
+              <h2 id="closing-summary-title" class="mt-2 text-xl font-bold text-gray-800">
+                Condividi il riepilogo
+              </h2>
+            </div>
+            <button
+              type="button"
+              class="text-2xl leading-none text-gray-400 hover:text-gray-700"
+              aria-label="Chiudi riepilogo"
+              @click="showClosingSummary = false"
+            >
+              ×
+            </button>
+          </div>
+          <p class="mt-2 text-sm leading-6 text-gray-600">
+            Invia al gruppo le somme da pagare e il link per aggiornare i pagamenti.
+          </p>
+          <div
+            class="mt-4 max-h-64 overflow-y-auto whitespace-pre-wrap rounded-lg bg-gray-50 p-3 text-sm leading-6 text-gray-700"
+          >
+            {{ closingSummaryMessage }}
+          </div>
+          <a
+            :href="closingSummaryWhatsAppUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mt-4 flex items-center justify-center rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700"
+            @click="trackEvent('closing_summary_whatsapp')"
+          >
+            Condividi su WhatsApp
+          </a>
+          <button
+            type="button"
+            class="mt-3 w-full text-sm text-gray-500 hover:text-gray-700"
+            @click="showClosingSummary = false"
+          >
+            Non ora
+          </button>
+        </div>
+      </div>
+
       <!-- Link home -->
       <div class="mb-4">
         <RouterLink to="/" class="text-sm text-gray-400 hover:text-green-600 transition">
@@ -122,11 +212,7 @@
       <div class="mb-6 flex items-start justify-between gap-4">
         <div class="min-w-0 flex-1">
           <div class="flex items-center gap-2 mb-1">
-            <svg width="24" height="24" viewBox="0 0 64 64" class="flex-shrink-0">
-              <rect x="8" y="10" width="48" height="13" rx="6.5" fill="#16a34a" />
-              <rect x="8" y="28" width="32" height="13" rx="6.5" fill="#4ade80" />
-              <rect x="8" y="46" width="20" height="13" rx="6.5" fill="#86efac" />
-            </svg>
+            <img :src="equaLogo" alt="" width="24" height="24" class="flex-shrink-0" />
             <h1 class="break-words text-2xl font-bold text-green-700">{{ group.name }}</h1>
           </div>
           <p v-if="group.description" class="text-gray-500 text-sm">
@@ -145,9 +231,16 @@
         v-if="!savedLocally"
         class="mb-6 flex items-center justify-between gap-3 rounded-xl border border-green-100 bg-green-50 px-4 py-3"
       >
-        <p class="text-sm text-green-800">
-          Ritrova questo gruppo dalla home su questo dispositivo.
-        </p>
+        <div class="min-w-0">
+          <span
+            class="inline-block rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700"
+          >
+            Novità
+          </span>
+          <p class="mt-1 text-sm text-green-800">
+            Ritrova questo gruppo dalla home su questo dispositivo.
+          </p>
+        </div>
         <button
           type="button"
           class="shrink-0 text-sm font-semibold text-green-700 underline underline-offset-2 hover:text-green-800"
@@ -156,6 +249,61 @@
           Salva gruppo
         </button>
       </div>
+
+      <section
+        v-if="group.status !== 'active'"
+        :class="[
+          'mb-6 rounded-xl border px-4 py-4',
+          group.status === 'closing'
+            ? 'border-amber-100 bg-amber-50'
+            : 'border-green-100 bg-green-50',
+        ]"
+      >
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="font-semibold text-gray-800">{{ groupStatusTitle }}</p>
+            <p class="mt-1 text-sm text-gray-600">{{ groupStatusDescription }}</p>
+          </div>
+          <span
+            :class="[
+              'shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold',
+              group.status === 'closing'
+                ? 'bg-amber-100 text-amber-700'
+                : 'bg-green-100 text-green-700',
+            ]"
+          >
+            {{ groupStatusLabel }}
+          </span>
+        </div>
+        <p v-if="statusError" class="mt-3 text-sm text-red-600">{{ statusError }}</p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <button
+            v-if="group.status === 'closing'"
+            type="button"
+            class="rounded-lg border border-amber-300 bg-white px-3 py-2 text-sm font-semibold text-amber-800 transition hover:bg-amber-100"
+            @click="showClosingSummary = true"
+          >
+            Condividi riepilogo
+          </button>
+          <button
+            v-if="group.status === 'closing'"
+            type="button"
+            :disabled="statusLoading"
+            class="rounded-lg bg-green-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-green-700 disabled:bg-gray-300"
+            @click="closeGroup"
+          >
+            {{ statusLoading ? 'Aggiornamento...' : 'Segna come chiuso' }}
+          </button>
+          <button
+            type="button"
+            :disabled="statusLoading"
+            class="rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-white disabled:bg-gray-100"
+            @click="reopenGroup"
+          >
+            Riapri conti
+          </button>
+        </div>
+      </section>
 
       <!-- Tabs -->
       <div class="flex gap-2 mb-6 border-b border-gray-200">
@@ -188,6 +336,7 @@
 
         <!-- Bottone aggiungi -->
         <button
+          v-if="group.status === 'active'"
           @click="openNewExpenseForm"
           class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg py-2.5 mb-4 transition"
         >
@@ -325,7 +474,10 @@
           <div
             v-for="expense in [...group.expenses].reverse()"
             :key="expense.id"
-            class="bg-white rounded-2xl shadow px-5 py-4 flex items-center justify-between cursor-pointer hover:shadow-md transition"
+            :class="[
+              'bg-white rounded-2xl shadow px-5 py-4 flex items-center justify-between transition',
+              group.status === 'active' ? 'cursor-pointer hover:shadow-md' : '',
+            ]"
             @click="openEditExpenseForm(expense)"
           >
             <div>
@@ -340,6 +492,7 @@
                 >{{ expense.amount }} {{ group.currency }}</span
               >
               <button
+                v-if="group.status === 'active'"
                 @click.stop="deleteExpense(expense.id)"
                 class="text-gray-300 hover:text-red-400 transition text-lg"
               >
@@ -352,7 +505,178 @@
 
       <!-- Tab: Bilanci -->
       <div v-if="activeTab === 'balances'">
+        <div
+          v-if="group.status === 'closing'"
+          class="mb-4 rounded-xl border border-amber-100 bg-amber-50 p-4"
+        >
+          <div
+            v-if="currentMemberId && !showMemberPicker"
+            class="flex items-center justify-between gap-3"
+          >
+            <p class="text-sm text-amber-900">
+              Stai agendo come <strong>{{ currentMemberName }}</strong
+              >.
+            </p>
+            <button
+              type="button"
+              class="shrink-0 text-sm font-semibold text-amber-800 underline"
+              @click="showMemberPicker = true"
+            >
+              Cambia
+            </button>
+          </div>
+          <template v-else>
+            <label class="block text-sm font-medium text-amber-900" for="current-member"
+              >Quale partecipante sei?</label
+            >
+            <select
+              id="current-member"
+              v-model="currentMemberId"
+              class="mt-2 w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-gray-700"
+              @change="saveCurrentMember"
+            >
+              <option :value="null">Seleziona il tuo nome per aggiornare un pagamento</option>
+              <option v-for="member in group.members" :key="member.id" :value="member.id">
+                {{ member.name }}
+              </option>
+            </select>
+          </template>
+          <p class="mt-2 text-xs text-amber-800">
+            La scelta resta solo su questo dispositivo e non è un'autenticazione.
+          </p>
+        </div>
+        <section
+          v-if="!balancesLoading && group.status !== 'closed' && currentMemberId"
+          class="mb-4 border-y border-gray-200 bg-white px-4 py-4"
+        >
+          <div class="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 class="font-semibold text-gray-800">Il tuo riepilogo</h2>
+            <p class="text-xs text-gray-500">Come {{ currentMemberName }}</p>
+          </div>
+          <div class="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-3">
+            <div>
+              <p class="text-xs text-gray-500">Devi pagare</p>
+              <p class="mt-1 font-semibold text-red-600">
+                {{ formatGroupAmount(personalBalance.amountToPay) }}
+              </p>
+              <p class="mt-0.5 text-xs text-gray-400">
+                {{ paymentCountLabel(personalBalance.outgoingPayments) }}
+              </p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500">Devi ricevere</p>
+              <p class="mt-1 font-semibold text-green-700">
+                {{ formatGroupAmount(personalBalance.amountToReceive) }}
+              </p>
+              <p class="mt-0.5 text-xs text-gray-400">
+                {{ paymentCountLabel(personalBalance.incomingPayments) }}
+              </p>
+            </div>
+            <div
+              class="col-span-2 border-t border-gray-100 pt-3 sm:col-span-1 sm:border-t-0 sm:pt-0"
+            >
+              <p class="text-xs text-gray-500">Saldo netto</p>
+              <p
+                :class="[
+                  'mt-1 font-semibold',
+                  personalBalance.netAmount > 0
+                    ? 'text-green-700'
+                    : personalBalance.netAmount < 0
+                      ? 'text-red-600'
+                      : 'text-gray-700',
+                ]"
+              >
+                {{ formatSignedGroupAmount(personalBalance.netAmount) }}
+              </p>
+            </div>
+          </div>
+        </section>
+        <div
+          v-else-if="!balancesLoading && group.status === 'active'"
+          class="mb-4 flex items-center justify-between gap-3 border-y border-gray-200 bg-white px-4 py-3"
+        >
+          <p class="text-sm text-gray-600">Scegli chi sei per vedere il tuo riepilogo.</p>
+          <button
+            type="button"
+            class="shrink-0 text-sm font-semibold text-green-700 underline underline-offset-2"
+            @click="activeTab = 'members'"
+          >
+            Vai a Partecipanti
+          </button>
+        </div>
+        <section
+          v-if="!balancesLoading && group.status === 'active' && group.expenses.length > 0"
+          class="mb-4 rounded-xl border border-blue-100 bg-blue-50 p-4"
+        >
+          <div class="flex flex-wrap items-center gap-2">
+            <p class="font-semibold text-blue-900">Avete finito con le spese?</p>
+            <span
+              class="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700"
+            >
+              Beta
+            </span>
+          </div>
+          <p class="mt-1 text-sm text-blue-800">
+            Blocca il gruppo per verificare e chiudere i pagamenti.
+          </p>
+          <button
+            type="button"
+            class="mt-3 rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+            @click="startClosing"
+          >
+            Chiudiamo i conti
+          </button>
+        </section>
         <div v-if="balancesLoading" class="text-center py-10 text-gray-400">Calcolo...</div>
+        <div v-else-if="group.status !== 'active'" class="space-y-3">
+          <p v-if="settlementError" class="text-sm text-red-600">{{ settlementError }}</p>
+          <p
+            v-else-if="group.status === 'closed' && settlements.length > 0"
+            class="text-center py-4 text-green-700"
+          >
+            Tutti i pagamenti sono stati confermati. Conti chiusi 🎉
+          </p>
+          <p v-if="settlements.length === 0" class="text-center py-6 text-gray-400">
+            Nessun pagamento necessario: siete già tutti pari.
+          </p>
+          <div
+            v-for="settlement in settlements"
+            :key="settlement.id"
+            class="rounded-2xl bg-white px-5 py-4 shadow"
+          >
+            <div class="flex items-center justify-between gap-3">
+              <div class="min-w-0 text-gray-700">
+                <span class="font-medium">{{ displayMemberName(settlement.from_member_id) }}</span>
+                <span class="mx-2 text-gray-400">→</span>
+                <span class="font-medium">{{ displayMemberName(settlement.to_member_id) }}</span>
+              </div>
+              <span class="shrink-0 font-bold text-red-500"
+                >{{ settlement.amount }} {{ group.currency }}</span
+              >
+            </div>
+            <p class="mt-2 text-sm text-gray-500">{{ settlementLabel(settlement) }}</p>
+            <button
+              v-if="currentMemberId === settlement.from_member_id && !settlement.reported_at"
+              class="mt-3 rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white disabled:bg-gray-300"
+              :disabled="settlementLoading"
+              @click="reportSettlement(settlement.id)"
+            >
+              Ho pagato
+            </button>
+            <button
+              v-else-if="
+                currentMemberId === settlement.to_member_id &&
+                settlement.reported_at &&
+                settlement.status === 'pending'
+              "
+              class="mt-3 rounded-lg bg-green-600 px-3 py-2 text-sm font-semibold text-white disabled:bg-gray-300"
+              :disabled="settlementLoading"
+              @click="confirmSettlement(settlement.id)"
+            >
+              Conferma ricezione
+            </button>
+          </div>
+        </div>
         <div v-else-if="balances.length === 0" class="text-center py-10 text-gray-400">
           Nessun debito! Siete tutti pari 🎉
         </div>
@@ -363,9 +687,9 @@
             class="bg-white rounded-2xl shadow px-5 py-4 flex items-center justify-between"
           >
             <div class="flex items-center gap-2 text-gray-700">
-              <span class="font-medium">{{ balance.from_member_name }}</span>
+              <span class="font-medium">{{ displayMemberName(balance.from_member_id) }}</span>
               <span class="text-gray-400">→</span>
-              <span class="font-medium">{{ balance.to_member_name }}</span>
+              <span class="font-medium">{{ displayMemberName(balance.to_member_id) }}</span>
             </div>
             <span class="font-bold text-red-500">{{ balance.amount }} {{ group.currency }}</span>
           </div>
@@ -374,8 +698,60 @@
 
       <!-- Tab: Partecipanti -->
       <div v-if="activeTab === 'members'">
+        <div
+          v-if="group.status === 'active'"
+          class="mb-4 rounded-xl border border-green-100 bg-green-50 p-4"
+        >
+          <div
+            v-if="currentMemberId && !showMemberPicker"
+            class="flex items-center justify-between gap-3"
+          >
+            <p class="text-sm text-green-900">
+              In questo gruppo sei <strong>{{ currentMemberName }}</strong
+              >.
+            </p>
+            <button
+              type="button"
+              class="shrink-0 text-sm font-semibold text-green-800 underline"
+              @click="showMemberPicker = true"
+            >
+              Cambia
+            </button>
+          </div>
+          <template v-else>
+            <label class="block text-sm font-medium text-green-900" for="active-current-member">
+              Tu chi sei nel gruppo?
+            </label>
+            <select
+              id="active-current-member"
+              v-model="currentMemberId"
+              class="mt-2 w-full rounded-lg border border-green-200 bg-white px-3 py-2 text-sm text-gray-700"
+              @change="saveCurrentMember"
+            >
+              <option :value="null">Seleziona il tuo nome</option>
+              <option v-for="member in group.members" :key="member.id" :value="member.id">
+                {{ member.name }}
+              </option>
+            </select>
+          </template>
+          <p class="mt-2 text-xs text-green-800">
+            La scelta resta solo su questo dispositivo e non è un'autenticazione.
+          </p>
+        </div>
+
+        <p
+          v-if="group.status !== 'active'"
+          class="mb-4 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800"
+        >
+          {{
+            group.status === 'closed'
+              ? 'Il gruppo è chiuso: i partecipanti sono in sola lettura.'
+              : 'I partecipanti non possono essere modificati durante la chiusura dei conti.'
+          }}
+        </p>
         <!-- Bottone toggle, stesso pattern della tab Spese -->
         <button
+          v-if="group.status === 'active'"
           @click="toggleAddMemberForm"
           class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg py-2.5 mb-4 transition"
         >
@@ -383,7 +759,7 @@
         </button>
 
         <div
-          v-if="showAddMemberForm"
+          v-if="showAddMemberForm && group.status === 'active'"
           class="bg-white rounded-2xl shadow p-4 mb-4 flex flex-col sm:flex-row gap-2"
         >
           <input
@@ -392,6 +768,7 @@
             class="min-w-0 flex-1 border rounded-lg px-3 py-2 text-sm"
           />
           <input
+            v-if="emailManagementEnabled"
             v-model="newMember.email"
             placeholder="Email (opzionale)"
             class="min-w-0 flex-1 border rounded-lg px-3 py-2 text-sm"
@@ -415,14 +792,28 @@
               <span class="font-medium text-gray-800">{{ member.name }}</span>
 
               <span
-                v-if="editingEmailId !== member.id"
-                @click="startEditEmail(member)"
-                class="text-sm text-gray-400 ml-2 cursor-pointer hover:text-green-600 transition"
+                v-if="
+                  emailManagementEnabled &&
+                  editingEmailId !== member.id &&
+                  (member.email || group.status === 'active')
+                "
+                @click="group.status === 'active' && startEditEmail(member)"
+                :class="[
+                  'ml-2 text-sm text-gray-400 transition',
+                  group.status === 'active' ? 'cursor-pointer hover:text-green-600' : '',
+                ]"
               >
                 {{ member.email || '+ aggiungi email' }}
               </span>
 
-              <div v-else class="flex items-center gap-2 mt-1">
+              <div
+                v-else-if="
+                  emailManagementEnabled &&
+                  editingEmailId === member.id &&
+                  group.status === 'active'
+                "
+                class="flex items-center gap-2 mt-1"
+              >
                 <input
                   v-model="editingEmailValue"
                   type="email"
@@ -448,7 +839,7 @@
 
             <!-- il bottone elimina sparisce mentre stai editando l'email di QUESTO membro -->
             <button
-              v-if="editingEmailId !== member.id"
+              v-if="editingEmailId !== member.id && group.status === 'active'"
               @click="deleteMember(member.id, member.name)"
               class="text-gray-300 hover:text-red-400 transition text-lg shrink-0"
             >
@@ -472,13 +863,21 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { groupsApi, type Group, type Balance, type Expense } from '../api/groups'
+import { groupsApi, type Group, type Balance, type Expense, type Settlement } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
+import { buildClosingSummary } from '../utils/closingSummary'
+import {
+  calculatePersonalBalanceSummary,
+  calculatePersonalSettlementSummary,
+} from '../utils/personalBalanceSummary'
 import { isRecentGroup, saveRecentGroup } from '../utils/recentGroups'
+import equaLogo from '../assets/equa-logo.svg'
+import { trackEvent } from '../utils/analytics'
 
 const route = useRoute()
 const router = useRouter()
 const groupId = route.params.id as string
+const emailManagementEnabled = false
 
 const group = ref<Group | null>(null)
 const balances = ref<Balance[]>([])
@@ -489,6 +888,15 @@ const showShareDialog = ref(route.query.created === '1')
 const savedLocally = ref(route.query.created === '1' || isRecentGroup(groupId))
 const activeTab = ref('expenses')
 const balancesLoading = ref(false)
+const settlements = ref<Settlement[]>([])
+const settlementLoading = ref(false)
+const settlementError = ref('')
+const currentMemberId = ref<number | null>(getCurrentMember())
+const showMemberPicker = ref(!currentMemberId.value)
+const showCelebration = ref(false)
+const showClosingSummary = ref(false)
+const statusLoading = ref(false)
+const statusError = ref('')
 
 const newMember = reactive({ name: '', email: '' })
 const addMemberError = ref('')
@@ -527,6 +935,40 @@ const totalExpenses = computed(() => {
   return group.value.expenses.reduce((acc, e) => acc + parseFloat(String(e.amount)), 0)
 })
 
+const groupStatusLabel = computed(() => {
+  if (group.value?.status === 'closing') return 'Chiusura conti'
+  if (group.value?.status === 'closed') return 'Conti chiusi'
+  return 'In corso'
+})
+
+const groupStatusTitle = computed(() => {
+  if (group.value?.status === 'closing') return 'I conti sono bloccati'
+  if (group.value?.status === 'closed') return 'Questo gruppo è chiuso'
+  return 'Quando la vacanza è finita, chiudete i conti'
+})
+
+const groupStatusDescription = computed(() => {
+  if (group.value?.status === 'closing') {
+    return 'Spese e partecipanti non possono essere modificati finché state verificando i saldi.'
+  }
+  if (group.value?.status === 'closed') {
+    return 'Il riepilogo resta disponibile in sola lettura. Puoi riaprire i conti se serve una correzione.'
+  }
+  return 'Blocca spese e partecipanti per verificare i saldi senza modifiche involontarie.'
+})
+
+const currentMemberName = computed(() =>
+  currentMemberId.value ? memberName(currentMemberId.value) : '',
+)
+
+const personalBalance = computed(() =>
+  currentMemberId.value
+    ? group.value?.status === 'closing'
+      ? calculatePersonalSettlementSummary(settlements.value, currentMemberId.value)
+      : calculatePersonalBalanceSummary(balances.value, currentMemberId.value)
+    : calculatePersonalBalanceSummary([], 0),
+)
+
 const groupLink = computed(() => new URL(`/group/${groupId}`, window.location.origin).toString())
 
 const shareMessage = computed(() => {
@@ -536,6 +978,14 @@ const shareMessage = computed(() => {
 
 const whatsAppShareUrl = computed(
   () => `https://wa.me/?text=${encodeURIComponent(shareMessage.value)}`,
+)
+
+const closingSummaryMessage = computed(() =>
+  group.value ? buildClosingSummary(group.value, balances.value, groupLink.value) : '',
+)
+
+const closingSummaryWhatsAppUrl = computed(
+  () => `https://wa.me/?text=${encodeURIComponent(closingSummaryMessage.value)}`,
 )
 
 const splitSum = computed(() => {
@@ -551,6 +1001,13 @@ async function loadGroup() {
   try {
     const res = await groupsApi.get(groupId)
     group.value = res.data
+    if (
+      currentMemberId.value &&
+      !res.data.members.some((member) => member.id === currentMemberId.value)
+    ) {
+      currentMemberId.value = null
+      saveCurrentMember()
+    }
     if (route.query.created === '1' || savedLocally.value) {
       saveRecentGroup(res.data)
       savedLocally.value = true
@@ -567,6 +1024,10 @@ async function loadBalances() {
   try {
     const res = await groupsApi.getBalances(groupId)
     balances.value = res.data
+    if (group.value?.status !== 'active') {
+      const settlementsResponse = await groupsApi.getSettlements(groupId)
+      settlements.value = settlementsResponse.data
+    }
   } finally {
     balancesLoading.value = false
   }
@@ -578,6 +1039,26 @@ watch(activeTab, (tab) => {
 
 function memberName(id: number) {
   return group.value?.members.find((m) => m.id === id)?.name || 'Sconosciuto'
+}
+
+function displayMemberName(id: number) {
+  return currentMemberId.value === id ? 'Tu' : memberName(id)
+}
+
+function formatGroupAmount(amount: number) {
+  return new Intl.NumberFormat('it-IT', {
+    style: 'currency',
+    currency: group.value?.currency || 'EUR',
+  }).format(amount)
+}
+
+function formatSignedGroupAmount(amount: number) {
+  if (amount === 0) return formatGroupAmount(amount)
+  return `${amount > 0 ? '+' : '-'}${formatGroupAmount(Math.abs(amount))}`
+}
+
+function paymentCountLabel(count: number) {
+  return count === 1 ? '1 pagamento' : `${count} pagamenti`
 }
 
 function toggleAddMemberForm() {
@@ -621,6 +1102,7 @@ function resetExpenseForm() {
 }
 
 function openNewExpenseForm() {
+  if (group.value?.status !== 'active') return
   if (showExpenseForm.value && !editingExpenseId.value) {
     showExpenseForm.value = false
     resetExpenseForm()
@@ -631,6 +1113,7 @@ function openNewExpenseForm() {
 }
 
 function openEditExpenseForm(expense: Expense) {
+  if (group.value?.status !== 'active') return
   resetExpenseForm()
   editingExpenseId.value = expense.id
   expenseForm.description = expense.description
@@ -715,6 +1198,7 @@ async function saveExpense() {
       })
     }
     await loadGroup()
+    if (!editingExpenseId.value) trackEvent('expense_created')
     showExpenseForm.value = false
     resetExpenseForm()
   } catch {
@@ -725,12 +1209,14 @@ async function saveExpense() {
 }
 
 async function deleteExpense(expenseId: number) {
+  if (group.value?.status !== 'active') return
   if (!confirm('Eliminare questa spesa?')) return
   await groupsApi.deleteExpense(groupId, expenseId)
   await loadGroup()
 }
 
 async function deleteMember(memberId: number, name: string) {
+  if (group.value?.status !== 'active') return
   if (!confirm(`Rimuovere ${name} dal gruppo?`)) return
   try {
     await groupsApi.deleteMember(groupId, memberId)
@@ -742,6 +1228,7 @@ async function deleteMember(memberId: number, name: string) {
 }
 
 async function addMember() {
+  if (group.value?.status !== 'active') return
   addMemberError.value = ''
   if (!newMember.name.trim()) {
     addMemberError.value = 'Inserisci un nome'
@@ -765,6 +1252,7 @@ async function copyLink() {
   try {
     await navigator.clipboard.writeText(groupLink.value)
     copied.value = true
+    trackEvent('share_copied')
     setTimeout(() => (copied.value = false), 2000)
   } catch {
     // Il link resta visibile nel promemoria e può essere copiato manualmente.
@@ -789,6 +1277,7 @@ async function shareGroup() {
 }
 
 function openShareDialog() {
+  trackEvent('share_opened')
   showShareDialog.value = true
 }
 
@@ -803,6 +1292,106 @@ function saveGroupLocally() {
   if (!group.value) return
   saveRecentGroup(group.value)
   savedLocally.value = true
+}
+
+function getCurrentMember() {
+  try {
+    const value = localStorage.getItem(`equa.current-member.${groupId}`)
+    return value ? Number(value) : null
+  } catch {
+    return null
+  }
+}
+
+function saveCurrentMember() {
+  try {
+    if (currentMemberId.value)
+      localStorage.setItem(`equa.current-member.${groupId}`, String(currentMemberId.value))
+    else localStorage.removeItem(`equa.current-member.${groupId}`)
+  } catch {
+    // L'app resta utilizzabile se lo storage locale non è disponibile.
+  }
+  showMemberPicker.value = !currentMemberId.value
+}
+
+function settlementLabel(settlement: Settlement) {
+  if (settlement.status === 'confirmed')
+    return `Ricezione confermata da ${memberName(settlement.confirmed_by_member_id!)}`
+  if (settlement.reported_at)
+    return `Pagamento segnalato da ${memberName(settlement.reported_by_member_id!)}. In attesa che ${memberName(settlement.to_member_id)} confermi la ricezione.`
+  return 'Da pagare'
+}
+
+async function reportSettlement(settlementId: number) {
+  if (!currentMemberId.value) return
+  settlementLoading.value = true
+  settlementError.value = ''
+  try {
+    await groupsApi.reportSettlement(groupId, settlementId, currentMemberId.value)
+    trackEvent('settlement_reported')
+    await loadBalances()
+  } catch (e: any) {
+    settlementError.value =
+      e?.response?.data?.detail || 'Non è stato possibile segnalare il pagamento.'
+  } finally {
+    settlementLoading.value = false
+  }
+}
+
+async function confirmSettlement(settlementId: number) {
+  if (!currentMemberId.value) return
+  settlementLoading.value = true
+  settlementError.value = ''
+  try {
+    await groupsApi.confirmSettlement(groupId, settlementId, currentMemberId.value)
+    trackEvent('settlement_confirmed')
+    await loadBalances()
+  } catch (e: any) {
+    settlementError.value =
+      e?.response?.data?.detail || 'Non è stato possibile confermare il pagamento.'
+  } finally {
+    settlementLoading.value = false
+  }
+}
+
+async function updateGroupStatus(status: Group['status']) {
+  statusError.value = ''
+  statusLoading.value = true
+  try {
+    const response = await groupsApi.updateStatus(groupId, status)
+    group.value = response.data
+    if (status === 'closing') trackEvent('closing_started')
+    if (status === 'closed') {
+      showCelebration.value = true
+      trackEvent('group_closed')
+    }
+    showExpenseForm.value = false
+    showAddMemberForm.value = false
+    cancelEditEmail()
+    if (activeTab.value === 'balances') await loadBalances()
+    return true
+  } catch (e: any) {
+    statusError.value =
+      e?.response?.data?.detail || 'Non è stato possibile aggiornare lo stato del gruppo.'
+    return false
+  } finally {
+    statusLoading.value = false
+  }
+}
+
+async function startClosing() {
+  if (!confirm('Bloccare spese e partecipanti per iniziare la chiusura dei conti?')) return
+  if (await updateGroupStatus('closing')) showClosingSummary.value = true
+}
+
+function closeGroup() {
+  if (!confirm('Segnare il gruppo come chiuso? Potrai riaprirlo se serve una correzione.')) return
+  updateGroupStatus('closed')
+}
+
+function reopenGroup() {
+  if (!confirm('Riaprire i conti? Spese e partecipanti torneranno modificabili.')) return
+  updateGroupStatus('active')
 }
 
 onMounted(loadGroup)

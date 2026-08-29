@@ -7,6 +7,43 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
+## [1.5.0] Frontend; Backend - 2026-08-26
+
+### Aggiunto
+
+- Setup e manutenzione riproducibili dell'ambiente Codex Cloud con Python 3.12, Node.js 20 e dipendenze di sviluppo.
+- Badge `Novità` per gruppi recenti e salvataggio locale, e badge `Beta` per il flusso di chiusura dei conti.
+- Riepilogo WhatsApp con emoji generato all'avvio della chiusura, con totale spese, pagamenti richiesti, link al gruppo e versione per i cicli successivi al primo.
+- Integrazione Umami Cloud opzionale per pageview anonimizzate e gli eventi aggregati del funnel: gruppi, spese, condivisione, chiusura, pagamenti e donazioni.
+- Asset SVG del logo condiviso tra l'app e la testata del README.
+- Base di test automatici: pytest per il calcolo dei bilanci, Vitest per le utility frontend e hook pre-commit per le suite interessate dalle modifiche.
+- Flusso di chiusura dei conti con stati `In corso`, `Chiusura conti` e `Conti chiusi`, più riapertura esplicita quando serve una correzione.
+- Pagamenti persistenti generati dai saldi: chi paga può segnalare il pagamento e chi riceve può confermarlo dal proprio dispositivo.
+- Invito alla chiusura visibile nella tab Bilanci solo quando è rilevante, selezione locale del partecipante compatta e popup finale di celebrazione con donazione facoltativa.
+- Selezione locale `Tu chi sei nel gruppo?` disponibile nella tab Partecipanti mentre la vacanza è in corso e riutilizzata durante la chiusura dei conti.
+- Riepilogo personale nella tab Bilanci con importi da pagare e ricevere, saldo netto e numero di pagamenti per l'identità scelta sul dispositivo.
+
+### Modificato
+
+- Lockfile resi disponibili a Codex e dipendenza `cryptography` fissata a una versione esplicita.
+- Il link di donazione mostrato alla chiusura dei conti ora lascia libero l'importo.
+- L'azione `Aggiungi email` dei partecipanti viene nascosta quando il gruppo è in chiusura o chiuso.
+- La gestione email dei partecipanti resta disponibile nel codice ma viene temporaneamente nascosta nell'interfaccia.
+
+### Corretto
+
+- I gruppi già in pari possono avviare e completare il flusso di chiusura dalla tab Bilanci.
+- Nei gruppi chiusi la tab Bilanci mostra lo storico dei pagamenti confermati invece di riproporre i saldi originari come debiti aperti.
+- L'eliminazione di un partecipante coinvolto nello storico dei pagamenti viene rifiutata esplicitamente, evitando errori di integrità del database.
+- Aggiunti gli script di rollback mancanti per le migrazioni `001` e `002`.
+- Il riepilogo personale resta visibile durante la chiusura e considera solo i pagamenti non ancora confermati.
+- Suggerimenti di donazione aggiornati a 2 €, 3 € e 5 €.
+- Durante la chiusura dei conti il backend rifiuta modifiche a spese e partecipanti, evitando che i saldi cambino involontariamente.
+- I messaggi della chiusura distinguono correttamente il gruppo in chiusura dal gruppo già chiuso e indicano quando si attende la conferma del creditore.
+- Dopo l'avvio della chiusura, la tab Bilanci ricarica subito i pagamenti da confermare senza richiedere una navigazione o un refresh manuale.
+
+---
+
 ## [1.4.2] Frontend - 2026-08-25
 
 ### Aggiunto

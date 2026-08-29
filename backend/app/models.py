@@ -16,6 +16,8 @@ class Group(Base):
     name = Column(String(100), nullable=False)
     description = Column(String(500), nullable=True)
     currency = Column(String(3), nullable=False, default="EUR")
+    status = Column(String(20), nullable=False, default="active")
+    closing_count = Column(Integer, nullable=False, default=0)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     members = relationship(
@@ -23,6 +25,9 @@ class Group(Base):
     )
     expenses = relationship(
         "Expense", back_populates="group", cascade="all, delete-orphan"
+    )
+    settlements = relationship(
+        "Settlement", back_populates="group", cascade="all, delete-orphan"
     )
 
 
@@ -68,3 +73,21 @@ class ExpenseSplit(Base):
 
     expense = relationship("Expense", back_populates="splits")
     member = relationship("Member", back_populates="splits")
+
+
+class Settlement(Base):
+    __tablename__ = "settlements"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    group_id = Column(String(36), ForeignKey("groups.id"), nullable=False)
+    from_member_id = Column(Integer, ForeignKey("members.id"), nullable=False)
+    to_member_id = Column(Integer, ForeignKey("members.id"), nullable=False)
+    amount = Column(Numeric(10, 2), nullable=False)
+    status = Column(String(20), nullable=False, default="pending")
+    reported_by_member_id = Column(Integer, ForeignKey("members.id"), nullable=True)
+    reported_at = Column(DateTime, nullable=True)
+    confirmed_by_member_id = Column(Integer, ForeignKey("members.id"), nullable=True)
+    confirmed_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    group = relationship("Group", back_populates="settlements")

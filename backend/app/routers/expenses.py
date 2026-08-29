@@ -7,14 +7,24 @@ from ..database import get_db
 router = APIRouter(prefix="/groups/{group_id}/expenses", tags=["expenses"])
 
 
+def get_editable_group(group_id: str, db: Session):
+    db_group = db.query(models.Group).filter(models.Group.id == group_id).first()
+    if not db_group:
+        raise HTTPException(status_code=404, detail="Gruppo non trovato")
+    if db_group.status != "active":
+        raise HTTPException(
+            status_code=409,
+            detail="Le spese sono bloccate durante la chiusura dei conti",
+        )
+    return db_group
+
+
 @router.post("/", response_model=schemas.ExpenseOut)
 def add_expense(
     group_id: str, expense: schemas.ExpenseCreate, db: Session = Depends(get_db)
 ):
     # Verifica che il gruppo esista
-    db_group = db.query(models.Group).filter(models.Group.id == group_id).first()
-    if not db_group:
-        raise HTTPException(status_code=404, detail="Gruppo non trovato")
+    get_editable_group(group_id, db)
 
     # Verifica che chi paga sia membro del gruppo
     payer = (
@@ -66,9 +76,7 @@ def add_expense_equal(
     group_id: str, expense: schemas.ExpenseCreateEqual, db: Session = Depends(get_db)
 ):
     # Verifica che il gruppo esista
-    db_group = db.query(models.Group).filter(models.Group.id == group_id).first()
-    if not db_group:
-        raise HTTPException(status_code=404, detail="Gruppo non trovato")
+    db_group = get_editable_group(group_id, db)
 
     # Verifica che chi paga sia membro del gruppo
     payer = (
@@ -119,9 +127,7 @@ def add_expense_equal(
 def add_expense_subset(
     group_id: str, expense: schemas.ExpenseCreateSubset, db: Session = Depends(get_db)
 ):
-    db_group = db.query(models.Group).filter(models.Group.id == group_id).first()
-    if not db_group:
-        raise HTTPException(status_code=404, detail="Gruppo non trovato")
+    db_group = get_editable_group(group_id, db)
 
     payer = (
         db.query(models.Member)
@@ -181,6 +187,7 @@ def update_expense(
     expense: schemas.ExpenseCreate,
     db: Session = Depends(get_db),
 ):
+    get_editable_group(group_id, db)
     db_expense = (
         db.query(models.Expense)
         .filter(models.Expense.id == expense_id, models.Expense.group_id == group_id)
@@ -233,6 +240,7 @@ def update_expense(
 
 @router.delete("/{expense_id}", status_code=204)
 def delete_expense(group_id: str, expense_id: int, db: Session = Depends(get_db)):
+    get_editable_group(group_id, db)
     db_expense = (
         db.query(models.Expense)
         .filter(models.Expense.id == expense_id, models.Expense.group_id == group_id)

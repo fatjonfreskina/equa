@@ -21,24 +21,26 @@ La roadmap e ordinata per impatto e dipendenze, non per data rigida. Le funziona
 - [ ] Correggere la validazione degli split lato backend.
 - [ ] Uniformare caricamenti, errori, retry e conferme.
 - [ ] Uniformare la formattazione di importi e valute.
-- [ ] Aggiungere test backend e frontend essenziali.
+- [x] Aggiungere test backend e frontend essenziali.
 - [ ] Definire il modello di sicurezza dei link.
 
 ### Condivisione e ritorno senza account
 
-- [ ] Implementare Web Share API e fallback clipboard.
-- [ ] Aggiungere condivisione WhatsApp, Telegram ed email.
-- [ ] Salvare e mostrare i gruppi recenti localmente.
+- [x] Implementare Web Share API e fallback clipboard.
+- [x] Aggiungere condivisione WhatsApp.
+- [x] Salvare e mostrare i gruppi recenti localmente.
 - [ ] Migliorare la pagina di ingresso da link condiviso.
 - [ ] Aggiungere titolo dinamico e anteprima del link.
 
 ### Bilanci e chiusura dei debiti
 
-- [ ] Permettere di identificare il partecipante sul dispositivo.
-- [ ] Mostrare il riepilogo personale "devi pagare/ricevere".
+- [x] Permettere di identificare il partecipante sul dispositivo.
+- [x] Mostrare il riepilogo personale "devi pagare/ricevere".
 - [ ] Generare promemoria condivisibili.
-- [ ] Introdurre lo stato dei pagamenti.
-- [ ] Mostrare lo stato di chiusura del gruppo.
+- [x] Generare un riepilogo di chiusura condivisibile e versionato.
+- [x] Introdurre lo stato dei pagamenti.
+- [x] Mostrare lo stato di chiusura del gruppo.
+- [ ] Gestire spese in più valute nello stesso gruppo.
 
 ### Collaborazione
 
@@ -320,10 +322,11 @@ Questa fase non deve introdurre una registrazione obbligatoria.
 
 **Checklist**
 
-- [ ] Usare Web Share API sui dispositivi compatibili.
-- [ ] Aggiungere WhatsApp, Telegram, email e copia link.
-- [ ] Preparare un messaggio con nome gruppo e URL.
-- [ ] Gestire clipboard e Web Share non disponibili.
+- [x] Usare Web Share API sui dispositivi compatibili.
+- [x] Aggiungere WhatsApp e copia link.
+- [ ] Aggiungere Telegram ed email.
+- [x] Preparare un messaggio con nome gruppo e URL.
+- [x] Gestire clipboard e Web Share non disponibili.
 - [ ] Mostrare sempre l'esito dell'azione.
 
 Il pulsante "Condividi" deve:
@@ -381,7 +384,7 @@ La cronologia locale non e un backup. Il gruppo deve continuare a essere recuper
 
 - [ ] Mostrare nome, descrizione e partecipanti.
 - [ ] Mostrare totale spese e azione principale.
-- [ ] Offrire il salvataggio tra i gruppi recenti.
+- [x] Offrire il salvataggio tra i gruppi recenti.
 - [ ] Stabilizzare il layout durante il caricamento mobile.
 
 Quando un utente apre un link da una chat, la pagina deve rendere immediatamente chiaro:
@@ -423,10 +426,10 @@ Non includere importi, email o dati sensibili nelle anteprime social.
 
 **Checklist**
 
-- [ ] Chiedere quale partecipante rappresenta l'utente.
-- [ ] Salvare la scelta solo sul dispositivo.
-- [ ] Permettere di cambiare partecipante in seguito.
-- [ ] Mantenere accessibile il gruppo senza identificazione.
+- [x] Chiedere quale partecipante rappresenta l'utente.
+- [x] Salvare la scelta solo sul dispositivo.
+- [x] Permettere di cambiare partecipante in seguito.
+- [x] Mantenere accessibile il gruppo senza identificazione.
 
 Alla prima apertura del gruppo, proporre in modo leggero:
 
@@ -438,11 +441,11 @@ La scelta viene salvata solo sul dispositivo e puo essere modificata in seguito.
 
 **Checklist**
 
-- [ ] Mostrare totale da pagare.
-- [ ] Mostrare totale da ricevere.
-- [ ] Mostrare saldo netto personale.
-- [ ] Mostrare il numero di pagamenti in entrata e in uscita.
-- [ ] Lasciare disponibile la lista globale dei bilanci.
+- [x] Mostrare totale da pagare.
+- [x] Mostrare totale da ricevere.
+- [x] Mostrare saldo netto personale.
+- [x] Mostrare il numero di pagamenti in entrata e in uscita.
+- [x] Lasciare disponibile la lista globale dei bilanci.
 
 In cima alla tab Bilanci mostrare:
 
@@ -477,9 +480,9 @@ Il messaggio deve contenere:
 
 **Checklist**
 
-- [ ] Definire gli stati `pending`, `confirmed` e `cancelled`.
-- [ ] Progettare la tabella `settlements`.
-- [ ] Gestire la rigenerazione dei saldi dopo modifiche alle spese.
+- [x] Definire gli stati `pending`, `confirmed` e `cancelled`.
+- [x] Progettare la tabella `settlements`.
+- [x] Gestire la rigenerazione dei saldi dopo modifiche alle spese.
 - [ ] Conservare lo storico delle conferme precedenti.
 
 Aggiungere lo stato di una transazione:
@@ -489,6 +492,8 @@ Aggiungere lo stato di una transazione:
 - `cancelled`: annullata o corretta.
 
 Per la prima versione puo bastare una conferma locale o condivisa, ma la versione persistente richiedera nuove entita backend.
+
+La prima versione persistente usa l'identità scelta localmente sul dispositivo per attribuire una segnalazione o una conferma. Non costituisce autenticazione: finché non esistono token personali, il gruppo opera su fiducia tra i partecipanti. Riaprire i conti annulla i pagamenti della chiusura corrente, che vengono rigenerati al prossimo avvio della chiusura.
 
 #### Modello dati suggerito
 
@@ -509,17 +514,20 @@ Le transazioni dovrebbero essere rigenerate quando cambiano le spese, mantenendo
 
 **Checklist**
 
-- [ ] Mostrare stato "In corso".
-- [ ] Mostrare stato "Quasi chiuso".
-- [ ] Mostrare stato "Tutti i pagamenti confermati".
+- [x] Mostrare stato "In corso".
+- [x] Mostrare stato "Chiusura conti".
+- [x] Mostrare stato "Conti chiusi" dopo la conferma dei pagamenti.
 - [ ] Creare il riepilogo finale del gruppo.
-- [ ] Consentire la riapertura quando necessario.
+- [x] Bloccare spese e partecipanti durante la chiusura.
+- [x] Consentire la riapertura quando necessario.
 
 Mostrare una sintesi:
 
 - `In corso`;
 - `Quasi chiuso`;
 - `Tutti i pagamenti confermati`.
+
+La prima versione può bloccare spese e partecipanti durante la chiusura dei conti e consentire una riapertura esplicita. Lo stato "Tutti i pagamenti confermati" richiede invece gli stati persistenti delle singole transazioni.
 
 Quando tutti i saldi sono chiusi, mostrare una schermata breve con:
 
@@ -528,6 +536,57 @@ Quando tutti i saldi sono chiusi, mostrare una schermata breve con:
 - numero spese;
 - data di chiusura;
 - azione per riaprire il gruppo se necessario.
+
+### 6.6 Riepilogo condivisibile della chiusura
+
+**Checklist**
+
+- [x] Generare il riepilogo dopo l'avvio riuscito della chiusura.
+- [x] Includere totale spese, partecipanti e pagamenti da effettuare.
+- [x] Includere il link al gruppo per segnalare e confermare i pagamenti.
+- [x] Aprire WhatsApp con il messaggio precompilato senza invio automatico.
+- [x] Numerare dal secondo ciclo di chiusura per distinguere i riepiloghi aggiornati.
+
+Il riepilogo globale serve a condividere nella chat del gruppo una fotografia dei conti. Quando un gruppo viene riaperto e chiuso di nuovo, il backend incrementa un contatore persistente e il messaggio mostra `versione 2`, `versione 3` e così via. La prima chiusura non mostra il numero di versione.
+
+Il messaggio deve restare leggibile su mobile e contenere solo dati già accessibili tramite il link del gruppo. Non deve includere email o introdurre invii automatici.
+
+### 6.7 Spese in più valute
+
+**Stato: funzionalità futura**
+
+**Checklist**
+
+- [ ] Mantenere una valuta base del gruppo per bilanci e pagamenti finali.
+- [ ] Consentire di scegliere la valuta originale per ogni spesa.
+- [ ] Salvare importo originale, valuta originale e tasso di conversione applicato.
+- [ ] Mostrare prima del salvataggio l'importo convertito nella valuta base.
+- [ ] Consentire l'inserimento e la correzione manuale del tasso di cambio.
+- [ ] Valutare un provider opzionale per suggerire i tassi senza renderlo necessario al funzionamento.
+- [ ] Conservare il tasso usato dalla spesa, evitando che variazioni future cambino i saldi storici.
+- [ ] Mostrare nel riepilogo gli importi originali per valuta e il totale nella valuta base.
+- [ ] Aggiungere migrazione, validazione backend e test su precisione e arrotondamenti.
+
+Un gruppo continua ad avere una valuta base, usata come unica unità per saldi e settlement. Ogni spesa può avere una valuta diversa e conserva una fotografia del tasso applicato al momento del salvataggio. Modificare un tasso deve essere un'azione esplicita e deve ricalcolare i saldi in modo deterministico.
+
+La prima versione deve funzionare senza rete e con tassi inseriti manualmente. Un eventuale servizio esterno può suggerire il cambio, ma il valore accettato deve essere visibile e persistito; non devono essere inviati al provider nomi, descrizioni, partecipanti o importi delle spese.
+
+#### Modello dati proposto
+
+Per ogni spesa aggiungere:
+
+- `original_amount` con precisione decimale;
+- `original_currency` come codice ISO 4217;
+- `exchange_rate` verso la valuta base del gruppo;
+- mantenere `amount` come importo convertito nella valuta base, calcolato e validato dal backend.
+
+#### Criteri di completamento
+
+- Gruppi con una sola valuta continuano a funzionare senza passaggi aggiuntivi.
+- I saldi sono riproducibili usando i tassi salvati, anche senza accesso a Internet.
+- UI e messaggi distinguono chiaramente importo originale e importo convertito.
+- Arrotondamenti e somma degli split restano coerenti al centesimo nella valuta base.
+- La migrazione preserva tutte le spese esistenti assegnando loro la valuta base del gruppo.
 
 ---
 
@@ -1024,28 +1083,31 @@ Prima di procedere servono analisi legale, sicurezza, costi e domanda reale degl
 - [ ] Validazione completa degli split.
 - [ ] Errori e retry uniformi.
 - [ ] Formattazione valuta.
-- [ ] Test backend e frontend essenziali.
+- [x] Test backend e frontend essenziali.
 - [ ] Sicurezza minima del link.
 
 **Risultato atteso:** meno errori e maggiore fiducia nel calcolo.
 
 ### Release B: Il gruppo si diffonde
 
-- [ ] Web Share API.
-- [ ] WhatsApp, Telegram, email e clipboard.
+- [x] Web Share API.
+- [x] WhatsApp e clipboard.
+- [ ] Telegram ed email.
 - [ ] Anteprima e titolo dinamico.
-- [ ] Cronologia locale.
-- [ ] Link di ingresso piu chiaro.
+- [x] Cronologia locale.
+- [x] Link di ingresso piu chiaro.
 
 **Risultato atteso:** piu aperture condivise e meno gruppi persi.
 
 ### Release C: Il gruppo si chiude
 
-- [ ] Selezione "chi sono".
-- [ ] Riepilogo personale.
+- [x] Selezione "chi sono".
+- [x] Riepilogo personale.
 - [ ] Promemoria condivisibili.
-- [ ] Stato dei pagamenti.
-- [ ] Schermata di gruppo chiuso.
+- [x] Riepilogo WhatsApp della chiusura.
+- [x] Stato dei pagamenti.
+- [x] Schermata di gruppo chiuso.
+- [ ] Spese in più valute con conversione tracciabile.
 
 **Risultato atteso:** piu ritorni nei giorni successivi e meno pagamenti dimenticati.
 

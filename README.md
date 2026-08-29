@@ -1,84 +1,36 @@
-# equa 🍝
+<div align="center">
+  <h1 align="center"><img src="frontend/src/assets/equa-logo.svg" width="56" height="56" align="absmiddle" alt="Equa"> equa</h1>
+  <p align="center"><strong>Dividi le spese, non le amicizie.</strong></p>
+  <p align="center">
+    <a href="http://equa.fatjonfreskina.com/"><strong>Prova Equa online →</strong></a>
+  </p>
+  <p align="center">
+    <img src="https://img.shields.io/badge/Senza_account-16a34a?style=flat-square" alt="Senza account">
+    <img src="https://img.shields.io/badge/Privacy_first-16a34a?style=flat-square" alt="Privacy first">
+    <img src="https://img.shields.io/badge/Gratis_per_sempre-16a34a?style=flat-square" alt="Gratis per sempre">
+  </p>
+</div>
 
-> *Dividi le spese, non le amicizie.*
+Equa è un'app italiana per dividere le spese di una vacanza, una cena o una casa condivisa. Crea un gruppo, condividi un link e lasciate che Equa calcoli chi deve cosa a chi — senza registrazione, abbonamenti o pubblicità.
 
-**Equa** è un'app web italiana per dividere le spese in gruppo — senza abbonamenti, senza tracciamento, senza rotture di scatole. Basta un link.
+## Perché usarla
 
----
+| | |
+|---|---|
+| 🔗 **Un link, tutto il gruppo** | Chi riceve il link può vedere e collaborare subito. |
+| ⚖️ **Conti semplici** | Split equi, per sottoinsieme o personalizzati; meno pagamenti possibili per pareggiare. |
+| 📱 **Pensata per il telefono** | Condivisione WhatsApp, copia link e gruppi recenti salvati sul dispositivo. |
+| ✅ **Chiudete davvero i conti** | Blocca il gruppo quando finite, segnala i pagamenti e conferma le ricezioni. |
 
-## Perché Equa?
+## Inizia in pochi secondi
 
-Perché ogni gruppo ha quel momento imbarazzante in cui nessuno sa bene chi deve quanto a chi, e qualcuno inizia a tirare fuori lo scontrino della cena di tre settimane fa.
+1. Crea un gruppo e aggiungi almeno due partecipanti.
+2. Condividi il link nella chat della vacanza o della cena.
+3. Inserite le spese man mano che arrivano.
+4. Aprite **Bilanci** per sapere subito chi deve pagare chi.
+5. A fine evento, avviate **Chiudiamo i conti** e confermate i pagamenti.
 
-Equa risolve il problema. Aggiungi le spese, seleziona chi partecipa, e l'algoritmo calcola il numero minimo di transazioni per pareggiare i conti. Fine.
-
-**Gratis per sempre.** Nessun piano Pro, nessuna funzionalità nascosta dietro un paywall.
-
----
-
-## Funzionalità
-
-- ✅ Crea un gruppo in 30 secondi, senza registrazione
-- ✅ Condividi con un semplice link
-- ✅ Dividi equamente tra tutti, tra un sottoinsieme, o con importi personalizzati
-- ✅ Algoritmo di ottimizzazione che minimizza il numero di pagamenti
-- ✅ Nessun account richiesto
-
----
-
-## L'algoritmo
-
-Questo è il pezzo interessante.
-
-Il problema del "chi deve cosa a chi" sembra banale ma non lo è. Con N persone e M spese, la soluzione ingenua produce una rete di pagamenti incrociati che fa venire il mal di testa. Equa fa di meglio.
-
-### Come funziona
-
-**Step 1 — Calcolo del saldo netto**
-
-Per ogni membro si calcola il saldo netto: quanto ha pagato in totale, meno quanto avrebbe dovuto pagare in base agli split. Un saldo positivo significa che quella persona è in credito, uno negativo che è in debito.
-
-```
-saldo(persona) = totale_pagato - totale_dovuto
-```
-
-Esempio con 3 persone e 230€ di spese totali (quota ideale: ~76.67€ a testa):
-
-| Persona | Pagato | Dovuto | Saldo |
-|---------|--------|--------|-------|
-| Marco   | 100€   | 76.67€ | +23.33€ (creditore) |
-| Giulia  | 130€   | 76.67€ | +53.33€ (creditrice) |
-| Luca    | 0€     | 76.67€ | -76.67€ (debitore) |
-
-**Step 2 — Algoritmo greedy**
-
-Si separano creditori e debitori, ordinati per importo decrescente. Si abbinano iterativamente il creditore più grande con il debitore più grande:
-
-1. Luca deve 76.67€. Giulia ne aspetta 53.33€ → Luca paga 53.33€ a Giulia. Luca ha ancora 23.34€ di debito.
-2. Luca deve ancora 23.34€. Marco ne aspetta 23.33€ → Luca paga 23.33€ a Marco.
-
-Risultato: **2 transazioni** invece delle potenziali 6 di una soluzione ingenua (ogni debitore paga ogni creditore separatamente).
-
-**Perché funziona**
-
-In un gruppo di N persone, l'algoritmo garantisce al massimo N-1 transazioni — il minimo teorico possibile per azzerare tutti i debiti. Ogni transazione azzera completamente almeno una persona dal gioco, riducendo il problema ad ogni passo.
-
-Non è sempre la soluzione globalmente ottimale in tutti i casi edge (è un problema NP in generale), ma per i casi reali — gruppi da 3 a 20 persone — produce risultati ottimali o quasi, in tempo costante.
-
----
-
-## Stack
-
-| Layer | Tecnologia |
-|-------|------------|
-| Frontend | Vue 3 + TypeScript + Vite + Tailwind CSS |
-| Backend | Python + FastAPI + SQLAlchemy |
-| Database | MySQL |
-| Reverse proxy | Nginx |
-| CI/CD | GitHub Actions → Docker Hub |
-| Container management | Portainer |
-
----
+> Il link è la chiave del gruppo: condividilo e conservalo. Equa salva i gruppi recenti solo sul dispositivo, ma questa cronologia non è un backup.
 
 ## Sviluppo locale
 
@@ -86,18 +38,11 @@ Non è sempre la soluzione globalmente ottimale in tutti i casi edge (è un prob
 
 - Node.js 20+
 - Python 3.12+
-- MySQL
+- MySQL 8+
 
-### Backend
+### 1. Database e backend
 
-```bash
-cd backend
-python3 -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-Crea `backend/.env`:
+Crea un database MySQL e il file `backend/.env`:
 
 ```env
 DB_USER=equa
@@ -109,15 +54,27 @@ SECRET_KEY=una-stringa-random-lunga
 ALLOW_ORIGINS=http://localhost:5173
 ```
 
-Avvia:
+Poi avvia l’API:
 
 ```bash
+cd backend
+python -m venv venv
+
+# macOS / Linux
+source venv/bin/activate
+
+# Windows PowerShell
+# .\venv\Scripts\Activate.ps1
+
+pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
 
-La documentazione API è disponibile su `http://localhost:8000/docs`.
+API e documentazione: [http://localhost:8000/docs](http://localhost:8000/docs)
 
-### Frontend
+### 2. Frontend
+
+In un secondo terminale:
 
 ```bash
 cd frontend
@@ -125,78 +82,49 @@ npm install
 npm run dev
 ```
 
-L'app è disponibile su `http://localhost:5173`.
+App locale: [http://localhost:5173](http://localhost:5173)
 
----
+### 3. Test e controlli
 
-## Deploy
+```bash
+# Backend, dalla root del repository
+pip install -r backend/requirements-dev.txt
+python -m pytest backend/tests
 
-Il progetto usa Docker per il backend e un build statico per il frontend, serviti da nginx.
-
-### Database (prima volta)
-
-```sql
-CREATE DATABASE equa CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'equa'@'localhost' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON equa.* TO 'equa'@'localhost';
-FLUSH PRIVILEGES;
+# Frontend
+cd frontend
+npm run test:run
+npm run build
 ```
 
-### CI/CD
+Per attivare i controlli automatici prima di ogni commit:
 
-Ad ogni push su `main`, GitHub Actions builda l'immagine Docker del backend e la pusha su Docker Hub. Il deploy sul server avviene tramite Portainer — basta fare un pull dell'immagine aggiornata dal registry e riavviare il container.
-
-Configura i seguenti secrets su GitHub (`Settings → Secrets → Actions`):
-
-| Secret | Descrizione |
-|--------|-------------|
-| `DOCKER_USERNAME` | Username Docker Hub |
-| `DOCKER_PASSWORD` | Token Docker Hub |
-
----
-
-## Struttura del progetto
-
-```
-equa/
-├── frontend/          # Vue 3 + TypeScript
-│   ├── src/
-│   │   ├── views/     # HomeView, GroupView
-│   │   ├── components/
-│   │   └── api/       # Client HTTP tipizzato
-│   └── vite.config.ts
-├── backend/           # FastAPI
-│   ├── app/
-│   │   ├── routers/   # groups, expenses, balances
-│   │   ├── models.py
-│   │   ├── schemas.py
-│   │   └── main.py
-│   └── Dockerfile
-└── .github/
-    └── workflows/
-        └── deploy.yml
+```bash
+python -m pre_commit install
 ```
 
----
+## Migrazioni database
 
-## Contribuire
+`Base.metadata.create_all()` crea le tabelle mancanti, ma non modifica quelle già esistenti. Prima di distribuire una nuova versione su un database già in uso, esegui le migrazioni SQL in [`backend/migrations/`](backend/migrations/README.md) nell’ordine indicato.
 
-Pull request benvenute. Se trovi un bug o hai un'idea, apri una issue.
+## Stack
 
-Se vuoi aggiungere una funzionalità grossa, apri prima una issue per discuterne — meglio allinearsi prima di scrivere codice.
+Vue 3 · TypeScript · Vite · Tailwind CSS · FastAPI · SQLAlchemy · MySQL
 
----
+## Documentazione
 
-## Supporto
+- [Roadmap di prodotto](doc/ROADMAP.md)
+- [Changelog](doc/CHANGELOG.md)
+- [Strategia e comandi di test](doc/TESTING.md)
+- [Migrazioni database](backend/migrations/README.md)
+- [Metriche anonime](doc/ANALYTICS.md)
 
-Equa è sviluppato e mantenuto nel tempo libero, su un server di casa, con amore e caffè.
+## Supporta Equa
 
-Se ti è utile e vuoi offrire un giro:
+Equa è gratuita e open source. Se ti ha evitato una discussione sui conti, puoi offrirci un caffè.
 
-[![Donate](https://img.shields.io/badge/PayPal-Offrimi%20un%20caffè-00457C?style=flat&logo=paypal)](https://paypal.me/fatjonfreskina)
-
----
+[![Offrimi un caffè su PayPal](https://img.shields.io/badge/PayPal-Offrimi_un_caffè-00457C?style=for-the-badge&logo=paypal)](https://paypal.me/fatjonfreskina)
 
 ## Licenza
 
-MIT — fai quello che vuoi, ma non togliere i credits. È un gesto di rispetto, non un obbligo legale.
+MIT — usala, adattala e migliorala. I contributi sono benvenuti.

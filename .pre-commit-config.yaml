@@ -22,3 +22,15 @@ repos:
         entry: npx --prefix frontend prettier --write
         language: system
         files: ^frontend/src/.*\.(ts|vue|js)$
+      - id: backend-tests
+        name: backend tests
+        entry: python -m pytest backend/tests
+        language: system
+        pass_filenames: false
+        files: ^backend/(app|tests)/.*\.py$
+      - id: frontend-tests
+        name: frontend tests
+        entry: npm --prefix frontend run test:run
+        language: system
+        pass_filenames: false
+        files: ^frontend/(src|tests)/.*\.(ts|vue|js)$

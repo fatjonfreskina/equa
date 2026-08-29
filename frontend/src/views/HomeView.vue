@@ -4,11 +4,7 @@
       <!-- Hero -->
       <div class="text-center mb-10">
         <div class="flex items-center justify-center gap-3 mb-3">
-          <svg width="48" height="48" viewBox="0 0 64 64" class="flex-shrink-0">
-            <rect x="8" y="10" width="48" height="13" rx="6.5" fill="#16a34a" />
-            <rect x="8" y="28" width="32" height="13" rx="6.5" fill="#4ade80" />
-            <rect x="8" y="46" width="20" height="13" rx="6.5" fill="#86efac" />
-          </svg>
+          <img :src="equaLogo" alt="" width="48" height="48" class="flex-shrink-0" />
           <h1 class="text-5xl font-bold text-green-700 tracking-tight">equa</h1>
         </div>
         <p class="text-xl text-gray-700 font-medium mb-2">Dividi le spese, non le amicizie.</p>
@@ -99,7 +95,14 @@
       <section v-if="recentGroups.length" class="bg-white rounded-2xl shadow p-6 mb-4">
         <div class="flex items-start justify-between gap-3 mb-1">
           <div>
-            <h2 class="text-lg font-semibold text-gray-800">I tuoi gruppi recenti</h2>
+            <div class="flex flex-wrap items-center gap-2">
+              <h2 class="text-lg font-semibold text-gray-800">I tuoi gruppi recenti</h2>
+              <span
+                class="rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700"
+              >
+                Novità
+              </span>
+            </div>
             <p class="text-sm text-gray-400">Salvati solo su questo dispositivo.</p>
           </div>
           <button
@@ -192,6 +195,8 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { groupsApi } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
+import equaLogo from '../assets/equa-logo.svg'
+import { trackEvent } from '../utils/analytics'
 import {
   clearRecentGroups as clearStoredRecentGroups,
   getRecentGroups,
@@ -246,6 +251,7 @@ async function createGroup() {
       currency: form.currency,
       members: validMembers,
     })
+    trackEvent('group_created')
     router.push({ path: `/group/${response.data.id}`, query: { created: '1' } })
   } catch {
     error.value = 'Qualcosa è andato storto. Riprova.'
@@ -268,6 +274,7 @@ function goToGroup() {
 }
 
 function openRecentGroup(groupId: string) {
+  trackEvent('group_opened_from_recent')
   router.push(`/group/${groupId}`)
 }
 
