@@ -1,4 +1,5 @@
 <template>
+  <FeedbackDialog :request="dialog" @respond="respond" />
   <div class="min-h-screen bg-gray-50">
     <div class="max-w-lg mx-auto py-12 px-4">
       <!-- Hero -->
@@ -195,6 +196,8 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { groupsApi } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
+import FeedbackDialog from '../components/FeedbackDialog.vue'
+import { useFeedbackDialog } from '../composables/useFeedbackDialog'
 import equaLogo from '../assets/equa-logo.svg'
 import { trackEvent } from '../utils/analytics'
 import {
@@ -205,6 +208,7 @@ import {
 } from '../utils/recentGroups'
 
 const router = useRouter()
+const { dialog, respond, askConfirmation } = useFeedbackDialog()
 
 const exampleNames = ['Marco', 'Giulia', 'Luca', 'Sara', 'Paolo']
 
@@ -282,8 +286,17 @@ function removeRecentGroup(groupId: string) {
   recentGroups.value = removeStoredRecentGroup(groupId)
 }
 
-function clearHistory() {
-  if (!confirm('Cancellare tutti i gruppi salvati su questo dispositivo?')) return
+async function clearHistory() {
+  if (
+    !(await askConfirmation({
+      title: 'Cancellare la cronologia?',
+      message:
+        'Rimuoverai tutti i gruppi salvati su questo dispositivo. I gruppi e le loro spese non verranno eliminati: potrai riaprirli tramite il link.',
+      confirmLabel: 'Cancella cronologia',
+      destructive: true,
+    }))
+  )
+    return
   clearStoredRecentGroups()
   recentGroups.value = []
 }
