@@ -260,10 +260,10 @@ Ogni operazione deve avere:
 
 **Checklist**
 
-- [ ] Sostituire gli `alert` con notifiche accessibili.
+- [x] Sostituire gli `alert` con notifiche accessibili.
 - [ ] Mostrare conferme dopo le operazioni riuscite.
 - [ ] Rendere espliciti gli errori recuperabili.
-- [ ] Confermare le azioni distruttive con il nome dell'elemento.
+- [x] Confermare le azioni distruttive con il nome dell'elemento.
 
 Sostituire progressivamente gli `alert` con notifiche temporanee accessibili:
 

@@ -1,4 +1,5 @@
 <template>
+  <FeedbackDialog :request="dialog" @respond="respond" />
   <div class="max-w-2xl mx-auto py-8 px-4">
     <div v-if="loading" class="text-center py-20 text-gray-400">Caricamento...</div>
     <div v-else-if="error" class="text-center py-20 text-red-500">
@@ -494,6 +495,8 @@
               <button
                 v-if="group.status === 'active'"
                 @click.stop="deleteExpense(expense.id)"
+                :aria-disabled="deletionPending"
+                :aria-label="`Elimina spesa ${expense.description}`"
                 class="text-gray-300 hover:text-red-400 transition text-lg"
               >
                 ✕
@@ -841,6 +844,8 @@
             <button
               v-if="editingEmailId !== member.id && group.status === 'active'"
               @click="deleteMember(member.id, member.name)"
+              :aria-disabled="deletionPending"
+              :aria-label="`Rimuovi partecipante ${member.name}`"
               class="text-gray-300 hover:text-red-400 transition text-lg shrink-0"
             >
               ✕
@@ -865,6 +870,8 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { groupsApi, type Group, type Balance, type Expense, type Settlement } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
+import FeedbackDialog from '../components/FeedbackDialog.vue'
+import { useFeedbackDialog } from '../composables/useFeedbackDialog'
 import { buildClosingSummary } from '../utils/closingSummary'
 import {
   calculatePersonalBalanceSummary,
@@ -876,6 +883,8 @@ import { trackEvent } from '../utils/analytics'
 
 const route = useRoute()
 const router = useRouter()
+const { dialog, respond, askConfirmation, showAlert } = useFeedbackDialog()
+const deletionPending = ref(false)
 const groupId = route.params.id as string
 const emailManagementEnabled = false
 
@@ -1086,7 +1095,13 @@ async function saveEmail(memberId: number) {
     editingEmailId.value = null
     await loadGroup()
   } catch (e: any) {
-    alert(e?.response?.data?.detail || "Errore durante l'aggiornamento dell'email")
+    await showAlert({
+      title: 'Email non aggiornata',
+      message:
+        typeof e?.response?.data?.detail === 'string'
+          ? e.response.data.detail
+          : "Errore durante l'aggiornamento dell'email. Riprova.",
+    })
   }
 }
 
@@ -1209,21 +1224,57 @@ async function saveExpense() {
 }
 
 async function deleteExpense(expenseId: number) {
-  if (group.value?.status !== 'active') return
-  if (!confirm('Eliminare questa spesa?')) return
-  await groupsApi.deleteExpense(groupId, expenseId)
-  await loadGroup()
+  if (group.value?.status !== 'active' || deletionPending.value) return
+  const expense = group.value.expenses.find((item) => item.id === expenseId)
+  if (!expense) return
+  deletionPending.value = true
+  try {
+    if (
+      !(await askConfirmation({
+        title: 'Eliminare la spesa?',
+        message: `La spesa “${expense.description}” verrà eliminata e i saldi saranno ricalcolati. Questa azione non può essere annullata.`,
+        confirmLabel: 'Elimina spesa',
+        destructive: true,
+      }))
+    )
+      return
+    await groupsApi.deleteExpense(groupId, expenseId)
+    await loadGroup()
+  } catch {
+    await showAlert({
+      title: 'Spesa non eliminata',
+      message: 'Non è stato possibile eliminare la spesa. Riprova.',
+    })
+  } finally {
+    deletionPending.value = false
+  }
 }
 
 async function deleteMember(memberId: number, name: string) {
-  if (group.value?.status !== 'active') return
-  if (!confirm(`Rimuovere ${name} dal gruppo?`)) return
+  if (group.value?.status !== 'active' || deletionPending.value) return
+  deletionPending.value = true
   try {
+    if (
+      !(await askConfirmation({
+        title: 'Rimuovere il partecipante?',
+        message: `Vuoi rimuovere “${name}” dal gruppo? Questa azione non può essere annullata.`,
+        confirmLabel: 'Rimuovi partecipante',
+        destructive: true,
+      }))
+    )
+      return
     await groupsApi.deleteMember(groupId, memberId)
     await loadGroup()
   } catch (e: any) {
-    const msg = e?.response?.data?.detail || 'Impossibile rimuovere il partecipante.'
-    alert(msg)
+    await showAlert({
+      title: 'Partecipante non rimosso',
+      message:
+        typeof e?.response?.data?.detail === 'string'
+          ? e.response.data.detail
+          : 'Impossibile rimuovere il partecipante. Riprova.',
+    })
+  } finally {
+    deletionPending.value = false
   }
 }
 
@@ -1380,18 +1431,43 @@ async function updateGroupStatus(status: Group['status']) {
 }
 
 async function startClosing() {
-  if (!confirm('Bloccare spese e partecipanti per iniziare la chiusura dei conti?')) return
+  if (statusLoading.value) return
+  if (
+    !(await askConfirmation({
+      title: 'Iniziare la chiusura dei conti?',
+      message:
+        'Spese e partecipanti saranno bloccati per verificare i saldi. Potrai riaprire i conti se serve una correzione.',
+      confirmLabel: 'Inizia chiusura',
+    }))
+  )
+    return
   if (await updateGroupStatus('closing')) showClosingSummary.value = true
 }
 
-function closeGroup() {
-  if (!confirm('Segnare il gruppo come chiuso? Potrai riaprirlo se serve una correzione.')) return
-  updateGroupStatus('closed')
+async function closeGroup() {
+  if (statusLoading.value) return
+  if (
+    !(await askConfirmation({
+      title: 'Chiudere il gruppo?',
+      message: 'Segnerai il gruppo come chiuso. Potrai riaprirlo se serve una correzione.',
+      confirmLabel: 'Chiudi gruppo',
+    }))
+  )
+    return
+  await updateGroupStatus('closed')
 }
 
-function reopenGroup() {
-  if (!confirm('Riaprire i conti? Spese e partecipanti torneranno modificabili.')) return
-  updateGroupStatus('active')
+async function reopenGroup() {
+  if (statusLoading.value) return
+  if (
+    !(await askConfirmation({
+      title: 'Riaprire i conti?',
+      message: 'Spese e partecipanti torneranno modificabili.',
+      confirmLabel: 'Riapri conti',
+    }))
+  )
+    return
+  await updateGroupStatus('active')
 }
 
 onMounted(loadGroup)
