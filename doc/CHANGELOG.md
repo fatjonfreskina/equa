@@ -7,7 +7,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
-## [Unreleased]
+## [1.6.0] Frontend - 2026-09-04
 
 ### Modificato
 
