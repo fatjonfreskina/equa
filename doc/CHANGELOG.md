@@ -7,6 +7,19 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
+## [1.6.0] Frontend - 2026-09-04
+
+### Modificato
+
+- Sostituiti alert e conferme native con modali condivise mobile-first, pulsanti touch, semantica accessibile, gestione del focus e annullamento tramite Escape.
+- Le conferme di eliminazione indicano la spesa o il partecipante coinvolto; la cancellazione della cronologia chiarisce che non elimina i gruppi remoti.
+
+### Corretto
+
+- Gli errori durante l'eliminazione delle spese mostrano un messaggio recuperabile e le richieste di eliminazione ripetute vengono bloccate mentre l'operazione è in corso.
+
+---
+
 ## [1.5.1] Frontend - 2026-08-29
 
 ### Corretto

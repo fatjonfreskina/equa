@@ -15,7 +15,7 @@ Equa è un'app italiana per dividere le spese di una vacanza, una cena o una cas
 
 ## Perché usarla
 
-| | |
+| Vantaggio | Descrizione |
 |---|---|
 | 🔗 **Un link, tutto il gruppo** | Chi riceve il link può vedere e collaborare subito. |
 | ⚖️ **Conti semplici** | Split equi, per sottoinsieme o personalizzati; meno pagamenti possibili per pareggiare. |
