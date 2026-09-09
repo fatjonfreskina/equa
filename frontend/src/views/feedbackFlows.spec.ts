@@ -162,6 +162,23 @@ it('uses a native modal for the share/email panel and allows Escape cancellation
   expect(document.querySelector('[aria-labelledby=share-reminder-title]')).toBeNull()
 })
 
+it('removes one recent group only after confirmation', async () => {
+  saveRecentGroup(group)
+  await mount(HomeView, '/')
+  const remove = document.querySelector<HTMLButtonElement>(
+    '[aria-label="Rimuovi Vacanza dai gruppi recenti"]',
+  )!
+  remove.click()
+  await flush()
+  expect(document.querySelector('dialog')?.textContent).toContain('Vacanza')
+  await click('Annulla')
+  expect(getRecentGroups()).toHaveLength(1)
+  remove.click()
+  await flush()
+  await click('Rimuovi dai recenti')
+  expect(getRecentGroups()).toHaveLength(0)
+})
+
 it('deletes the named expense only after confirmation and shows API failures', async () => {
   await mount(GroupView)
   const remove = document.querySelector<HTMLButtonElement>('[aria-label="Elimina spesa Cena"]')!
@@ -240,6 +257,38 @@ it('keeps multi-currency details progressive and closes with the selected balanc
   )
   await click('Inizia chiusura')
   expect(groupsApi.updateStatus).toHaveBeenCalledWith('test-group', 'closing', 'unified')
+})
+
+it('saves the automatic rate preview without asking the provider again', async () => {
+  await mount(GroupView)
+  await click('+ Aggiungi spesa')
+
+  const setValue = (selector: string, value: string, event = 'input') => {
+    const element = document.querySelector<HTMLInputElement | HTMLSelectElement>(selector)!
+    element.value = value
+    element.dispatchEvent(new Event(event, { bubbles: true }))
+  }
+  setValue('#expense-description', 'Taxi')
+  setValue('#expense-amount', '1000')
+  setValue('#expense-currency', 'ALL', 'change')
+  setValue('#expense-payer', '1', 'change')
+  await flush()
+
+  expect(groupsApi.getExchangeRate).toHaveBeenCalledExactlyOnceWith(
+    'test-group',
+    'ALL',
+    expect.any(String),
+  )
+  await click('Salva')
+  expect(groupsApi.addExpenseEqual).toHaveBeenCalledExactlyOnceWith(
+    'test-group',
+    expect.objectContaining({
+      exchange_rate: '0.01',
+      exchange_rate_date: '2026-09-02',
+      exchange_rate_source: 'frankfurter',
+    }),
+  )
+  expect(groupsApi.getExchangeRate).toHaveBeenCalledTimes(1)
 })
 
 it.each([

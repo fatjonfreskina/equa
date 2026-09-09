@@ -7,7 +7,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
-## [Unreleased] Backend; Frontend
+## [Non rilasciato]
 
 ### Aggiunto
 
@@ -16,6 +16,19 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 - Migrazione `005` e rollback per verifiche temporanee e contatori, comando di pulizia e guida operativa/privacy in `doc/EMAIL_LINK.md`.
 - Azioni di riuso e passaparola per tutti i visitatori dei gruppi chiusi: nuovo gruppo vuoto, condivisione nativa, WhatsApp e copia della sola pagina pubblica di Equa.
 - Test backend e frontend per consenso, validazione, scadenza, tentativi, replay, limiti, guasti del servizio e condivisione senza dati del gruppo.
+- Tema scuro automatico in base alle preferenze di sistema, con controllo manuale persistente sul dispositivo, fallback sicuro quando lo storage del browser non è disponibile e contrasto coerente per tutti i pannelli informativi.
+
+### Modificato
+
+- La rimozione di un singolo gruppo dalla cronologia locale richiede ora una conferma e chiarisce che i dati del gruppo non vengono eliminati.
+
+### Corretto
+
+- Il salvataggio conserva il cambio automatico mostrato nell'anteprima, con data e fonte, senza interrogare una seconda volta il provider.
+- Un partecipante torna rimovibile dopo l'eliminazione dell'unica spesa che lo coinvolge.
+- Un partecipante coinvolto soltanto in pagamenti annullati può essere rimosso dopo la riapertura del gruppo; i pagamenti pendenti o confermati continuano a proteggerne lo storico.
+- Nei riepiloghi multivaluta il codice viene mostrato una sola volta, affiancato al simbolo breve quando disponibile.
+- Banner informativi e badge di stato condividono componenti semantici riutilizzabili con varianti coerenti anche nel tema scuro.
 
 ## [1.7.0] Frontend; Backend - 2026-09-05
 

@@ -169,11 +169,7 @@
         <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
           <div class="flex items-start justify-between gap-4">
             <div>
-              <span
-                class="inline-block rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700"
-              >
-                Beta
-              </span>
+              <StatusBadge tone="warning">Beta</StatusBadge>
               <h2 id="closing-summary-title" class="mt-2 text-xl font-bold text-gray-800">
                 Condividi il riepilogo
               </h2>
@@ -258,30 +254,19 @@
         </button>
       </div>
 
-      <section
+      <StatusBanner
         v-if="group.status !== 'active'"
-        :class="[
-          'mb-6 rounded-xl border px-4 py-4',
-          group.status === 'closing'
-            ? 'border-amber-100 bg-amber-50'
-            : 'border-green-100 bg-green-50',
-        ]"
+        :tone="group.status === 'closing' ? 'warning' : 'success'"
+        class="mb-6 px-4 py-4"
       >
         <div class="flex items-start justify-between gap-4">
           <div>
             <p class="font-semibold text-gray-800">{{ groupStatusTitle }}</p>
             <p class="mt-1 text-sm text-gray-600">{{ groupStatusDescription }}</p>
           </div>
-          <span
-            :class="[
-              'shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold',
-              group.status === 'closing'
-                ? 'bg-amber-100 text-amber-700'
-                : 'bg-green-100 text-green-700',
-            ]"
-          >
+          <StatusBadge :tone="group.status === 'closing' ? 'warning' : 'success'">
             {{ groupStatusLabel }}
-          </span>
+          </StatusBadge>
         </div>
         <p v-if="statusError" class="mt-3 text-sm text-red-600">{{ statusError }}</p>
         <div class="mt-4 flex flex-wrap gap-2">
@@ -311,7 +296,7 @@
             Riapri conti
           </button>
         </div>
-      </section>
+      </StatusBanner>
 
       <GroupGrowthCard v-if="group.status === 'closed'" />
 
@@ -345,10 +330,14 @@
               :key="total.currency"
               class="text-lg font-bold text-green-700"
             >
-              {{ formatCurrency(total.amount, total.currency) }}
               <span v-if="hasForeignExpenses" class="text-xs font-medium">{{
                 total.currency
               }}</span>
+              {{
+                hasForeignExpenses
+                  ? formatCurrencyValue(total.amount, total.currency)
+                  : formatCurrency(total.amount, total.currency)
+              }}
             </p>
             <p v-if="hasForeignExpenses" class="text-xs text-green-700">
               Importi originali, senza conversioni
@@ -647,12 +636,16 @@
               </p>
             </div>
             <div class="flex items-center gap-3">
-              <span class="font-bold text-green-700"
-                >{{ formatCurrency(expense.amount, expense.currency || group.currency) }}
+              <span class="font-bold text-green-700">
                 <span v-if="hasForeignExpenses" class="text-xs">{{
                   expense.currency || group.currency
-                }}</span></span
-              >
+                }}</span>
+                {{
+                  hasForeignExpenses
+                    ? formatCurrencyValue(expense.amount, expense.currency || group.currency)
+                    : formatCurrency(expense.amount, expense.currency || group.currency)
+                }}
+              </span>
               <button
                 v-if="group.status === 'active'"
                 @click.stop="deleteExpense(expense.id)"
@@ -864,24 +857,21 @@
             Vai a Partecipanti
           </button>
         </div>
-        <section
+        <StatusBanner
           v-if="
             !balancesLoading &&
             !balancesError &&
             group.status === 'active' &&
             group.expenses.length > 0
           "
-          class="mb-4 rounded-xl border border-blue-100 bg-blue-50 p-4"
+          tone="info"
+          class="mb-4 p-4"
         >
           <div class="flex flex-wrap items-center gap-2">
-            <p class="font-semibold text-blue-900">Avete finito con le spese?</p>
-            <span
-              class="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700"
-            >
-              Beta
-            </span>
+            <p class="font-semibold">Avete finito con le spese?</p>
+            <StatusBadge tone="warning">Beta</StatusBadge>
           </div>
-          <p class="mt-1 text-sm text-blue-800">
+          <p class="mt-1 text-sm opacity-90">
             Blocca il gruppo per verificare e chiudere i pagamenti.
           </p>
           <button
@@ -891,7 +881,7 @@
           >
             Chiudiamo i conti
           </button>
-        </section>
+        </StatusBanner>
         <div v-if="balancesLoading" class="text-center py-10 text-gray-400">Calcolo...</div>
         <div v-else-if="balancesError"></div>
         <div v-else-if="group.status !== 'active'" class="space-y-3">
@@ -916,12 +906,16 @@
                 <span class="mx-2 text-gray-400">→</span>
                 <span class="font-medium">{{ displayMemberName(settlement.to_member_id) }}</span>
               </div>
-              <span class="shrink-0 font-bold text-red-500"
-                >{{ formatCurrency(settlement.amount, settlement.currency || group.currency) }}
+              <span class="shrink-0 font-bold text-red-500">
                 <span v-if="hasForeignExpenses" class="text-xs">{{
                   settlement.currency || group.currency
-                }}</span></span
-              >
+                }}</span>
+                {{
+                  hasForeignExpenses
+                    ? formatCurrencyValue(settlement.amount, settlement.currency || group.currency)
+                    : formatCurrency(settlement.amount, settlement.currency || group.currency)
+                }}
+              </span>
             </div>
             <p class="mt-2 text-sm text-gray-500">{{ settlementLabel(settlement) }}</p>
             <button
@@ -960,12 +954,16 @@
               <span class="text-gray-400">→</span>
               <span class="font-medium">{{ displayMemberName(balance.to_member_id) }}</span>
             </div>
-            <span class="shrink-0 font-bold text-red-500"
-              >{{ formatCurrency(balance.amount, balance.currency || group.currency) }}
+            <span class="shrink-0 font-bold text-red-500">
               <span v-if="hasForeignExpenses" class="text-xs">{{
                 balance.currency || group.currency
-              }}</span></span
-            >
+              }}</span>
+              {{
+                hasForeignExpenses
+                  ? formatCurrencyValue(balance.amount, balance.currency || group.currency)
+                  : formatCurrency(balance.amount, balance.currency || group.currency)
+              }}
+            </span>
           </div>
         </div>
       </div>
@@ -1154,6 +1152,8 @@ import DonationFooter from '../components/DonationFooter.vue'
 import FeedbackDialog from '../components/FeedbackDialog.vue'
 import EmailLinkCard from '../components/EmailLinkCard.vue'
 import GroupGrowthCard from '../components/GroupGrowthCard.vue'
+import StatusBadge from '../components/StatusBadge.vue'
+import StatusBanner from '../components/StatusBanner.vue'
 import { useFeedbackDialog } from '../composables/useFeedbackDialog'
 import { buildClosingSummary } from '../utils/closingSummary'
 import {
@@ -1165,6 +1165,7 @@ import {
   currencyDecimals,
   currencyStep,
   formatCurrency,
+  formatCurrencyValue,
   todayDate,
   expenseTotalsByCurrency,
 } from '../utils/currency'
@@ -1716,8 +1717,16 @@ async function saveExpense() {
       amount: Number(expenseForm.amount),
       currency: expenseForm.currency,
       expense_date: expenseForm.expense_date,
-      ...(manualRateOverride.value ? { exchange_rate: String(manualRate.value) } : {}),
-      ...(refreshRateRequested.value && !manualRateOverride.value
+      ...(manualRateOverride.value
+        ? { exchange_rate: String(manualRate.value) }
+        : ratePreview.value?.source === 'frankfurter'
+          ? {
+              exchange_rate: ratePreview.value.rate,
+              exchange_rate_date: ratePreview.value.date,
+              exchange_rate_source: ratePreview.value.source,
+            }
+          : {}),
+      ...(refreshRateRequested.value && !manualRateOverride.value && !ratePreview.value
         ? { refresh_exchange_rate: true }
         : {}),
     }

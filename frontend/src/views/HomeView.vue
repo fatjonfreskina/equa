@@ -12,15 +12,13 @@
         <p class="text-sm text-gray-400">Semplice, italiano, e gratis per sempre.</p>
       </div>
 
-      <aside
-        class="mb-4 rounded-xl border border-green-100 bg-green-50 px-4 py-3 text-sm text-green-800"
-      >
+      <StatusBanner tone="success" class="mb-4 px-4 py-3 text-sm">
         <span class="font-semibold">Novità · Spese in più valute</span>
         <p class="mt-1">
           Registra ogni spesa nella sua valuta. Puoi vedere i conti separati o unificarli quando
           serve.
         </p>
-      </aside>
+      </StatusBanner>
 
       <!-- Form crea gruppo -->
       <div class="bg-white rounded-2xl shadow p-6 mb-4">
@@ -145,7 +143,7 @@
               type="button"
               class="shrink-0 px-1 text-lg text-gray-300 transition hover:text-red-400"
               :aria-label="`Rimuovi ${group.name} dai gruppi recenti`"
-              @click="removeRecentGroup(group.id)"
+              @click="removeRecentGroup(group.id, group.name)"
             >
               ×
             </button>
@@ -207,6 +205,7 @@ import { useRouter } from 'vue-router'
 import { groupsApi } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
 import FeedbackDialog from '../components/FeedbackDialog.vue'
+import StatusBanner from '../components/StatusBanner.vue'
 import { useFeedbackDialog } from '../composables/useFeedbackDialog'
 import equaLogo from '../assets/equa-logo.svg'
 import { trackEvent } from '../utils/analytics'
@@ -293,7 +292,16 @@ function openRecentGroup(groupId: string) {
   router.push(`/group/${groupId}`)
 }
 
-function removeRecentGroup(groupId: string) {
+async function removeRecentGroup(groupId: string, groupName: string) {
+  if (
+    !(await askConfirmation({
+      title: 'Rimuovere il gruppo dai recenti?',
+      message: `Vuoi rimuovere “${groupName}” dai gruppi salvati su questo dispositivo? Il gruppo e le sue spese non verranno eliminati: potrai riaprirlo tramite il link.`,
+      confirmLabel: 'Rimuovi dai recenti',
+      destructive: true,
+    }))
+  )
+    return
   recentGroups.value = removeStoredRecentGroup(groupId)
 }
 
