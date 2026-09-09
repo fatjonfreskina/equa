@@ -11,7 +11,7 @@ from backend.app.routers.expenses import delete_expense
 from backend.app.routers.members import delete_member
 
 
-def test_cannot_delete_member_referenced_by_cancelled_settlement():
+def test_can_delete_member_referenced_only_by_cancelled_settlement():
     engine = create_engine("sqlite:///:memory:")
     Base.metadata.create_all(engine)
     session = sessionmaker(bind=engine)()
@@ -29,6 +29,41 @@ def test_cannot_delete_member_referenced_by_cancelled_settlement():
                 to_member_id=giulia.id,
                 amount=Decimal("20.00"),
                 status="cancelled",
+            )
+        )
+        session.commit()
+
+        group_id = group.id
+        member_id = marco.id
+
+        delete_member(group_id, member_id, session)
+
+        assert session.get(Member, member_id) is None
+        assert session.query(Settlement).filter_by(group_id=group_id).count() == 0
+    finally:
+        session.close()
+        engine.dispose()
+
+
+@pytest.mark.parametrize("status", ["pending", "confirmed"])
+def test_cannot_delete_member_referenced_by_active_settlement(status):
+    engine = create_engine("sqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    session = sessionmaker(bind=engine)()
+
+    try:
+        giulia = Member(name="Giulia")
+        marco = Member(name="Marco")
+        group = Group(name="Weekend", currency="EUR", members=[giulia, marco])
+        session.add(group)
+        session.flush()
+        session.add(
+            Settlement(
+                group_id=group.id,
+                from_member_id=marco.id,
+                to_member_id=giulia.id,
+                amount=Decimal("20.00"),
+                status=status,
             )
         )
         session.commit()

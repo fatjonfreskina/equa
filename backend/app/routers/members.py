@@ -112,24 +112,31 @@ def delete_member(group_id: str, member_id: int, db: Session = Depends(get_db)):
             detail="Impossibile eliminare: il membro è coinvolto in una o più spese",
         )
 
-    in_settlement = (
+    settlement_member_filter = or_(
+        models.Settlement.from_member_id == member_id,
+        models.Settlement.to_member_id == member_id,
+        models.Settlement.reported_by_member_id == member_id,
+        models.Settlement.confirmed_by_member_id == member_id,
+    )
+    in_active_settlement = (
         db.query(models.Settlement)
         .filter(
             models.Settlement.group_id == group_id,
-            or_(
-                models.Settlement.from_member_id == member_id,
-                models.Settlement.to_member_id == member_id,
-                models.Settlement.reported_by_member_id == member_id,
-                models.Settlement.confirmed_by_member_id == member_id,
-            ),
+            models.Settlement.status != "cancelled",
+            settlement_member_filter,
         )
         .first()
     )
-    if in_settlement:
+    if in_active_settlement:
         raise HTTPException(
             status_code=400,
             detail="Impossibile eliminare: il membro è coinvolto nello storico dei pagamenti",
         )
 
+    db.query(models.Settlement).filter(
+        models.Settlement.group_id == group_id,
+        models.Settlement.status == "cancelled",
+        settlement_member_filter,
+    ).delete(synchronize_session=False)
     db.delete(member)
     db.commit()
