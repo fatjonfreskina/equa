@@ -157,11 +157,7 @@
         <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
           <div class="flex items-start justify-between gap-4">
             <div>
-              <span
-                class="inline-block rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700"
-              >
-                Beta
-              </span>
+              <StatusBadge tone="warning">Beta</StatusBadge>
               <h2 id="closing-summary-title" class="mt-2 text-xl font-bold text-gray-800">
                 Condividi il riepilogo
               </h2>
@@ -246,30 +242,19 @@
         </button>
       </div>
 
-      <section
+      <StatusBanner
         v-if="group.status !== 'active'"
-        :class="[
-          'mb-6 rounded-xl border px-4 py-4',
-          group.status === 'closing'
-            ? 'border-amber-100 bg-amber-50'
-            : 'border-green-100 bg-green-50',
-        ]"
+        :tone="group.status === 'closing' ? 'warning' : 'success'"
+        class="mb-6 px-4 py-4"
       >
         <div class="flex items-start justify-between gap-4">
           <div>
             <p class="font-semibold text-gray-800">{{ groupStatusTitle }}</p>
             <p class="mt-1 text-sm text-gray-600">{{ groupStatusDescription }}</p>
           </div>
-          <span
-            :class="[
-              'shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold',
-              group.status === 'closing'
-                ? 'bg-amber-100 text-amber-700'
-                : 'bg-green-100 text-green-700',
-            ]"
-          >
+          <StatusBadge :tone="group.status === 'closing' ? 'warning' : 'success'">
             {{ groupStatusLabel }}
-          </span>
+          </StatusBadge>
         </div>
         <p v-if="statusError" class="mt-3 text-sm text-red-600">{{ statusError }}</p>
         <div class="mt-4 flex flex-wrap gap-2">
@@ -299,7 +284,7 @@
             Riapri conti
           </button>
         </div>
-      </section>
+      </StatusBanner>
 
       <!-- Tabs -->
       <div class="flex gap-2 mb-6 border-b border-gray-200">
@@ -858,24 +843,21 @@
             Vai a Partecipanti
           </button>
         </div>
-        <section
+        <StatusBanner
           v-if="
             !balancesLoading &&
             !balancesError &&
             group.status === 'active' &&
             group.expenses.length > 0
           "
-          class="mb-4 rounded-xl border border-blue-100 bg-blue-50 p-4"
+          tone="info"
+          class="mb-4 p-4"
         >
           <div class="flex flex-wrap items-center gap-2">
-            <p class="font-semibold text-blue-900">Avete finito con le spese?</p>
-            <span
-              class="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700"
-            >
-              Beta
-            </span>
+            <p class="font-semibold">Avete finito con le spese?</p>
+            <StatusBadge tone="warning">Beta</StatusBadge>
           </div>
-          <p class="mt-1 text-sm text-blue-800">
+          <p class="mt-1 text-sm opacity-90">
             Blocca il gruppo per verificare e chiudere i pagamenti.
           </p>
           <button
@@ -885,7 +867,7 @@
           >
             Chiudiamo i conti
           </button>
-        </section>
+        </StatusBanner>
         <div v-if="balancesLoading" class="text-center py-10 text-gray-400">Calcolo...</div>
         <div v-else-if="balancesError"></div>
         <div v-else-if="group.status !== 'active'" class="space-y-3">
@@ -1154,6 +1136,8 @@ import {
 } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
 import FeedbackDialog from '../components/FeedbackDialog.vue'
+import StatusBadge from '../components/StatusBadge.vue'
+import StatusBanner from '../components/StatusBanner.vue'
 import { useFeedbackDialog } from '../composables/useFeedbackDialog'
 import { buildClosingSummary } from '../utils/closingSummary'
 import {
