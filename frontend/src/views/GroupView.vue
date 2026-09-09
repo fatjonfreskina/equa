@@ -331,10 +331,14 @@
               :key="total.currency"
               class="text-lg font-bold text-green-700"
             >
-              {{ formatCurrency(total.amount, total.currency) }}
               <span v-if="hasForeignExpenses" class="text-xs font-medium">{{
                 total.currency
               }}</span>
+              {{
+                hasForeignExpenses
+                  ? formatCurrencyValue(total.amount, total.currency)
+                  : formatCurrency(total.amount, total.currency)
+              }}
             </p>
             <p v-if="hasForeignExpenses" class="text-xs text-green-700">
               Importi originali, senza conversioni
@@ -633,12 +637,16 @@
               </p>
             </div>
             <div class="flex items-center gap-3">
-              <span class="font-bold text-green-700"
-                >{{ formatCurrency(expense.amount, expense.currency || group.currency) }}
+              <span class="font-bold text-green-700">
                 <span v-if="hasForeignExpenses" class="text-xs">{{
                   expense.currency || group.currency
-                }}</span></span
-              >
+                }}</span>
+                {{
+                  hasForeignExpenses
+                    ? formatCurrencyValue(expense.amount, expense.currency || group.currency)
+                    : formatCurrency(expense.amount, expense.currency || group.currency)
+                }}
+              </span>
               <button
                 v-if="group.status === 'active'"
                 @click.stop="deleteExpense(expense.id)"
@@ -902,12 +910,16 @@
                 <span class="mx-2 text-gray-400">→</span>
                 <span class="font-medium">{{ displayMemberName(settlement.to_member_id) }}</span>
               </div>
-              <span class="shrink-0 font-bold text-red-500"
-                >{{ formatCurrency(settlement.amount, settlement.currency || group.currency) }}
+              <span class="shrink-0 font-bold text-red-500">
                 <span v-if="hasForeignExpenses" class="text-xs">{{
                   settlement.currency || group.currency
-                }}</span></span
-              >
+                }}</span>
+                {{
+                  hasForeignExpenses
+                    ? formatCurrencyValue(settlement.amount, settlement.currency || group.currency)
+                    : formatCurrency(settlement.amount, settlement.currency || group.currency)
+                }}
+              </span>
             </div>
             <p class="mt-2 text-sm text-gray-500">{{ settlementLabel(settlement) }}</p>
             <button
@@ -946,12 +958,16 @@
               <span class="text-gray-400">→</span>
               <span class="font-medium">{{ displayMemberName(balance.to_member_id) }}</span>
             </div>
-            <span class="shrink-0 font-bold text-red-500"
-              >{{ formatCurrency(balance.amount, balance.currency || group.currency) }}
+            <span class="shrink-0 font-bold text-red-500">
               <span v-if="hasForeignExpenses" class="text-xs">{{
                 balance.currency || group.currency
-              }}</span></span
-            >
+              }}</span>
+              {{
+                hasForeignExpenses
+                  ? formatCurrencyValue(balance.amount, balance.currency || group.currency)
+                  : formatCurrency(balance.amount, balance.currency || group.currency)
+              }}
+            </span>
           </div>
         </div>
       </div>
@@ -1149,6 +1165,7 @@ import {
   currencyDecimals,
   currencyStep,
   formatCurrency,
+  formatCurrencyValue,
   todayDate,
   expenseTotalsByCurrency,
 } from '../utils/currency'

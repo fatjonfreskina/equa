@@ -1,5 +1,5 @@
 import type { Balance, Group } from '../api/groups'
-import { expenseTotalsByCurrency, formatCurrency } from './currency'
+import { expenseTotalsByCurrency, formatCurrency, formatCurrencyValue } from './currency'
 
 export function buildClosingSummary(group: Group, balances: Balance[], groupLink: string): string {
   const totals = expenseTotalsByCurrency(group.expenses, group.currency)
@@ -9,7 +9,7 @@ export function buildClosingSummary(group: Group, balances: Balance[], groupLink
       : [
           '💰 Totali spese per valuta:',
           ...totals.map(
-            (total) => `• ${total.currency}: ${formatCurrency(total.amount, total.currency)}`,
+            (total) => `• ${total.currency}: ${formatCurrencyValue(total.amount, total.currency)}`,
           ),
         ]
   const unified = group.closing_balance_mode === 'unified'

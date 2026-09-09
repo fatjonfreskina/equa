@@ -59,6 +59,22 @@ export function formatCurrency(amount: number | string, currency: string): strin
   }).format(Number(amount))
 }
 
+export function formatCurrencyValue(amount: number | string, currency: string): string {
+  const options = {
+    minimumFractionDigits: currencyDecimals(currency),
+    maximumFractionDigits: currencyDecimals(currency),
+  }
+  const formatted = new Intl.NumberFormat('it-IT', {
+    ...options,
+    style: 'currency',
+    currency,
+    currencyDisplay: 'narrowSymbol',
+  }).format(Number(amount))
+
+  if (!formatted.toUpperCase().includes(currency.toUpperCase())) return formatted
+  return new Intl.NumberFormat('it-IT', options).format(Number(amount))
+}
+
 export function todayDate(): string {
   const now = new Date()
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`

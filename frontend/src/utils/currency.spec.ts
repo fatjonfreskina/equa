@@ -5,6 +5,7 @@ import {
   currencyStep,
   expenseTotalsByCurrency,
   formatCurrency,
+  formatCurrencyValue,
   todayDate,
 } from './currency'
 
@@ -23,6 +24,14 @@ describe('currency helpers', () => {
     expect(formatCurrency('1200', 'JPY').replace(/\./g, '')).toContain('1200')
     expect(formatCurrency('1200', 'JPY')).not.toContain(',00')
     expect(formatCurrency('12.50', 'EUR')).toContain('12,50')
+  })
+
+  it('does not repeat a currency code that is already shown beside the value', () => {
+    expect(formatCurrencyValue(1200, 'JPY')).toContain('¥')
+    expect(formatCurrencyValue(1200, 'JPY')).not.toContain('JPY')
+    expect(formatCurrencyValue(1200, 'USD')).toContain('$')
+    expect(formatCurrencyValue(1200, 'ALL')).not.toContain('ALL')
+    expect(formatCurrencyValue(1200, 'CHF')).not.toContain('CHF')
   })
 
   it('never sums different currencies and retains exact cents', () => {

@@ -22,6 +22,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 - Il salvataggio conserva il cambio automatico mostrato nell'anteprima, con data e fonte, senza interrogare una seconda volta il provider.
 - Un partecipante torna rimovibile dopo l'eliminazione dell'unica spesa che lo coinvolge.
 - Un partecipante coinvolto soltanto in pagamenti annullati può essere rimosso dopo la riapertura del gruppo; i pagamenti pendenti o confermati continuano a proteggerne lo storico.
+- Nei riepiloghi multivaluta il codice viene mostrato una sola volta, affiancato al simbolo breve quando disponibile.
 
 ## [1.7.0] Frontend; Backend - 2026-09-05
 
