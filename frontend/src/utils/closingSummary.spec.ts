@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { Balance, Group } from '../api/groups'
 import { buildClosingSummary } from './closingSummary'
-import { formatCurrency } from './currency'
+import { formatCurrencyValue } from './currency'
 
 const group: Group = {
   id: 'group-1',
@@ -91,7 +91,8 @@ describe('buildClosingSummary', () => {
     )
     expect(summary).toContain('Totali spese per valuta:')
     expect(summary).toContain('EUR: 42,50')
-    expect(summary).toContain(`ALL: ${formatCurrency(1000, 'ALL')}`)
+    expect(summary).toContain(`ALL: ${formatCurrencyValue(1000, 'ALL')}`)
+    expect(summary).not.toContain('ALL: 1.000,00 ALL')
     expect(summary).toContain('Marco deve 500,00')
     expect(summary).not.toContain('1.042,50')
   })
