@@ -28,6 +28,19 @@
     @apply bg-amber-950;
   }
 
+  html.dark .bg-amber-100 {
+    @apply bg-amber-900;
+  }
+
+  html.dark .border-amber-100,
+  html.dark .border-amber-200 {
+    @apply border-amber-800;
+  }
+
+  html.dark .border-amber-300 {
+    @apply border-amber-700;
+  }
+
   html.dark .bg-blue-50 {
     @apply bg-blue-950;
   }
@@ -43,6 +56,15 @@
 
   html.dark .text-green-700 {
     @apply text-green-300;
+  }
+
+  html.dark .bg-green-100 {
+    @apply bg-green-900;
+  }
+
+  html.dark .border-green-100,
+  html.dark .border-green-200 {
+    @apply border-green-800;
   }
 
   html.dark .text-green-800,
@@ -101,5 +123,9 @@
 
   html.dark .hover\:bg-green-50:hover {
     @apply bg-green-950;
+  }
+
+  html.dark .hover\:bg-amber-100:hover {
+    @apply bg-amber-900;
   }
 }
