@@ -11,7 +11,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ### Aggiunto
 
-- Tema scuro automatico in base alle preferenze di sistema, con controllo manuale persistente sul dispositivo e fallback sicuro quando lo storage del browser non è disponibile.
+- Tema scuro automatico in base alle preferenze di sistema, con controllo manuale persistente sul dispositivo, fallback sicuro quando lo storage del browser non è disponibile e contrasto coerente per tutti i pannelli informativi.
 
 ### Modificato
 

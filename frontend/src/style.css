@@ -28,6 +28,19 @@
     @apply bg-amber-950;
   }
 
+  html.dark .bg-blue-50 {
+    @apply bg-blue-950;
+  }
+
+  html.dark .border-blue-100 {
+    @apply border-blue-800;
+  }
+
+  html.dark .text-blue-800,
+  html.dark .text-blue-900 {
+    @apply text-blue-200;
+  }
+
   html.dark .text-green-700 {
     @apply text-green-300;
   }
