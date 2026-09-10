@@ -26,7 +26,7 @@
 
 ## Convenzioni di implementazione
 
-- Frontend: usa `<script setup lang="ts">`, Composition API e tipi espliciti. Mantieni l'UI in italiano.
+- Frontend: usa `<script setup lang="ts">`, Composition API e tipi espliciti. Mantieni l'italiano come lingua predefinita e passa tutti i testi visibili attraverso il layer i18n quando la UI supporta più lingue.
 - Backend: usa Pydantic v2 e route sincrone; valida sempre lato backend, anche se la UI già limita l'azione.
 - Per funzioni legate alla chiusura: la selezione del partecipante è locale e serve solo per attribuire azioni fiduciarie. Token/ruoli separati sono una feature futura della roadmap.
 - Preferisci modifiche mirate; non riscrivere componenti o file non coinvolti dalla richiesta.

@@ -747,9 +747,7 @@
             class="flex items-center justify-between gap-3"
           >
             <p class="text-sm text-amber-900">
-              {{ t('actingAs', { name: currentMemberName })
-              }}<strong class="sr-only">{{ currentMemberName }}</strong
-              >.
+              {{ t('actingAs', { name: currentMemberName }) }}
             </p>
             <button
               type="button"
@@ -971,9 +969,7 @@
             class="flex items-center justify-between gap-3"
           >
             <p class="text-sm text-green-900">
-              {{ t('inThisGroupYouAre', { name: currentMemberName })
-              }}<strong class="sr-only">{{ currentMemberName }}</strong
-              >.
+              {{ t('inThisGroupYouAre', { name: currentMemberName }) }}
             </p>
             <button
               type="button"
