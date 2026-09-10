@@ -17,6 +17,10 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ### Modificato
 
+- Le risposte di errore API espongono ora codici stabili tradotti dal frontend, mantenendo il dettaglio italiano per compatibilità con i client esistenti.
+
+- Le risposte di errore API espongono ora codici stabili tradotti dal frontend, mantenendo il dettaglio italiano per compatibilità con i client esistenti.
+
 - La rimozione di un singolo gruppo dalla cronologia locale richiede ora una conferma e chiarisce che i dati del gruppo non vengono eliminati.
 
 ### Corretto
@@ -38,6 +42,8 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ### Modificato
 
+- Le risposte di errore API espongono ora codici stabili tradotti dal frontend, mantenendo il dettaglio italiano per compatibilità con i client esistenti.
+
 - Il campo valuta nella creazione del gruppo è ora presentato come “Valuta di default” e le spese mostrano sempre la propria valuta.
 - Totali, riepiloghi personali e messaggi di chiusura mantengono separati gli importi in valute diverse.
 - Le conferme di eliminazione indicano la spesa o il partecipante coinvolto; la cancellazione della cronologia chiarisce che non elimina i gruppi remoti.
@@ -45,6 +51,8 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 ## [1.6.0] Frontend - 2026-09-04
 
 ### Modificato
+
+- Le risposte di errore API espongono ora codici stabili tradotti dal frontend, mantenendo il dettaglio italiano per compatibilità con i client esistenti.
 
 - Sostituiti alert e conferme native con modali condivise mobile-first, pulsanti touch, semantica accessibile, gestione del focus e annullamento tramite Escape.
 
@@ -79,6 +87,8 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 - Riepilogo personale nella tab Bilanci con importi da pagare e ricevere, saldo netto e numero di pagamenti per l'identità scelta sul dispositivo.
 
 ### Modificato
+
+- Le risposte di errore API espongono ora codici stabili tradotti dal frontend, mantenendo il dettaglio italiano per compatibilità con i client esistenti.
 
 - Lockfile resi disponibili a Codex e dipendenza `cryptography` fissata a una versione esplicita.
 - Il link di donazione mostrato alla chiusura dei conti ora lascia libero l'importo.

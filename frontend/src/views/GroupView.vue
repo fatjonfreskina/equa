@@ -621,8 +621,10 @@
               >
                 {{
                   expense.converted_amount !== null && expense.converted_amount !== undefined
-                    ? `${formatCurrency(expense.converted_amount, group.currency)} con cambio salvato`
-                    : 'Cambio da completare per unificare i conti'
+                    ? t('savedRate', {
+                        amount: formatCurrency(expense.converted_amount, group.currency),
+                      })
+                    : t('rateNeedsCompletion')
                 }}
               </p>
             </div>
@@ -1122,6 +1124,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { apiErrorMessage } from '../api/errors'
 import {
   groupsApi,
   type Group,
@@ -1449,11 +1452,6 @@ function formatExpenseDate(date: string) {
   )
 }
 
-function apiErrorMessage(cause: unknown, fallback: string) {
-  const detail = (cause as { response?: { data?: { detail?: unknown } } })?.response?.data?.detail
-  return typeof detail === 'string' ? detail : fallback
-}
-
 function paymentCountLabel(count: number) {
   return count === 1 ? t('paymentSingular') : t('paymentPlural', { count })
 }
@@ -1485,10 +1483,7 @@ async function saveEmail(memberId: number) {
   } catch (e: any) {
     await showAlert({
       title: t('emailUpdateTitle'),
-      message:
-        typeof e?.response?.data?.detail === 'string'
-          ? e.response.data.detail
-          : t('emailUpdateError'),
+      message: apiErrorMessage(e, t('emailUpdateError')),
     })
   }
 }
@@ -1792,10 +1787,7 @@ async function deleteMember(memberId: number, name: string) {
   } catch (e: any) {
     await showAlert({
       title: t('memberNotRemoved'),
-      message:
-        typeof e?.response?.data?.detail === 'string'
-          ? e.response.data.detail
-          : t('memberRemoveError'),
+      message: apiErrorMessage(e, t('memberRemoveError')),
     })
   } finally {
     deletionPending.value = false
@@ -1819,7 +1811,7 @@ async function addMember() {
     showAddMemberForm.value = false
     await loadGroup()
   } catch (e: any) {
-    addMemberError.value = e?.response?.data?.detail || t('memberAddError')
+    addMemberError.value = apiErrorMessage(e, t('memberAddError'))
   }
 }
 
@@ -1909,7 +1901,7 @@ async function reportSettlement(settlementId: number) {
     trackEvent('settlement_reported')
     await loadBalances()
   } catch (e: any) {
-    settlementError.value = e?.response?.data?.detail || t('reportPaymentError')
+    settlementError.value = apiErrorMessage(e, t('reportPaymentError'))
   } finally {
     settlementLoading.value = false
   }
@@ -1924,7 +1916,7 @@ async function confirmSettlement(settlementId: number) {
     trackEvent('settlement_confirmed')
     await loadBalances()
   } catch (e: any) {
-    settlementError.value = e?.response?.data?.detail || t('confirmPaymentError')
+    settlementError.value = apiErrorMessage(e, t('confirmPaymentError'))
   } finally {
     settlementLoading.value = false
   }
@@ -1952,7 +1944,7 @@ async function updateGroupStatus(status: Group['status']) {
     if (activeTab.value === 'balances' || status === 'closing') await loadBalances()
     return true
   } catch (e: any) {
-    statusError.value = e?.response?.data?.detail || t('statusUpdateError')
+    statusError.value = apiErrorMessage(e, t('statusUpdateError'))
     return false
   } finally {
     statusLoading.value = false
