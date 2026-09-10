@@ -25,7 +25,7 @@
             class="min-h-12 rounded-xl border border-gray-300 px-5 py-3 font-semibold text-gray-700 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             @click="emit('respond', false)"
           >
-            Annulla
+            {{ t('cancel') }}
           </button>
           <button
             ref="confirmButton"
@@ -38,7 +38,9 @@
             "
             @click="emit('respond', true)"
           >
-            {{ request.confirmLabel || (request.kind === 'alert' ? 'Ho capito' : 'Conferma') }}
+            {{
+              request.confirmLabel || (request.kind === 'alert' ? t('understood') : t('confirm'))
+            }}
           </button>
         </div>
       </div>
@@ -49,6 +51,9 @@
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, ref, useId, watch } from 'vue'
 import type { FeedbackDialogRequest } from '../composables/useFeedbackDialog'
+import { useI18n } from '../utils/i18n'
+
+const { t } = useI18n()
 
 const props = defineProps<{ request: FeedbackDialogRequest | null }>()
 const emit = defineEmits<{ respond: [confirmed: boolean] }>()

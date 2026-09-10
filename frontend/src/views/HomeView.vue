@@ -8,74 +8,71 @@
           <img :src="equaLogo" alt="" width="48" height="48" class="flex-shrink-0" />
           <h1 class="text-5xl font-bold text-green-700 tracking-tight">equa</h1>
         </div>
-        <p class="text-xl text-gray-700 font-medium mb-2">Dividi le spese, non le amicizie.</p>
-        <p class="text-sm text-gray-400">Semplice, italiano, e gratis per sempre.</p>
+        <p class="text-xl text-gray-700 font-medium mb-2">{{ t('tagline') }}</p>
+        <p class="text-sm text-gray-400">{{ t('subtitle') }}</p>
       </div>
 
-      <aside
-        class="mb-4 rounded-xl border border-green-100 bg-green-50 px-4 py-3 text-sm text-green-800"
-      >
-        <span class="font-semibold">Novità · Spese in più valute</span>
+      <StatusBanner tone="success" class="mb-4 px-4 py-3 text-sm">
+        <span class="font-semibold">{{ t('multiCurrencyNews') }}</span>
         <p class="mt-1">
-          Registra ogni spesa nella sua valuta. Puoi vedere i conti separati o unificarli quando
-          serve.
+          {{ t('multiCurrencyNewsText') }}
         </p>
-      </aside>
+      </StatusBanner>
 
       <!-- Form crea gruppo -->
       <div class="bg-white rounded-2xl shadow p-6 mb-4">
-        <h2 class="text-lg font-semibold text-gray-800 mb-4">Crea un gruppo</h2>
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">{{ t('createGroup') }}</h2>
 
         <div class="space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Nome del gruppo</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('groupName') }}</label>
             <input
               v-model="form.name"
               type="text"
-              placeholder="Es. Vacanza in Sardegna"
+              :placeholder="t('groupNamePlaceholder')"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
             />
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">
-              Descrizione
-              <span class="text-gray-400 font-normal">(opzionale)</span>
+              {{ t('description') }}
+              <span class="text-gray-400 font-normal">{{ t('optional') }}</span>
             </label>
             <input
               v-model="form.description"
               type="text"
-              placeholder="Es. Agosto 2025, casa al mare"
+              :placeholder="t('descriptionPlaceholder')"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
             />
           </div>
 
           <div>
-            <label for="group-currency" class="block text-sm font-medium text-gray-700 mb-1"
-              >Valuta di default</label
-            >
+            <label for="group-currency" class="block text-sm font-medium text-gray-700 mb-1">{{
+              t('defaultCurrency')
+            }}</label>
             <select
               id="group-currency"
               v-model="form.currency"
               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
             >
               <option v-for="currency in CURRENCIES" :key="currency.code" :value="currency.code">
-                {{ currency.code }} · {{ currency.name }}
+                {{ currency.code }} · {{ currencyName(currency.code, locale) }}
               </option>
             </select>
             <p class="mt-1 text-xs text-gray-400">
-              Già selezionata nelle nuove spese; puoi cambiarla per ogni spesa.
+              {{ t('defaultCurrencyHint') }}
             </p>
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Partecipanti</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('members') }}</label>
             <div class="space-y-2">
               <div v-for="(member, index) in form.members" :key="index" class="flex gap-2">
                 <input
                   v-model="member.name"
                   type="text"
-                  :placeholder="`Es. ${exampleNames[index] || 'Partecipante'}`"
+                  :placeholder="`Es. ${exampleNames[index] || t('participant')}`"
                   class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
                 />
                 <button
@@ -91,7 +88,7 @@
               @click="addMember"
               class="mt-2 text-sm text-green-600 hover:text-green-800 font-medium"
             >
-              + Aggiungi partecipante
+              {{ t('addParticipant') }}
             </button>
           </div>
 
@@ -102,7 +99,7 @@
             :disabled="loading"
             class="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white font-semibold rounded-lg py-2.5 transition"
           >
-            {{ loading ? 'Creazione...' : 'Crea gruppo →' }}
+            {{ loading ? t('creating') : t('createGroupAction') }}
           </button>
         </div>
       </div>
@@ -112,16 +109,16 @@
         <div class="flex items-start justify-between gap-3 mb-1">
           <div>
             <div class="flex flex-wrap items-center gap-2">
-              <h2 class="text-lg font-semibold text-gray-800">I tuoi gruppi recenti</h2>
+              <h2 class="text-lg font-semibold text-gray-800">{{ t('recentGroups') }}</h2>
             </div>
-            <p class="text-sm text-gray-400">Salvati solo su questo dispositivo.</p>
+            <p class="text-sm text-gray-400">{{ t('localOnly') }}</p>
           </div>
           <button
             type="button"
             class="shrink-0 text-xs font-medium text-gray-400 hover:text-red-500 transition"
             @click="clearHistory"
           >
-            Cancella tutto
+            {{ t('clearAll') }}
           </button>
         </div>
         <div class="mt-4 space-y-2">
@@ -137,15 +134,16 @@
             >
               <p class="truncate font-medium text-gray-800">{{ group.name }}</p>
               <p class="mt-0.5 text-xs text-gray-400">
-                {{ group.memberCount }} partecipanti · {{ group.expenseCount }} spese ·
+                {{ t('memberCount', { count: group.memberCount }) }} ·
+                {{ t('expenseCount', { count: group.expenseCount }) }} ·
                 {{ formatLastAccess(group.lastAccessedAt) }}
               </p>
             </button>
             <button
               type="button"
               class="shrink-0 px-1 text-lg text-gray-300 transition hover:text-red-400"
-              :aria-label="`Rimuovi ${group.name} dai gruppi recenti`"
-              @click="removeRecentGroup(group.id)"
+              :aria-label="t('removeRecentAria', { name: group.name })"
+              @click="removeRecentGroup(group.id, group.name)"
             >
               ×
             </button>
@@ -155,20 +153,20 @@
 
       <!-- Recupera gruppo esistente -->
       <div class="bg-white rounded-2xl shadow p-6 mb-8">
-        <h2 class="text-lg font-semibold text-gray-800 mb-1">Hai già un gruppo?</h2>
-        <p class="text-sm text-gray-400 mb-3">Incolla il link che ti hanno condiviso.</p>
+        <h2 class="text-lg font-semibold text-gray-800 mb-1">{{ t('existingGroup') }}</h2>
+        <p class="text-sm text-gray-400 mb-3">{{ t('pasteSharedLink') }}</p>
         <div class="flex gap-2">
           <input
             v-model="existingId"
             type="text"
-            placeholder="Link o ID del gruppo"
+            :placeholder="t('groupLinkOrId')"
             class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
           />
           <button
             @click="goToGroup"
             class="bg-gray-800 hover:bg-gray-900 text-white font-semibold rounded-lg px-4 py-2 text-sm transition"
           >
-            Vai
+            {{ t('go') }}
           </button>
         </div>
         <p v-if="linkError" class="text-red-500 text-sm mt-2">
@@ -180,18 +178,18 @@
       <div class="grid grid-cols-3 gap-3 mb-8">
         <div class="bg-white rounded-xl shadow p-4 text-center">
           <div class="text-2xl mb-1">🔗</div>
-          <p class="text-xs font-medium text-gray-700">Basta un link</p>
-          <p class="text-xs text-gray-400 mt-1">Niente app, niente registrazione</p>
+          <p class="text-xs font-medium text-gray-700">{{ t('linkOnly') }}</p>
+          <p class="text-xs text-gray-400 mt-1">{{ t('linkOnlyText') }}</p>
         </div>
         <div class="bg-white rounded-xl shadow p-4 text-center">
           <div class="text-2xl mb-1">⚖️</div>
-          <p class="text-xs font-medium text-gray-700">Conti precisi</p>
-          <p class="text-xs text-gray-400 mt-1">Algoritmo che minimizza i pagamenti</p>
+          <p class="text-xs font-medium text-gray-700">{{ t('preciseAccounts') }}</p>
+          <p class="text-xs text-gray-400 mt-1">{{ t('preciseAccountsText') }}</p>
         </div>
         <div class="bg-white rounded-xl shadow p-4 text-center">
           <div class="text-2xl mb-1">❤️</div>
-          <p class="text-xs font-medium text-gray-700">Gratis per sempre</p>
-          <p class="text-xs text-gray-400 mt-1">Nessun abbonamento, mai</p>
+          <p class="text-xs font-medium text-gray-700">{{ t('freeForever') }}</p>
+          <p class="text-xs text-gray-400 mt-1">{{ t('freeForeverText') }}</p>
         </div>
       </div>
 
@@ -207,10 +205,12 @@ import { useRouter } from 'vue-router'
 import { groupsApi } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
 import FeedbackDialog from '../components/FeedbackDialog.vue'
+import StatusBanner from '../components/StatusBanner.vue'
 import { useFeedbackDialog } from '../composables/useFeedbackDialog'
 import equaLogo from '../assets/equa-logo.svg'
 import { trackEvent } from '../utils/analytics'
-import { CURRENCIES } from '../utils/currency'
+import { CURRENCIES, currencyName } from '../utils/currency'
+import { useI18n } from '../utils/i18n'
 import {
   clearRecentGroups as clearStoredRecentGroups,
   getRecentGroups,
@@ -219,6 +219,7 @@ import {
 } from '../utils/recentGroups'
 
 const router = useRouter()
+const { locale, localeTag, t } = useI18n()
 const { dialog, respond, askConfirmation } = useFeedbackDialog()
 
 const exampleNames = ['Marco', 'Giulia', 'Luca', 'Sara', 'Paolo']
@@ -248,13 +249,13 @@ async function createGroup() {
   error.value = ''
 
   if (!form.name.trim()) {
-    error.value = 'Dai un nome al gruppo.'
+    error.value = t('nameRequired')
     return
   }
 
   const validMembers = form.members.filter((m) => m.name.trim())
   if (validMembers.length < 2) {
-    error.value = 'Aggiungi almeno 2 partecipanti.'
+    error.value = t('twoMembersRequired')
     return
   }
 
@@ -269,7 +270,7 @@ async function createGroup() {
     trackEvent('group_created')
     router.push({ path: `/group/${response.data.id}`, query: { created: '1' } })
   } catch {
-    error.value = 'Qualcosa è andato storto. Riprova.'
+    error.value = t('genericError')
   } finally {
     loading.value = false
   }
@@ -284,7 +285,7 @@ function goToGroup() {
   if (match) {
     router.push(`/group/${match[1]}`)
   } else {
-    linkError.value = 'Link o ID non valido.'
+    linkError.value = t('invalidLink')
   }
 }
 
@@ -293,17 +294,25 @@ function openRecentGroup(groupId: string) {
   router.push(`/group/${groupId}`)
 }
 
-function removeRecentGroup(groupId: string) {
+async function removeRecentGroup(groupId: string, groupName: string) {
+  if (
+    !(await askConfirmation({
+      title: t('removeRecentTitle'),
+      message: t('removeRecentMessage', { name: groupName }),
+      confirmLabel: t('removeRecentConfirm'),
+      destructive: true,
+    }))
+  )
+    return
   recentGroups.value = removeStoredRecentGroup(groupId)
 }
 
 async function clearHistory() {
   if (
     !(await askConfirmation({
-      title: 'Cancellare la cronologia?',
-      message:
-        'Rimuoverai tutti i gruppi salvati su questo dispositivo. I gruppi e le loro spese non verranno eliminati: potrai riaprirli tramite il link.',
-      confirmLabel: 'Cancella cronologia',
+      title: t('clearHistoryTitle'),
+      message: t('clearHistoryMessage'),
+      confirmLabel: t('clearHistoryConfirm'),
       destructive: true,
     }))
   )
@@ -313,6 +322,8 @@ async function clearHistory() {
 }
 
 function formatLastAccess(lastAccessedAt: string) {
-  return new Intl.DateTimeFormat('it-IT', { dateStyle: 'medium' }).format(new Date(lastAccessedAt))
+  return new Intl.DateTimeFormat(localeTag.value, { dateStyle: 'medium' }).format(
+    new Date(lastAccessedAt),
+  )
 }
 </script>

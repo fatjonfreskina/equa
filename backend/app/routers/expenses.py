@@ -85,7 +85,7 @@ def resolve_exchange_fields(group, payload, currency, existing=None):
         fields.update(
             exchange_rate=payload.exchange_rate,
             exchange_rate_date=rate_date,
-            exchange_rate_source="manual",
+            exchange_rate_source=payload.exchange_rate_source or "manual",
         )
     elif (
         existing is not None
@@ -238,5 +238,10 @@ def delete_expense(group_id: str, expense_id: int, db: Session = Depends(get_db)
     )
     if not expense:
         raise HTTPException(status_code=404, detail="Spesa non trovata")
+    # Remove the association rows explicitly. This keeps member deletion reliable
+    # on existing MySQL databases whose foreign keys do not use ON DELETE CASCADE.
+    db.query(models.ExpenseSplit).filter(
+        models.ExpenseSplit.expense_id == expense.id
+    ).delete(synchronize_session=False)
     db.delete(expense)
     db.commit()

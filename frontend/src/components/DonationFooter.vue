@@ -1,18 +1,18 @@
 <template>
   <div class="text-center text-xs text-gray-400 space-y-2">
     <p>
-      Equa è open source e gratis per sempre.
+      {{ t('openSource') }}
       <a
         href="https://github.com/fatjonfreskina/equa"
         target="_blank"
         class="text-green-600 hover:underline"
-        >Vedi il codice →</a
+        >{{ t('viewCode') }}</a
       >
       <span class="text-gray-300 mx-1">·</span>
       <span>v{{ APP_VERSION }}</span>
     </p>
     <div class="flex items-center justify-center gap-2 flex-wrap">
-      <span>Ti è utile? Offrimi un caffè:</span>
+      <span>{{ t('useful') }}</span>
       <div class="flex gap-1">
         <a
           v-for="amount in amounts"
@@ -28,7 +28,7 @@
           target="_blank"
           @click="trackEvent('donation_clicked')"
           class="inline-block bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium rounded-lg px-2.5 py-1 transition border border-gray-200"
-          >Libero</a
+          >{{ t('customAmount') }}</a
         >
       </div>
     </div>
@@ -38,6 +38,8 @@
 <script setup lang="ts">
 import { APP_VERSION } from '../config'
 import { trackEvent } from '../utils/analytics'
+import { useI18n } from '../utils/i18n'
+const { t } = useI18n()
 const amounts = [
   { label: '☕ 2€', value: 2 },
   { label: '🍕 3€', value: 3 },
