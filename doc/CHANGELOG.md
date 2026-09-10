@@ -7,18 +7,16 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
-## [Non rilasciato]
+## [1.8.0] Frontend; Backend - 2026-09-10
 
 ### Aggiunto
 
 - Supporto italiano e inglese in tutti i flussi frontend, con selettore accessibile, formati localizzati e preferenza salvata esclusivamente sul dispositivo.
-
 - Tema scuro automatico in base alle preferenze di sistema, con controllo manuale persistente sul dispositivo, fallback sicuro quando lo storage del browser non è disponibile e contrasto coerente per tutti i pannelli informativi.
 
 ### Modificato
 
 - Le risposte di errore API espongono ora codici stabili tradotti dal frontend, mantenendo il dettaglio italiano per compatibilità con i client esistenti.
-
 - La rimozione di un singolo gruppo dalla cronologia locale richiede ora una conferma e chiarisce che i dati del gruppo non vengono eliminati.
 
 ### Corretto
