@@ -11,6 +11,8 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ### Aggiunto
 
+- Supporto italiano e inglese in tutti i flussi frontend, con selettore accessibile, formati localizzati e preferenza salvata esclusivamente sul dispositivo.
+
 - Tema scuro automatico in base alle preferenze di sistema, con controllo manuale persistente sul dispositivo, fallback sicuro quando lo storage del browser non è disponibile e contrasto coerente per tutti i pannelli informativi.
 
 ### Modificato

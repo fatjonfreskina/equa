@@ -42,6 +42,15 @@ export const CURRENCIES: readonly CurrencyOption[] = [
   { code: 'ISK', name: 'Corona islandese', decimals: 0 },
 ]
 
+export function currencyName(currency: string, locale: 'it' | 'en'): string {
+  const fallback = CURRENCIES.find((item) => item.code === currency)?.name || currency
+  try {
+    return new Intl.DisplayNames([locale], { type: 'currency' }).of(currency) || fallback
+  } catch {
+    return fallback
+  }
+}
+
 export function currencyDecimals(currency: string): number {
   return CURRENCIES.find((item) => item.code === currency)?.decimals ?? 2
 }
@@ -50,8 +59,12 @@ export function currencyStep(currency: string): number {
   return 10 ** -currencyDecimals(currency)
 }
 
-export function formatCurrency(amount: number | string, currency: string): string {
-  return new Intl.NumberFormat('it-IT', {
+export function formatCurrency(
+  amount: number | string,
+  currency: string,
+  locale = 'it-IT',
+): string {
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency,
     minimumFractionDigits: currencyDecimals(currency),
@@ -59,12 +72,16 @@ export function formatCurrency(amount: number | string, currency: string): strin
   }).format(Number(amount))
 }
 
-export function formatCurrencyValue(amount: number | string, currency: string): string {
+export function formatCurrencyValue(
+  amount: number | string,
+  currency: string,
+  locale = 'it-IT',
+): string {
   const options = {
     minimumFractionDigits: currencyDecimals(currency),
     maximumFractionDigits: currencyDecimals(currency),
   }
-  const formatted = new Intl.NumberFormat('it-IT', {
+  const formatted = new Intl.NumberFormat(locale, {
     ...options,
     style: 'currency',
     currency,
@@ -72,7 +89,7 @@ export function formatCurrencyValue(amount: number | string, currency: string): 
   }).format(Number(amount))
 
   if (!formatted.toUpperCase().includes(currency.toUpperCase())) return formatted
-  return new Intl.NumberFormat('it-IT', options).format(Number(amount))
+  return new Intl.NumberFormat(locale, options).format(Number(amount))
 }
 
 export function todayDate(): string {
