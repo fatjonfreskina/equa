@@ -1,5 +1,9 @@
 from fastapi import FastAPI, Request
-from fastapi.exception_handlers import http_exception_handler
+from fastapi.exception_handlers import (
+    http_exception_handler,
+    request_validation_exception_handler,
+)
+from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base
@@ -28,6 +32,13 @@ app.add_middleware(
 async def add_error_code(request: Request, exc: StarletteHTTPException):
     response = await http_exception_handler(request, exc)
     response.headers["X-Error-Code"] = error_code(exc.detail, exc.status_code)
+    return response
+
+
+@app.exception_handler(RequestValidationError)
+async def add_validation_error_code(request: Request, exc: RequestValidationError):
+    response = await request_validation_exception_handler(request, exc)
+    response.headers["X-Error-Code"] = error_code(exc.errors(), response.status_code)
     return response
 
 

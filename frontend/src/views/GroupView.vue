@@ -419,8 +419,13 @@
                 {{ t('exchangeSavedHint', { currency: group.currency }) }}
               </p>
               <p v-if="ratePreview && !manualRateOverride" class="mt-2 text-xs text-gray-600">
-                {{ ratePreview.source === 'manual' ? t('savedManualRate') : t('referenceRate') }}
-                del {{ formatExpenseDate(ratePreview.date) }}.
+                {{
+                  t('datedExchangeRate', {
+                    label:
+                      ratePreview.source === 'manual' ? t('savedManualRate') : t('referenceRate'),
+                    date: formatExpenseDate(ratePreview.date),
+                  })
+                }}
                 <span v-if="ratePreview.source === 'frankfurter'">{{
                   t('sourceFrankfurter')
                 }}</span>
@@ -1983,7 +1988,7 @@ async function reopenGroup() {
     !(await askConfirmation({
       title: t('reopenTitle'),
       message: t('reopenMessage'),
-      confirmLabel: 'Riapri conti',
+      confirmLabel: t('reopenConfirm'),
     }))
   )
     return

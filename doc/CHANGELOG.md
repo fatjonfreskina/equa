@@ -23,6 +23,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ### Corretto
 
+- I messaggi del cambio e la conferma di riapertura rispettano interamente la lingua selezionata; anche gli errori di validazione automatica espongono ora il codice API stabile.
 - Il salvataggio conserva il cambio automatico mostrato nell'anteprima, con data e fonte, senza interrogare una seconda volta il provider.
 - Un partecipante torna rimovibile dopo l'eliminazione dell'unica spesa che lo coinvolge.
 - Un partecipante coinvolto soltanto in pagamenti annullati può essere rimosso dopo la riapertura del gruppo; i pagamenti pendenti o confermati continuano a proteggerne lo storico.

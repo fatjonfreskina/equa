@@ -125,6 +125,7 @@ const messages = {
       'Il cambio viene salvato con questa spesa e usato solo per unificare i conti in {currency}.',
     savedManualRate: 'Cambio manuale salvato',
     referenceRate: 'Cambio di riferimento',
+    datedExchangeRate: '{label} del {date}.',
     sourceFrankfurter: "Fonte: Frankfurter. Può differire dall'addebito della banca.",
     enterExchangeRate: 'Inserisci il cambio concordato o quello applicato dalla banca.',
     editRate: 'Modifica cambio',
@@ -248,6 +249,7 @@ const messages = {
     closeGroupConfirm: 'Chiudi gruppo',
     reopenTitle: 'Riaprire i conti?',
     reopenMessage: 'Spese e partecipanti torneranno modificabili.',
+    reopenConfirm: 'Riapri conti',
     shareMessage:
       'Ho creato il gruppo "{name}" su Equa. Aprilo qui per aggiungere o controllare le spese: {link}',
   },
@@ -369,6 +371,7 @@ const messages = {
       'This rate is saved with the expense and used only to combine balances in {currency}.',
     savedManualRate: 'Saved manual rate',
     referenceRate: 'Reference rate',
+    datedExchangeRate: '{label} from {date}.',
     sourceFrankfurter: 'Source: Frankfurter. It may differ from the rate charged by your bank.',
     enterExchangeRate: 'Enter the agreed rate or the rate applied by your bank.',
     editRate: 'Edit rate',
@@ -488,6 +491,7 @@ const messages = {
     closeGroupConfirm: 'Close group',
     reopenTitle: 'Reopen balances?',
     reopenMessage: 'Expenses and participants will become editable again.',
+    reopenConfirm: 'Reopen balances',
     shareMessage:
       'I created the group "{name}" on Equa. Open it here to add or check expenses: {link}',
   },

@@ -21,5 +21,9 @@ describe('i18n', () => {
     expect(translate('removeRecentAria', { name: 'Holiday' })).toBe(
       'Remove Holiday from recent groups',
     )
+    expect(translate('datedExchangeRate', { label: 'Reference rate', date: 'Sep 2, 2026' })).toBe(
+      'Reference rate from Sep 2, 2026.',
+    )
+    expect(translate('reopenConfirm')).toBe('Reopen balances')
   })
 })
