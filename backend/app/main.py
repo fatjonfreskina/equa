@@ -1,7 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.exception_handlers import http_exception_handler
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base
 from .routers import groups, expenses, balances, members, settlements
+from .errors import error_code
 import os
 
 allow_origins = os.getenv("ALLOW_ORIGINS", "")
@@ -17,7 +20,16 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["X-Error-Code"],
 )
+
+
+@app.exception_handler(StarletteHTTPException)
+async def add_error_code(request: Request, exc: StarletteHTTPException):
+    response = await http_exception_handler(request, exc)
+    response.headers["X-Error-Code"] = error_code(exc.detail, exc.status_code)
+    return response
+
 
 app.include_router(groups.router)
 app.include_router(expenses.router)
