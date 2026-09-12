@@ -1127,7 +1127,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch, nextTick } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { apiErrorMessage } from '../api/errors'
 import {
@@ -1200,6 +1200,16 @@ const showCelebration = ref(false)
 const showClosingSummary = ref(false)
 const statusLoading = ref(false)
 const statusError = ref('')
+
+const defaultDocumentTitle = 'Equa — Dividi le spese, non le amicizie'
+
+watch(
+  () => group.value?.name,
+  (name) => {
+    document.title = name ? `${name} · Equa` : defaultDocumentTitle
+  },
+  { immediate: true },
+)
 
 const newMember = reactive({ name: '', email: '' })
 const addMemberError = ref('')
@@ -1996,4 +2006,7 @@ async function reopenGroup() {
 }
 
 onMounted(loadGroup)
+onUnmounted(() => {
+  document.title = defaultDocumentTitle
+})
 </script>

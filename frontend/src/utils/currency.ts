@@ -59,16 +59,25 @@ export function currencyStep(currency: string): number {
   return 10 ** -currencyDecimals(currency)
 }
 
+function displayedCurrencyDecimals(amount: number | string, currency: string): number {
+  const decimals = currencyDecimals(currency)
+  if (decimals > 0) return decimals
+
+  const numericAmount = Number(amount)
+  return Number.isFinite(numericAmount) && !Number.isInteger(numericAmount) ? 2 : decimals
+}
+
 export function formatCurrency(
   amount: number | string,
   currency: string,
   locale = 'it-IT',
 ): string {
+  const decimals = displayedCurrencyDecimals(amount, currency)
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency,
-    minimumFractionDigits: currencyDecimals(currency),
-    maximumFractionDigits: currencyDecimals(currency),
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
   }).format(Number(amount))
 }
 
@@ -77,9 +86,10 @@ export function formatCurrencyValue(
   currency: string,
   locale = 'it-IT',
 ): string {
+  const decimals = displayedCurrencyDecimals(amount, currency)
   const options = {
-    minimumFractionDigits: currencyDecimals(currency),
-    maximumFractionDigits: currencyDecimals(currency),
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
   }
   const formatted = new Intl.NumberFormat(locale, {
     ...options,
