@@ -1,0 +1,79 @@
+name: Release guard
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  validate-release:
+    name: Validate release metadata
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Require release-candidate as source
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPOSITORY: ${{ github.event.pull_request.base.repo.full_name }}
+        run: |
+          if [ "$HEAD_REF" != "release-candidate" ] || [ "$HEAD_REPOSITORY" != "$BASE_REPOSITORY" ]; then
+            echo "Le PR verso main devono provenire dal release-candidate di questo repository."
+            exit 1
+          fi
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate versions and changelog
+        run: python scripts/check_release.py --base-ref origin/main
+
+  tag-release:
+    name: Create release tags
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate release metadata
+        id: release
+        env:
+          PREVIOUS_MAIN: ${{ github.event.before }}
+        run: python scripts/check_release.py --base-ref "$PREVIOUS_MAIN" --github-output "$GITHUB_OUTPUT"
+      - name: Create missing component tags
+        env:
+          FRONTEND_VERSION: ${{ steps.release.outputs.frontend_version }}
+          BACKEND_VERSION: ${{ steps.release.outputs.backend_version }}
+          FRONTEND_CHANGED: ${{ steps.release.outputs.frontend_changed }}
+          BACKEND_CHANGED: ${{ steps.release.outputs.backend_changed }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          tags=()
+          if [ "$FRONTEND_CHANGED" = "true" ]; then
+            tags+=("frontend_v$FRONTEND_VERSION")
+          fi
+          if [ "$BACKEND_CHANGED" = "true" ]; then
+            tags+=("backend_v$BACKEND_VERSION")
+          fi
+          for tag in "${tags[@]}"; do
+            if git rev-parse --verify "refs/tags/$tag" >/dev/null 2>&1; then
+              tagged_commit="$(git rev-list -n 1 "$tag")"
+              if [ "$tagged_commit" != "$GITHUB_SHA" ]; then
+                echo "Il tag $tag esiste già su un commit diverso."
+                exit 1
+              fi
+            else
+              git tag -a "$tag" -m "Release $tag" "$GITHUB_SHA"
+              git push origin "$tag"
+            fi
+          done

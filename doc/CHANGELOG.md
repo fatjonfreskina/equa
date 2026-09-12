@@ -7,6 +7,23 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
+## [1.8.1] Frontend; Backend - 2026-09-12
+
+### Aggiunto
+
+- Anteprima statica riconoscibile dei link condivisi tramite metadati Open Graph e Twitter, senza includere dati del gruppo.
+- Controllo CI delle pull request verso `main` per imporre il passaggio da `release-candidate`, verificare versioni e changelog e creare automaticamente i tag di componente dopo il merge.
+
+### Modificato
+
+- Il payoff del brand è ora “Spese condivise, senza complicazioni”, con traduzione inglese coerente e metadati di condivisione aggiornati.
+- Il titolo del browser identifica il gruppo aperto e torna al titolo predefinito quando si lascia la pagina.
+- Le regole operative richiedono versionamento e changelog coerenti prima dell'approvazione di una release verso `main`.
+
+### Corretto
+
+- Gli importi frazionari conservati dalla migrazione multivaluta per JPY, KRW, VND, CLP e ISK non vengono più arrotondati visivamente all'intero.
+
 ## [1.8.0] Frontend; Backend - 2026-09-10
 
 ### Aggiunto
