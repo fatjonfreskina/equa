@@ -97,6 +97,38 @@ describe('buildClosingSummary', () => {
     expect(summary).not.toContain('1.042,50')
   })
 
+  it('preserves legacy fractions for zero-decimal currencies in shared summaries', () => {
+    const legacyGroup: Group = {
+      ...group,
+      currency: 'JPY',
+      expenses: [
+        {
+          ...group.expenses[0]!,
+          currency: 'JPY',
+          amount: '0.50',
+          converted_amount: '0.50',
+        },
+      ],
+    }
+    const summary = buildClosingSummary(
+      legacyGroup,
+      [
+        {
+          from_member_id: 2,
+          from_member_name: 'Marco',
+          to_member_id: 1,
+          to_member_name: 'Giulia',
+          amount: '0.25',
+          currency: 'JPY',
+        },
+      ],
+      'https://equa.example',
+    )
+
+    expect(summary).toContain('Totale spese: 0,50')
+    expect(summary).toContain('Marco deve 0,25')
+  })
+
   it('includes the saved converted total only for a complete unified closing', () => {
     const multicurrency: Group = {
       ...group,

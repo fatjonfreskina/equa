@@ -9,3 +9,4 @@ dist/
 .idea/
 frontend/.env.development
 frontend/.env.production
+scripts/start-dev.bat
