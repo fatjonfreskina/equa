@@ -114,9 +114,6 @@ def validate_release(
     versions = read_versions(root)
     entries = parse_changelog((root / "doc/CHANGELOG.md").read_text(encoding="utf-8"))
 
-    if not re.search(r"^\s*-\s+\S", entries[0].body, re.MULTILINE):
-        raise ValueError("La release più recente del changelog non contiene modifiche")
-
     for component, version in versions.items():
         declaration = next(
             (entry for entry in entries if component in entry.scopes), None
@@ -125,6 +122,11 @@ def validate_release(
             declared = declaration.version if declaration else "nessuna"
             raise ValueError(
                 f"Versione {component} {version}, ultima versione nel changelog {declared}"
+            )
+        if not re.search(r"^\s*-\s+\S", declaration.body, re.MULTILINE):
+            raise ValueError(
+                f"La release più recente di {component} nel changelog "
+                "non contiene modifiche"
             )
 
     if base_versions is not None:

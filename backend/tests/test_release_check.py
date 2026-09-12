@@ -109,6 +109,24 @@ def test_release_rejects_inconsistent_changelog(
         validate_release(tmp_path)
 
 
+def test_release_rejects_empty_entry_for_second_incremented_component(tmp_path):
+    write_release_files(
+        tmp_path,
+        heading="## [1.8.1] Frontend",
+        body=(
+            "### Corretto\n\n- Frontend documentato.\n\n"
+            f"## [1.8.1] Backend - {date.today()}\n"
+        ),
+    )
+
+    with pytest.raises(ValueError, match="backend.*non contiene modifiche"):
+        validate_release(
+            tmp_path,
+            {"frontend": "1.8.0", "backend": "1.8.0"},
+            {"frontend", "backend"},
+        )
+
+
 def test_release_rejects_missing_version_increment(tmp_path):
     write_release_files(tmp_path)
 
