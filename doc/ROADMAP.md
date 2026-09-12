@@ -1,6 +1,6 @@
 # Roadmap Equa
 
-> Dividi le spese, non le amicizie.
+> Spese condivise, senza complicazioni.
 
 Questo documento descrive l'evoluzione prevista di Equa con tre obiettivi principali:
 
