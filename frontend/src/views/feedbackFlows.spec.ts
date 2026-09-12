@@ -120,7 +120,17 @@ afterEach(() => {
   app?.unmount()
   app = undefined
   document.body.replaceChildren()
+  document.title = ''
   localStorage.clear()
+})
+
+it('identifies a shared group in the browser title', async () => {
+  await mount(GroupView)
+  expect(document.title).toBe('Vacanza · Equa')
+
+  app?.unmount()
+  app = undefined
+  expect(document.title).toBe('Equa — Spese condivise, senza complicazioni')
 })
 
 it('clears only local history and only after confirmation', async () => {

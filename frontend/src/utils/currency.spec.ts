@@ -26,6 +26,13 @@ describe('currency helpers', () => {
     expect(formatCurrency('12.50', 'EUR')).toContain('12,50')
   })
 
+  it('preserves migrated fractions when displaying zero-decimal currencies', () => {
+    expect(formatCurrency('0.50', 'JPY')).toContain('0,50')
+    expect(formatCurrency('0.50', 'JPY')).not.toContain('1')
+    expect(formatCurrencyValue('12.25', 'KRW')).toContain('12,25')
+    expect(formatCurrency('12', 'VND')).not.toContain(',00')
+  })
+
   it('does not repeat a currency code that is already shown beside the value', () => {
     expect(formatCurrencyValue(1200, 'JPY')).toContain('¥')
     expect(formatCurrencyValue(1200, 'JPY')).not.toContain('JPY')

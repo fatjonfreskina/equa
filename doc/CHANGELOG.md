@@ -7,7 +7,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
-## [Non rilasciato]
+## [1.8.1] Frontend; Backend - 2026-09-12
 
 ### Aggiunto
 
@@ -16,14 +16,35 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 - Migrazione `005` e rollback per verifiche temporanee e contatori, comando di pulizia e guida operativa/privacy in `doc/EMAIL_LINK.md`.
 - Azioni di riuso e passaparola per tutti i visitatori dei gruppi chiusi: nuovo gruppo vuoto, condivisione nativa, WhatsApp e copia della sola pagina pubblica di Equa.
 - Test backend e frontend per consenso, validazione, scadenza, tentativi, replay, limiti, guasti del servizio e condivisione senza dati del gruppo.
+- Anteprima statica riconoscibile dei link condivisi tramite metadati Open Graph e Twitter, senza includere dati del gruppo.
+- Controllo CI delle pull request verso `main` per imporre il passaggio da `release-candidate`, verificare versioni e changelog e creare automaticamente i tag di componente dopo il merge.
+
+### Modificato
+
+- Il payoff del brand è ora “Spese condivise, senza complicazioni”, con traduzione inglese coerente e metadati di condivisione aggiornati.
+- Il titolo del browser identifica il gruppo aperto e torna al titolo predefinito quando si lascia la pagina.
+- Le regole operative richiedono versionamento e changelog coerenti prima dell'approvazione di una release verso `main`.
+
+### Corretto
+
+- Gli importi frazionari conservati dalla migrazione multivaluta per JPY, KRW, VND, CLP e ISK non vengono più arrotondati visivamente all'intero.
+- Il controllo di rilascio verifica che ogni componente dichiarato abbia modifiche documentate anche quando frontend e backend usano voci separate del changelog.
+
+## [1.8.0] Frontend; Backend - 2026-09-10
+
+### Aggiunto
+
+- Supporto italiano e inglese in tutti i flussi frontend, con selettore accessibile, formati localizzati e preferenza salvata esclusivamente sul dispositivo.
 - Tema scuro automatico in base alle preferenze di sistema, con controllo manuale persistente sul dispositivo, fallback sicuro quando lo storage del browser non è disponibile e contrasto coerente per tutti i pannelli informativi.
 
 ### Modificato
 
+- Le risposte di errore API espongono ora codici stabili tradotti dal frontend, mantenendo il dettaglio italiano per compatibilità con i client esistenti.
 - La rimozione di un singolo gruppo dalla cronologia locale richiede ora una conferma e chiarisce che i dati del gruppo non vengono eliminati.
 
 ### Corretto
 
+- I messaggi del cambio e la conferma di riapertura rispettano interamente la lingua selezionata; anche gli errori di validazione automatica espongono ora il codice API stabile.
 - Il salvataggio conserva il cambio automatico mostrato nell'anteprima, con data e fonte, senza interrogare una seconda volta il provider.
 - Un partecipante torna rimovibile dopo l'eliminazione dell'unica spesa che lo coinvolge.
 - Un partecipante coinvolto soltanto in pagamenti annullati può essere rimosso dopo la riapertura del gruppo; i pagamenti pendenti o confermati continuano a proteggerne lo storico.
@@ -41,6 +62,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ### Modificato
 
+
 - Il campo valuta nella creazione del gruppo è ora presentato come “Valuta di default” e le spese mostrano sempre la propria valuta.
 - Totali, riepiloghi personali e messaggi di chiusura mantengono separati gli importi in valute diverse.
 - Le conferme di eliminazione indicano la spesa o il partecipante coinvolto; la cancellazione della cronologia chiarisce che non elimina i gruppi remoti.
@@ -48,6 +70,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 ## [1.6.0] Frontend - 2026-09-04
 
 ### Modificato
+
 
 - Sostituiti alert e conferme native con modali condivise mobile-first, pulsanti touch, semantica accessibile, gestione del focus e annullamento tramite Escape.
 
@@ -82,6 +105,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 - Riepilogo personale nella tab Bilanci con importi da pagare e ricevere, saldo netto e numero di pagamenti per l'identità scelta sul dispositivo.
 
 ### Modificato
+
 
 - Lockfile resi disponibili a Codex e dipendenza `cryptography` fissata a una versione esplicita.
 - Il link di donazione mostrato alla chiusura dei conti ora lascia libero l'importo.

@@ -1,6 +1,6 @@
 <div align="center">
   <h1 align="center"><img src="frontend/src/assets/equa-logo.svg" width="56" height="56" align="absmiddle" alt="Equa"> equa</h1>
-  <p align="center"><strong>Dividi le spese, non le amicizie.</strong></p>
+  <p align="center"><strong>Spese condivise, senza complicazioni.</strong></p>
   <p align="center">
     <a href="http://equa.fatjonfreskina.com/"><strong>Prova Equa online →</strong></a>
   </p>

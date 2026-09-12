@@ -1,6 +1,6 @@
 # Roadmap Equa
 
-> Dividi le spese, non le amicizie.
+> Spese condivise, senza complicazioni.
 
 Questo documento descrive l'evoluzione prevista di Equa con tre obiettivi principali:
 
@@ -20,7 +20,7 @@ La roadmap e ordinata per impatto e dipendenze, non per data rigida. Le funziona
 
 - [ ] Correggere la validazione degli split lato backend.
 - [ ] Uniformare caricamenti, errori, retry e conferme.
-- [ ] Uniformare la formattazione di importi e valute.
+- [x] Uniformare la formattazione di importi e valute.
 - [x] Aggiungere test backend e frontend essenziali.
 - [ ] Definire il modello di sicurezza dei link.
 
@@ -30,7 +30,7 @@ La roadmap e ordinata per impatto e dipendenze, non per data rigida. Le funziona
 - [x] Aggiungere condivisione WhatsApp.
 - [x] Salvare e mostrare i gruppi recenti localmente.
 - [ ] Migliorare la pagina di ingresso da link condiviso.
-- [ ] Aggiungere titolo dinamico e anteprima del link.
+- [x] Aggiungere titolo dinamico e anteprima del link.
 
 ### Bilanci e chiusura dei debiti
 
@@ -279,9 +279,9 @@ Le azioni distruttive devono usare una conferma chiara e distinguere il nome del
 
 **Checklist**
 
-- [ ] Creare un formatter comune basato su `Intl.NumberFormat`.
-- [ ] Applicarlo a totale, spese, bilanci e riepilogo personale.
-- [ ] Applicarlo ai messaggi di condivisione.
+- [x] Creare un formatter comune basato su `Intl.NumberFormat`.
+- [x] Applicarlo a totale, spese, bilanci e riepilogo personale.
+- [x] Applicarlo ai messaggi di condivisione.
 
 Centralizzare la formattazione degli importi con `Intl.NumberFormat`, usando la valuta del gruppo e due decimali quando servono. Il formato deve essere uguale in:
 
@@ -404,9 +404,9 @@ Su mobile il caricamento deve mostrare uno stato stabile e non spostare il conte
 
 **Checklist**
 
-- [ ] Aggiornare il titolo del browser con il nome del gruppo.
-- [ ] Aggiungere meta description e Open Graph.
-- [ ] Escludere importi, email e dati sensibili.
+- [x] Aggiornare il titolo del browser con il nome del gruppo.
+- [x] Aggiungere meta description e Open Graph.
+- [x] Escludere importi, email e dati sensibili.
 
 Aggiornare dinamicamente:
 
@@ -1079,7 +1079,7 @@ Prima di procedere servono analisi legale, sicurezza, costi e domanda reale degl
 - [ ] Sostituire caratteri testuali come `X` con icone accessibili e label.
 - [x] Evitare sovrapposizioni tra titoli lunghi e azioni nell'header del gruppo.
 - [ ] Gestire focus dopo apertura e chiusura dei form.
-- [ ] Aggiornare il titolo della pagina per ogni gruppo.
+- [x] Aggiornare il titolo della pagina per ogni gruppo.
 - [ ] Aggiungere test dei componenti e dei flussi principali.
 - [ ] Verificare mobile a 320px, 375px, 768px e desktop.
 

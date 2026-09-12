@@ -1,7 +1,7 @@
 <template>
   <FeedbackDialog :request="dialog" @respond="respond" />
   <div class="max-w-2xl mx-auto py-8 px-4">
-    <div v-if="loading" class="text-center py-20 text-gray-400">Caricamento...</div>
+    <div v-if="loading" class="text-center py-20 text-gray-400">{{ t('loading') }}</div>
     <div v-else-if="error" class="text-center py-20 text-red-500">
       {{ error }}
     </div>
@@ -25,21 +25,20 @@
             <div>
               <p class="text-2xl" aria-hidden="true">🔗</p>
               <h2 id="share-reminder-title" class="mt-2 text-xl font-bold text-gray-800">
-                Condividi il link del gruppo
+                {{ t('shareGroupLink') }}
               </h2>
             </div>
             <button
               type="button"
               class="text-2xl leading-none text-gray-400 hover:text-gray-700"
-              aria-label="Chiudi promemoria condivisione"
+              :aria-label="t('closeShareReminder')"
               @click="closeShareDialog"
             >
               ×
             </button>
           </div>
           <p class="mt-3 text-sm leading-6 text-gray-600">
-            Invialo ai partecipanti e conservalo: chi ha il link può vedere e modificare il gruppo.
-            Ti servirà per ritrovarlo anche su un altro dispositivo.
+            {{ t('shareReminder') }}
           </p>
           <div class="mt-5 grid gap-2 sm:grid-cols-2">
             <a
@@ -88,7 +87,7 @@
                 <circle cx="18" cy="19" r="2.5" />
                 <path d="m8.2 10.8 7.5-4.4M8.2 13.2l7.5 4.4" />
               </svg>
-              Condividi…
+              {{ t('share') }}
             </button>
             <button
               type="button"
@@ -108,7 +107,7 @@
                 <rect x="9" y="9" width="10" height="10" rx="2" />
                 <path d="M15 9V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" />
               </svg>
-              {{ copied ? '✓ Link copiato' : 'Copia il link' }}
+              {{ copied ? t('copied') : t('copyLink') }}
             </button>
           </div>
           <p class="mt-4 break-all rounded-lg bg-gray-50 p-3 text-xs text-gray-500">
@@ -135,10 +134,11 @@
       >
         <div class="w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-xl">
           <p class="text-4xl" aria-hidden="true">🎉</p>
-          <h2 id="celebration-title" class="mt-3 text-xl font-bold text-gray-800">Conti chiusi!</h2>
+          <h2 id="celebration-title" class="mt-3 text-xl font-bold text-gray-800">
+            {{ t('accountsClosed') }}
+          </h2>
           <p class="mt-2 text-sm leading-6 text-gray-600">
-            Avete chiuso i conti di {{ group.name }}. Se Equa vi è stata utile, puoi offrirci un
-            caffè per mantenerla gratuita.
+            {{ t('celebration', { name: group.name }) }}
           </p>
           <a
             href="https://paypal.me/fatjonfreskina"
@@ -146,14 +146,14 @@
             rel="noopener noreferrer"
             @click="trackEvent('donation_clicked')"
             class="mt-5 block rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700"
-            >☕ Offri un caffè</a
+            >{{ t('offerCoffee') }}</a
           >
           <button
             type="button"
             class="mt-3 text-sm text-gray-500 hover:text-gray-700"
             @click="showCelebration = false"
           >
-            Non ora
+            {{ t('notNow') }}
           </button>
         </div>
       </div>
@@ -171,20 +171,20 @@
             <div>
               <StatusBadge tone="warning">Beta</StatusBadge>
               <h2 id="closing-summary-title" class="mt-2 text-xl font-bold text-gray-800">
-                Condividi il riepilogo
+                {{ t('shareSummary') }}
               </h2>
             </div>
             <button
               type="button"
               class="text-2xl leading-none text-gray-400 hover:text-gray-700"
-              aria-label="Chiudi riepilogo"
+              :aria-label="t('closeSummary')"
               @click="showClosingSummary = false"
             >
               ×
             </button>
           </div>
           <p class="mt-2 text-sm leading-6 text-gray-600">
-            Invia al gruppo le somme da pagare e il link per aggiornare i pagamenti.
+            {{ t('shareSummaryHint') }}
           </p>
           <div
             class="mt-4 max-h-64 overflow-y-auto whitespace-pre-wrap rounded-lg bg-gray-50 p-3 text-sm leading-6 text-gray-700"
@@ -198,14 +198,14 @@
             class="mt-4 flex items-center justify-center rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700"
             @click="trackEvent('closing_summary_whatsapp')"
           >
-            Condividi su WhatsApp
+            {{ t('shareWhatsapp') }}
           </a>
           <button
             type="button"
             class="mt-3 w-full text-sm text-gray-500 hover:text-gray-700"
             @click="showClosingSummary = false"
           >
-            Non ora
+            {{ t('notNow') }}
           </button>
         </div>
       </div>
@@ -213,7 +213,7 @@
       <!-- Link home -->
       <div class="mb-4">
         <RouterLink to="/" class="text-sm text-gray-400 hover:text-green-600 transition">
-          ← Torna alla home
+          {{ t('backHome') }}
         </RouterLink>
       </div>
 
@@ -232,7 +232,7 @@
           @click="openShareDialog"
           class="shrink-0 rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-500 transition hover:text-green-600"
         >
-          🔗 Condividi
+          {{ t('shareShort') }}
         </button>
       </div>
 
@@ -242,7 +242,7 @@
       >
         <div class="min-w-0">
           <p class="text-sm text-green-800">
-            Ritrova questo gruppo dalla home su questo dispositivo.
+            {{ t('saveGroupHint') }}
           </p>
         </div>
         <button
@@ -250,7 +250,7 @@
           class="shrink-0 text-sm font-semibold text-green-700 underline underline-offset-2 hover:text-green-800"
           @click="saveGroupLocally"
         >
-          Salva gruppo
+          {{ t('saveGroup') }}
         </button>
       </div>
 
@@ -276,7 +276,7 @@
             class="rounded-lg border border-amber-300 bg-white px-3 py-2 text-sm font-semibold text-amber-800 transition hover:bg-amber-100"
             @click="showClosingSummary = true"
           >
-            Condividi riepilogo
+            {{ t('shareSummary') }}
           </button>
           <button
             v-if="group.status === 'closing'"
@@ -285,7 +285,7 @@
             class="rounded-lg bg-green-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-green-700 disabled:bg-gray-300"
             @click="closeGroup"
           >
-            {{ statusLoading ? 'Aggiornamento...' : 'Segna come chiuso' }}
+            {{ statusLoading ? t('updating') : t('markClosed') }}
           </button>
           <button
             type="button"
@@ -293,7 +293,7 @@
             class="rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-white disabled:bg-gray-100"
             @click="reopenGroup"
           >
-            Riapri conti
+            {{ t('reopenAccounts') }}
           </button>
         </div>
       </StatusBanner>
@@ -323,7 +323,7 @@
         <div
           class="bg-green-50 border border-green-100 rounded-xl px-5 py-3 mb-4 flex flex-wrap items-center justify-between gap-3"
         >
-          <span class="text-sm text-green-700 font-medium">Totale spese</span>
+          <span class="text-sm text-green-700 font-medium">{{ t('totalExpenses') }}</span>
           <div class="text-right">
             <p
               v-for="total in totalExpenses"
@@ -340,7 +340,7 @@
               }}
             </p>
             <p v-if="hasForeignExpenses" class="text-xs text-green-700">
-              Importi originali, senza conversioni
+              {{ t('originalAmounts') }}
             </p>
           </div>
         </div>
@@ -351,18 +351,20 @@
           @click="openNewExpenseForm"
           class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg py-2.5 mb-4 transition"
         >
-          {{ showExpenseForm && !editingExpenseId ? '✕ Annulla' : '+ Aggiungi spesa' }}
+          {{ showExpenseForm && !editingExpenseId ? `✕ ${t('cancel')}` : t('addExpense') }}
         </button>
 
         <!-- Form aggiunta / modifica spesa -->
         <div v-if="showExpenseForm" id="expense-form" class="bg-white rounded-2xl shadow p-5 mb-4">
           <h3 class="font-semibold text-gray-800 mb-3">
-            {{ editingExpenseId ? 'Modifica spesa' : 'Nuova spesa' }}
+            {{ editingExpenseId ? t('editExpense') : t('newExpense') }}
           </h3>
           <div class="space-y-3">
             <div>
-              <label for="expense-description" class="block text-sm font-medium text-gray-700 mb-1"
-                >Descrizione</label
+              <label
+                for="expense-description"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >{{ t('description') }}</label
               >
               <input
                 id="expense-description"
@@ -374,9 +376,9 @@
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label for="expense-amount" class="block text-sm font-medium text-gray-700 mb-1"
-                  >Importo</label
-                >
+                <label for="expense-amount" class="block text-sm font-medium text-gray-700 mb-1">{{
+                  t('amount')
+                }}</label>
                 <input
                   id="expense-amount"
                   v-model="expenseForm.amount"
@@ -388,8 +390,10 @@
                 />
               </div>
               <div>
-                <label for="expense-currency" class="block text-sm font-medium text-gray-700 mb-1"
-                  >Valuta</label
+                <label
+                  for="expense-currency"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >{{ t('currency') }}</label
                 >
                 <select
                   id="expense-currency"
@@ -407,9 +411,9 @@
               </div>
             </div>
             <div>
-              <label for="expense-date" class="block text-sm font-medium text-gray-700 mb-1"
-                >Data della spesa</label
-              >
+              <label for="expense-date" class="block text-sm font-medium text-gray-700 mb-1">{{
+                t('expenseDate')
+              }}</label>
               <input
                 id="expense-date"
                 v-model="expenseForm.expense_date"
@@ -423,22 +427,22 @@
               class="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm"
             >
               <summary class="cursor-pointer font-medium text-gray-700">
-                Dettagli cambio · {{ exchangeRateCaption }}
+                {{ t('exchangeDetails', { caption: exchangeRateCaption }) }}
               </summary>
               <p class="mt-2 text-xs text-gray-600">
-                Il cambio viene salvato con questa spesa e usato solo per unificare i conti in
-                {{ group.currency }}.
+                {{ t('exchangeSavedHint', { currency: group.currency }) }}
               </p>
               <p v-if="ratePreview && !manualRateOverride" class="mt-2 text-xs text-gray-600">
                 {{
-                  ratePreview.source === 'manual'
-                    ? 'Cambio manuale salvato'
-                    : 'Cambio di riferimento'
+                  t('datedExchangeRate', {
+                    label:
+                      ratePreview.source === 'manual' ? t('savedManualRate') : t('referenceRate'),
+                    date: formatExpenseDate(ratePreview.date),
+                  })
                 }}
-                del {{ formatExpenseDate(ratePreview.date) }}.
-                <span v-if="ratePreview.source === 'frankfurter'"
-                  >Fonte: Frankfurter. Può differire dall'addebito della banca.</span
-                >
+                <span v-if="ratePreview.source === 'frankfurter'">{{
+                  t('sourceFrankfurter')
+                }}</span>
               </p>
               <div v-if="manualRateOverride" class="mt-3">
                 <label for="expense-exchange-rate" class="block text-xs font-medium text-gray-700"
@@ -455,7 +459,7 @@
                   class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
                 />
                 <p class="mt-1 text-xs text-gray-500">
-                  Inserisci il cambio concordato o quello applicato dalla banca.
+                  {{ t('enterExchangeRate') }}
                 </p>
               </div>
               <div class="mt-3 flex flex-wrap gap-3">
@@ -465,7 +469,7 @@
                   class="text-xs font-semibold text-green-700 underline"
                   @click="enableManualRate"
                 >
-                  Modifica cambio
+                  {{ t('editRate') }}
                 </button>
                 <button
                   type="button"
@@ -473,7 +477,7 @@
                   class="text-xs font-semibold text-green-700 underline disabled:text-gray-400"
                   @click="refreshAutomaticRate"
                 >
-                  {{ manualRateOverride ? 'Usa cambio automatico' : 'Aggiorna cambio automatico' }}
+                  {{ manualRateOverride ? t('useAutomaticRate') : t('refreshAutomaticRate') }}
                 </button>
               </div>
             </details>
@@ -482,27 +486,29 @@
               class="text-xs font-medium text-green-700"
               aria-live="polite"
             >
-              Controvalore: circa
-              {{ formatCurrency(expenseConvertedPreview, group.currency) }}
+              {{
+                t('convertedApprox', {
+                  amount: formatCurrency(expenseConvertedPreview, group.currency),
+                })
+              }}
             </p>
             <p
               v-if="rateError && !manualRateOverride && expenseForm.currency !== group.currency"
               role="status"
               class="text-xs text-amber-800"
             >
-              {{ rateError }} Puoi salvare la spesa e completare il cambio più tardi: i bilanci
-              separati restano disponibili.
+              {{ rateError }} {{ t('rateMissingHint') }}
             </p>
             <div>
-              <label for="expense-payer" class="block text-sm font-medium text-gray-700 mb-1"
-                >Pagato da</label
-              >
+              <label for="expense-payer" class="block text-sm font-medium text-gray-700 mb-1">{{
+                t('paidBy')
+              }}</label>
               <select
                 id="expense-payer"
                 v-model="expenseForm.paid_by_member_id"
                 class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
               >
-                <option disabled value="">Seleziona...</option>
+                <option disabled value="">{{ t('select') }}</option>
                 <option v-for="member in group.members" :key="member.id" :value="member.id">
                   {{ member.name }}
                 </option>
@@ -511,7 +517,7 @@
 
             <!-- Tipo di divisione -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Divisione</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('split') }}</label>
               <div class="flex gap-2 flex-wrap">
                 <button
                   v-for="type in splitTypes"
@@ -531,7 +537,7 @@
 
             <!-- Split: seleziona persone -->
             <div v-if="expenseForm.splitType === 'subset'" class="space-y-2">
-              <p class="text-xs text-gray-500">Seleziona tra chi dividere equamente:</p>
+              <p class="text-xs text-gray-500">{{ t('selectEqual') }}</p>
               <div v-for="member in group.members" :key="member.id" class="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -548,14 +554,14 @@
                 v-if="expenseForm.subsetIds.length > 0 && Number(expenseForm.amount) > 0"
                 class="text-xs text-green-600"
               >
-                Circa
                 {{
-                  formatCurrency(
-                    Number(expenseForm.amount) / expenseForm.subsetIds.length,
-                    expenseForm.currency,
-                  )
+                  t('perPerson', {
+                    amount: formatCurrency(
+                      Number(expenseForm.amount) / expenseForm.subsetIds.length,
+                      expenseForm.currency,
+                    ),
+                  })
                 }}
-                a testa; gli eventuali resti sono distribuiti automaticamente.
               </p>
             </div>
 
@@ -569,13 +575,17 @@
                   min="0"
                   :step="currencyStep(expenseForm.currency)"
                   :placeholder="currencyDecimals(expenseForm.currency) ? '0.00' : '0'"
-                  :aria-label="`Quota di ${member.name} in ${expenseForm.currency}`"
+                  :aria-label="t('shareOf', { name: member.name, currency: expenseForm.currency })"
                   class="w-24 border border-gray-300 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
                 />
               </div>
               <p :class="splitSumOk ? 'text-green-600' : 'text-red-500'" class="text-xs text-right">
-                Totale quote: {{ formatCurrency(splitSum, expenseForm.currency) }} /
-                {{ formatCurrency(expenseForm.amount || 0, expenseForm.currency) }}
+                {{
+                  t('sharesTotal', {
+                    sum: formatCurrency(splitSum, expenseForm.currency),
+                    total: formatCurrency(expenseForm.amount || 0, expenseForm.currency),
+                  })
+                }}
               </p>
             </div>
 
@@ -588,14 +598,14 @@
                 @click="cancelExpenseForm"
                 class="flex-1 border border-gray-300 text-gray-600 font-semibold rounded-lg py-2.5 transition hover:bg-gray-50"
               >
-                Annulla
+                {{ t('cancel') }}
               </button>
               <button
                 @click="saveExpense"
                 :disabled="expenseLoading"
                 class="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white font-semibold rounded-lg py-2.5 transition"
               >
-                {{ expenseLoading ? 'Salvataggio...' : editingExpenseId ? 'Aggiorna' : 'Salva' }}
+                {{ expenseLoading ? t('saving') : editingExpenseId ? t('update') : t('save') }}
               </button>
             </div>
           </div>
@@ -603,7 +613,7 @@
 
         <!-- Lista spese -->
         <div v-if="group.expenses.length === 0" class="text-center py-10 text-gray-400">
-          Nessuna spesa ancora. Aggiungine una!
+          {{ t('noExpenses') }}
         </div>
         <div v-else class="space-y-3">
           <div
@@ -618,7 +628,7 @@
             <div>
               <p class="font-medium text-gray-800">{{ expense.description }}</p>
               <p class="text-sm text-gray-500">
-                Pagato da
+                {{ t('paidBy') }}
                 <span class="font-medium">{{ memberName(expense.paid_by_member_id) }}</span>
               </p>
               <p class="mt-1 text-xs text-gray-400">
@@ -630,8 +640,10 @@
               >
                 {{
                   expense.converted_amount !== null && expense.converted_amount !== undefined
-                    ? `${formatCurrency(expense.converted_amount, group.currency)} con cambio salvato`
-                    : 'Cambio da completare per unificare i conti'
+                    ? t('savedRate', {
+                        amount: formatCurrency(expense.converted_amount, group.currency),
+                      })
+                    : t('rateNeedsCompletion')
                 }}
               </p>
             </div>
@@ -650,7 +662,7 @@
                 v-if="group.status === 'active'"
                 @click.stop="deleteExpense(expense.id)"
                 :aria-disabled="deletionPending"
-                :aria-label="`Elimina spesa ${expense.description}`"
+                :aria-label="t('deleteExpenseAria', { name: expense.description })"
                 class="text-gray-300 hover:text-red-400 transition text-lg"
               >
                 ✕
@@ -671,16 +683,12 @@
               <h2 class="font-semibold text-gray-800">
                 {{
                   balanceMode === 'unified'
-                    ? `Conti unificati in ${group.currency}`
-                    : 'Conti per valuta'
+                    ? t('unifiedAccounts', { currency: group.currency })
+                    : t('accountsByCurrency')
                 }}
               </h2>
               <p class="mt-1 text-xs text-gray-500">
-                {{
-                  balanceMode === 'unified'
-                    ? 'Usiamo i cambi salvati sulle singole spese, senza aggiornarli.'
-                    : 'Ogni pagamento resta nella valuta originale.'
-                }}
+                {{ balanceMode === 'unified' ? t('unifiedHint') : t('separateHint') }}
               </p>
             </div>
             <button
@@ -690,18 +698,20 @@
               @click="balanceMode = balanceMode === 'separate' ? 'unified' : 'separate'"
             >
               {{
-                balanceMode === 'separate' ? `Unifica in ${group.currency}` : 'Mostra per valuta'
+                balanceMode === 'separate'
+                  ? t('unifyIn', { currency: group.currency })
+                  : t('showByCurrency')
               }}
             </button>
           </div>
           <p v-if="group.status !== 'active'" class="mt-2 text-xs text-gray-500">
-            Modalità e pagamenti fissati all'inizio della chiusura. Per cambiarli, riapri i conti.
+            {{ t('closingModeLocked') }}
           </p>
           <p
             v-if="balanceMode === 'unified' && !balancesLoading && !balancesError"
             class="mt-3 text-sm font-medium text-green-700"
           >
-            Totale convertito: {{ formatCurrency(unifiedTotal, group.currency) }}
+            {{ t('convertedTotal', { amount: formatCurrency(unifiedTotal, group.currency) }) }}
           </p>
         </section>
         <section
@@ -714,7 +724,7 @@
             v-if="balanceMode === 'unified' && missingRateExpenses.length"
             class="mt-1 text-sm text-amber-800"
           >
-            Completa il cambio di queste spese per ottenere un bilancio completo:
+            {{ t('completeRates') }}
           </p>
           <ul v-if="balanceMode === 'unified' && missingRateExpenses.length" class="mt-2 space-y-2">
             <li
@@ -729,7 +739,7 @@
                 class="font-semibold underline"
                 @click="completeExpenseRate(expense)"
               >
-                Completa cambio
+                {{ t('completeRate') }}
               </button>
             </li>
           </ul>
@@ -738,7 +748,7 @@
             class="mt-3 text-sm font-semibold text-amber-900 underline"
             @click="loadBalances"
           >
-            Riprova
+            {{ t('retry') }}
           </button>
           <button
             v-if="group.status === 'active' && balanceMode === 'unified'"
@@ -746,7 +756,7 @@
             class="mt-3 ml-4 text-sm font-semibold text-amber-900 underline"
             @click="balanceMode = 'separate'"
           >
-            Torna ai conti per valuta
+            {{ t('backToCurrencies') }}
           </button>
         </section>
         <div
@@ -758,35 +768,34 @@
             class="flex items-center justify-between gap-3"
           >
             <p class="text-sm text-amber-900">
-              Stai agendo come <strong>{{ currentMemberName }}</strong
-              >.
+              {{ t('actingAs', { name: currentMemberName }) }}
             </p>
             <button
               type="button"
               class="shrink-0 text-sm font-semibold text-amber-800 underline"
               @click="showMemberPicker = true"
             >
-              Cambia
+              {{ t('change') }}
             </button>
           </div>
           <template v-else>
-            <label class="block text-sm font-medium text-amber-900" for="current-member"
-              >Quale partecipante sei?</label
-            >
+            <label class="block text-sm font-medium text-amber-900" for="current-member">{{
+              t('whichMember')
+            }}</label>
             <select
               id="current-member"
               v-model="currentMemberId"
               class="mt-2 w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-gray-700"
               @change="saveCurrentMember"
             >
-              <option :value="null">Seleziona il tuo nome per aggiornare un pagamento</option>
+              <option :value="null">{{ t('selectForPayment') }}</option>
               <option v-for="member in group.members" :key="member.id" :value="member.id">
                 {{ member.name }}
               </option>
             </select>
           </template>
           <p class="mt-2 text-xs text-amber-800">
-            La scelta resta solo su questo dispositivo e non è un'autenticazione.
+            {{ t('localIdentityHint') }}
           </p>
         </div>
         <section
@@ -794,8 +803,8 @@
           class="mb-4 border-y border-gray-200 bg-white px-4 py-4"
         >
           <div class="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 class="font-semibold text-gray-800">Il tuo riepilogo</h2>
-            <p class="text-xs text-gray-500">Come {{ currentMemberName }}</p>
+            <h2 class="font-semibold text-gray-800">{{ t('yourSummary') }}</h2>
+            <p class="text-xs text-gray-500">{{ t('asMember', { name: currentMemberName }) }}</p>
           </div>
           <div
             v-for="personalBalance in personalBalances"
@@ -807,7 +816,7 @@
             </p>
             <div class="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-3">
               <div>
-                <p class="text-xs text-gray-500">Devi pagare</p>
+                <p class="text-xs text-gray-500">{{ t('youPay') }}</p>
                 <p class="mt-1 font-semibold text-red-600">
                   {{ formatCurrency(personalBalance.amountToPay, personalBalance.currency) }}
                 </p>
@@ -816,7 +825,7 @@
                 </p>
               </div>
               <div>
-                <p class="text-xs text-gray-500">Devi ricevere</p>
+                <p class="text-xs text-gray-500">{{ t('youReceive') }}</p>
                 <p class="mt-1 font-semibold text-green-700">
                   {{ formatCurrency(personalBalance.amountToReceive, personalBalance.currency) }}
                 </p>
@@ -827,7 +836,7 @@
               <div
                 class="col-span-2 border-t border-gray-100 pt-3 sm:col-span-1 sm:border-t-0 sm:pt-0"
               >
-                <p class="text-xs text-gray-500">Saldo netto</p>
+                <p class="text-xs text-gray-500">{{ t('netBalance') }}</p>
                 <p
                   :class="[
                     'mt-1 font-semibold',
@@ -848,13 +857,13 @@
           v-else-if="!balancesLoading && !balancesError && group.status === 'active'"
           class="mb-4 flex items-center justify-between gap-3 border-y border-gray-200 bg-white px-4 py-3"
         >
-          <p class="text-sm text-gray-600">Scegli chi sei per vedere il tuo riepilogo.</p>
+          <p class="text-sm text-gray-600">{{ t('chooseIdentity') }}</p>
           <button
             type="button"
             class="shrink-0 text-sm font-semibold text-green-700 underline underline-offset-2"
             @click="activeTab = 'members'"
           >
-            Vai a Partecipanti
+            {{ t('goMembers') }}
           </button>
         </div>
         <StatusBanner
@@ -868,21 +877,23 @@
           class="mb-4 p-4"
         >
           <div class="flex flex-wrap items-center gap-2">
-            <p class="font-semibold">Avete finito con le spese?</p>
+            <p class="font-semibold">{{ t('finishedExpenses') }}</p>
             <StatusBadge tone="warning">Beta</StatusBadge>
           </div>
           <p class="mt-1 text-sm opacity-90">
-            Blocca il gruppo per verificare e chiudere i pagamenti.
+            {{ t('lockGroupHint') }}
           </p>
           <button
             type="button"
             class="mt-3 rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
             @click="startClosing"
           >
-            Chiudiamo i conti
+            {{ t('startClosingAction') }}
           </button>
         </StatusBanner>
-        <div v-if="balancesLoading" class="text-center py-10 text-gray-400">Calcolo...</div>
+        <div v-if="balancesLoading" class="text-center py-10 text-gray-400">
+          {{ t('calculating') }}
+        </div>
         <div v-else-if="balancesError"></div>
         <div v-else-if="group.status !== 'active'" class="space-y-3">
           <p v-if="settlementError" class="text-sm text-red-600">{{ settlementError }}</p>
@@ -890,10 +901,10 @@
             v-else-if="group.status === 'closed' && settlements.length > 0"
             class="text-center py-4 text-green-700"
           >
-            Tutti i pagamenti sono stati confermati. Conti chiusi 🎉
+            {{ t('allPaymentsConfirmed') }}
           </p>
           <p v-if="settlements.length === 0" class="text-center py-6 text-gray-400">
-            Nessun pagamento necessario: siete già tutti pari.
+            {{ t('noPaymentNeeded') }}
           </p>
           <div
             v-for="settlement in settlements"
@@ -924,7 +935,7 @@
               :disabled="settlementLoading"
               @click="reportSettlement(settlement.id)"
             >
-              Ho pagato
+              {{ t('paidAction') }}
             </button>
             <button
               v-else-if="
@@ -936,12 +947,12 @@
               :disabled="settlementLoading"
               @click="confirmSettlement(settlement.id)"
             >
-              Conferma ricezione
+              {{ t('confirmReceipt') }}
             </button>
           </div>
         </div>
         <div v-else-if="balances.length === 0" class="text-center py-10 text-gray-400">
-          Nessun debito! Siete tutti pari 🎉
+          {{ t('noDebt') }}
         </div>
         <div v-else class="space-y-3">
           <div
@@ -979,20 +990,19 @@
             class="flex items-center justify-between gap-3"
           >
             <p class="text-sm text-green-900">
-              In questo gruppo sei <strong>{{ currentMemberName }}</strong
-              >.
+              {{ t('inThisGroupYouAre', { name: currentMemberName }) }}
             </p>
             <button
               type="button"
               class="shrink-0 text-sm font-semibold text-green-800 underline"
               @click="showMemberPicker = true"
             >
-              Cambia
+              {{ t('change') }}
             </button>
           </div>
           <template v-else>
             <label class="block text-sm font-medium text-green-900" for="active-current-member">
-              Tu chi sei nel gruppo?
+              {{ t('whoAreYou') }}
             </label>
             <select
               id="active-current-member"
@@ -1000,14 +1010,14 @@
               class="mt-2 w-full rounded-lg border border-green-200 bg-white px-3 py-2 text-sm text-gray-700"
               @change="saveCurrentMember"
             >
-              <option :value="null">Seleziona il tuo nome</option>
+              <option :value="null">{{ t('selectYourName') }}</option>
               <option v-for="member in group.members" :key="member.id" :value="member.id">
                 {{ member.name }}
               </option>
             </select>
           </template>
           <p class="mt-2 text-xs text-green-800">
-            La scelta resta solo su questo dispositivo e non è un'autenticazione.
+            {{ t('localIdentityHint') }}
           </p>
         </div>
 
@@ -1015,11 +1025,7 @@
           v-if="group.status !== 'active'"
           class="mb-4 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800"
         >
-          {{
-            group.status === 'closed'
-              ? 'Il gruppo è chiuso: i partecipanti sono in sola lettura.'
-              : 'I partecipanti non possono essere modificati durante la chiusura dei conti.'
-          }}
+          {{ group.status === 'closed' ? t('closedMembersReadOnly') : t('closingMembersReadOnly') }}
         </p>
         <!-- Bottone toggle, stesso pattern della tab Spese -->
         <button
@@ -1027,7 +1033,7 @@
           @click="toggleAddMemberForm"
           class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg py-2.5 mb-4 transition"
         >
-          {{ showAddMemberForm ? '✕ Annulla' : '+ Aggiungi partecipante' }}
+          {{ showAddMemberForm ? `✕ ${t('cancel')}` : t('addParticipant') }}
         </button>
 
         <div
@@ -1036,20 +1042,20 @@
         >
           <input
             v-model="newMember.name"
-            placeholder="Nome"
+            :placeholder="t('name')"
             class="min-w-0 flex-1 border rounded-lg px-3 py-2 text-sm"
           />
           <input
             v-if="emailManagementEnabled"
             v-model="newMember.email"
-            placeholder="Email (opzionale)"
+            :placeholder="t('emailOptional')"
             class="min-w-0 flex-1 border rounded-lg px-3 py-2 text-sm"
           />
           <button
             @click="addMember"
             class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm shrink-0 w-full sm:w-auto"
           >
-            Aggiungi
+            {{ t('add') }}
           </button>
         </div>
         <p v-if="addMemberError" class="text-xs text-red-400 mb-2">{{ addMemberError }}</p>
@@ -1075,7 +1081,7 @@
                   group.status === 'active' ? 'cursor-pointer hover:text-green-600' : '',
                 ]"
               >
-                {{ member.email || '+ aggiungi email' }}
+                {{ member.email || t('addEmail') }}
               </span>
 
               <div
@@ -1098,13 +1104,13 @@
                   @click="saveEmail(member.id)"
                   class="text-green-600 hover:text-green-700 text-sm font-medium px-1"
                 >
-                  Salva
+                  {{ t('save') }}
                 </button>
                 <button
                   @click="cancelEditEmail"
                   class="text-gray-400 hover:text-gray-600 text-sm px-1"
                 >
-                  Annulla
+                  {{ t('cancel') }}
                 </button>
               </div>
             </div>
@@ -1114,7 +1120,7 @@
               v-if="editingEmailId !== member.id && group.status === 'active'"
               @click="deleteMember(member.id, member.name)"
               :aria-disabled="deletionPending"
-              :aria-label="`Rimuovi partecipante ${member.name}`"
+              :aria-label="t('removeMemberAria', { name: member.name })"
               class="text-gray-300 hover:text-red-400 transition text-lg shrink-0"
             >
               ✕
@@ -1122,7 +1128,7 @@
           </div>
         </div>
         <p class="text-xs text-gray-400 mt-3 text-center">
-          Un partecipante può essere rimosso solo se non è coinvolto in nessuna spesa.
+          {{ t('removeMemberHint') }}
         </p>
       </div>
 
@@ -1135,8 +1141,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch, watchPostEffect, nextTick } from 'vue'
+import {
+  ref,
+  reactive,
+  computed,
+  onMounted,
+  onUnmounted,
+  watch,
+  watchPostEffect,
+  nextTick,
+} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { apiErrorMessage } from '../api/errors'
 import {
   groupsApi,
   type Group,
@@ -1164,18 +1180,26 @@ import {
   CURRENCIES,
   currencyDecimals,
   currencyStep,
-  formatCurrency,
-  formatCurrencyValue,
+  formatCurrency as formatCurrencyForLocale,
+  formatCurrencyValue as formatCurrencyValueForLocale,
   todayDate,
   expenseTotalsByCurrency,
 } from '../utils/currency'
 import { isRecentGroup, saveRecentGroup } from '../utils/recentGroups'
 import equaLogo from '../assets/equa-logo.svg'
 import { trackEvent } from '../utils/analytics'
+import { useI18n } from '../utils/i18n'
 
 const route = useRoute()
+const { localeTag, t } = useI18n()
 const router = useRouter()
 const { dialog, respond, askConfirmation, showAlert } = useFeedbackDialog()
+function formatCurrency(amount: number | string, currency: string) {
+  return formatCurrencyForLocale(amount, currency, localeTag.value)
+}
+function formatCurrencyValue(amount: number | string, currency: string) {
+  return formatCurrencyValueForLocale(amount, currency, localeTag.value)
+}
 const deletionPending = ref(false)
 const groupId = route.params.id as string
 const emailManagementEnabled = false
@@ -1207,14 +1231,24 @@ const showClosingSummary = ref(false)
 const statusLoading = ref(false)
 const statusError = ref('')
 
+const defaultDocumentTitle = 'Equa — Spese condivise, senza complicazioni'
+
+watch(
+  () => group.value?.name,
+  (name) => {
+    document.title = name ? `${name} · Equa` : defaultDocumentTitle
+  },
+  { immediate: true },
+)
+
 const newMember = reactive({ name: '', email: '' })
 const addMemberError = ref('')
 
-const tabs = [
-  { key: 'expenses', label: '💸 Spese' },
-  { key: 'balances', label: '⚖️ Bilanci' },
-  { key: 'members', label: '👥 Partecipanti' },
-]
+const tabs = computed(() => [
+  { key: 'expenses', label: t('expensesTab') },
+  { key: 'balances', label: t('balancesTab') },
+  { key: 'members', label: t('membersTab') },
+])
 
 const showExpenseForm = ref(false)
 const editingExpenseId = ref<number | null>(null)
@@ -1244,11 +1278,11 @@ const showAddMemberForm = ref(false)
 const editingEmailId = ref<number | null>(null)
 const editingEmailValue = ref('')
 
-const splitTypes = [
-  { key: 'equal', label: 'Tutti' },
-  { key: 'subset', label: 'Seleziona persone' },
-  { key: 'custom', label: 'Personalizzato' },
-]
+const splitTypes = computed(() => [
+  { key: 'equal', label: t('everyone') },
+  { key: 'subset', label: t('selectPeople') },
+  { key: 'custom', label: t('custom') },
+])
 
 const totalExpenses = computed(() =>
   expenseTotalsByCurrency(group.value?.expenses || [], group.value?.currency || 'EUR'),
@@ -1284,8 +1318,8 @@ const unifiedTotal = computed(
 const exchangeRateCaption = computed(() => {
   if (manualRateOverride.value)
     return `1 ${expenseForm.currency} = ${manualRate.value || '…'} ${group.value?.currency}`
-  if (rateLoading.value) return 'Recupero in corso…'
-  if (!ratePreview.value) return 'Da completare'
+  if (rateLoading.value) return t('fetching')
+  if (!ratePreview.value) return t('toComplete')
   return `1 ${expenseForm.currency} = ${ratePreview.value.rate} ${group.value?.currency}`
 })
 const expenseConvertedPreview = computed(() => {
@@ -1297,25 +1331,25 @@ const expenseConvertedPreview = computed(() => {
 })
 
 const groupStatusLabel = computed(() => {
-  if (group.value?.status === 'closing') return 'Chiusura conti'
-  if (group.value?.status === 'closed') return 'Conti chiusi'
-  return 'In corso'
+  if (group.value?.status === 'closing') return t('statusClosing')
+  if (group.value?.status === 'closed') return t('statusClosed')
+  return t('statusActive')
 })
 
 const groupStatusTitle = computed(() => {
-  if (group.value?.status === 'closing') return 'I conti sono bloccati'
-  if (group.value?.status === 'closed') return 'Questo gruppo è chiuso'
-  return 'Quando la vacanza è finita, chiudete i conti'
+  if (group.value?.status === 'closing') return t('statusClosingTitle')
+  if (group.value?.status === 'closed') return t('statusClosedTitle')
+  return t('statusActiveTitle')
 })
 
 const groupStatusDescription = computed(() => {
   if (group.value?.status === 'closing') {
-    return 'Spese e partecipanti non possono essere modificati finché state verificando i saldi.'
+    return t('statusClosingDescription')
   }
   if (group.value?.status === 'closed') {
-    return 'Il riepilogo resta disponibile in sola lettura. Puoi riaprire i conti se serve una correzione.'
+    return t('statusClosedDescription')
   }
-  return 'Blocca spese e partecipanti per verificare i saldi senza modifiche involontarie.'
+  return t('statusActiveDescription')
 })
 
 const currentMemberName = computed(() =>
@@ -1340,7 +1374,7 @@ const groupLink = computed(() => new URL(`/group/${groupId}`, window.location.or
 
 const shareMessage = computed(() => {
   if (!group.value) return groupLink.value
-  return `Ho creato il gruppo "${group.value.name}" su Equa. Aprilo qui per aggiungere o controllare le spese: ${groupLink.value}`
+  return t('shareMessage', { name: group.value.name, link: groupLink.value })
 })
 
 const whatsAppShareUrl = computed(
@@ -1362,7 +1396,7 @@ const closingSummaryMessage = computed(() => {
             amount: settlement.amount,
             currency: settlement.currency || group.value!.currency,
           }))
-  return buildClosingSummary(group.value, summaryBalances, groupLink.value)
+  return buildClosingSummary(group.value, summaryBalances, groupLink.value, localeTag.value)
 })
 
 const closingSummaryWhatsAppUrl = computed(
@@ -1402,7 +1436,7 @@ async function loadGroup() {
       savedLocally.value = true
     }
   } catch {
-    error.value = 'Gruppo non trovato.'
+    error.value = t('groupNotFound')
   } finally {
     loading.value = false
   }
@@ -1429,8 +1463,8 @@ async function loadBalances() {
     if (request !== balancesRequest) return
     balancesError.value =
       balanceMode.value === 'unified' && missingRateExpenses.value.length
-        ? 'Mancano alcuni cambi: il bilancio unificato non è ancora disponibile.'
-        : apiErrorMessage(cause, 'Non è stato possibile caricare i bilanci. Riprova.')
+        ? t('missingRates')
+        : apiErrorMessage(cause, t('balancesLoadError'))
   } finally {
     if (request === balancesRequest) balancesLoading.value = false
   }
@@ -1445,11 +1479,11 @@ watch(balanceMode, () => {
 })
 
 function memberName(id: number) {
-  return group.value?.members.find((m) => m.id === id)?.name || 'Sconosciuto'
+  return group.value?.members.find((m) => m.id === id)?.name || t('unknown')
 }
 
 function displayMemberName(id: number) {
-  return currentMemberId.value === id ? 'Tu' : memberName(id)
+  return currentMemberId.value === id ? t('you') : memberName(id)
 }
 
 function formatSignedAmount(amount: number, currency: string) {
@@ -1458,18 +1492,13 @@ function formatSignedAmount(amount: number, currency: string) {
 }
 
 function formatExpenseDate(date: string) {
-  return new Intl.DateTimeFormat('it-IT', { dateStyle: 'medium' }).format(
+  return new Intl.DateTimeFormat(localeTag.value, { dateStyle: 'medium' }).format(
     new Date(`${date}T12:00:00`),
   )
 }
 
-function apiErrorMessage(cause: unknown, fallback: string) {
-  const detail = (cause as { response?: { data?: { detail?: unknown } } })?.response?.data?.detail
-  return typeof detail === 'string' ? detail : fallback
-}
-
 function paymentCountLabel(count: number) {
-  return count === 1 ? '1 pagamento' : `${count} pagamenti`
+  return count === 1 ? t('paymentSingular') : t('paymentPlural', { count })
 }
 
 function toggleAddMemberForm() {
@@ -1498,11 +1527,8 @@ async function saveEmail(memberId: number) {
     await loadGroup()
   } catch (e: any) {
     await showAlert({
-      title: 'Email non aggiornata',
-      message:
-        typeof e?.response?.data?.detail === 'string'
-          ? e.response.data.detail
-          : "Errore durante l'aggiornamento dell'email. Riprova.",
+      title: t('emailUpdateTitle'),
+      message: apiErrorMessage(e, t('emailUpdateError')),
     })
   }
 }
@@ -1567,7 +1593,7 @@ async function loadExchangeRate() {
     )
     if (request === rateRequest) ratePreview.value = response.data
   } catch {
-    if (request === rateRequest) rateError.value = 'Cambio automatico non disponibile.'
+    if (request === rateRequest) rateError.value = t('automaticRateUnavailable')
   } finally {
     if (request === rateRequest) rateLoading.value = false
   }
@@ -1668,21 +1694,24 @@ async function saveExpense() {
   if (expenseLoading.value) return
   expenseError.value = ''
   if (!expenseForm.description.trim()) {
-    expenseError.value = 'Inserisci una descrizione'
+    expenseError.value = t('descriptionRequired')
     return
   }
   if (
     !validCurrencyAmount(Number(expenseForm.amount)) ||
     Number(expenseForm.amount) > 99_999_999.99
   ) {
-    expenseError.value = `Inserisci un importo positivo con al massimo ${currencyDecimals(expenseForm.currency)} decimali per ${expenseForm.currency}.`
+    expenseError.value = t('amountInvalid', {
+      decimals: currencyDecimals(expenseForm.currency),
+      currency: expenseForm.currency,
+    })
     return
   }
   if (
     !/^\d{4}-\d{2}-\d{2}$/.test(expenseForm.expense_date) ||
     expenseForm.expense_date > todayDate()
   ) {
-    expenseError.value = 'Inserisci la data effettiva della spesa, non successiva a oggi.'
+    expenseError.value = t('dateInvalid')
     return
   }
   if (
@@ -1692,20 +1721,19 @@ async function saveExpense() {
       Number(manualRate.value) < 0.000000000001 ||
       Number(manualRate.value) > 1_000_000_000)
   ) {
-    expenseError.value = 'Inserisci un cambio positivo con al massimo 12 decimali.'
+    expenseError.value = t('rateInvalid')
     return
   }
   if (!expenseForm.paid_by_member_id) {
-    expenseError.value = 'Seleziona chi ha pagato'
+    expenseError.value = t('payerRequired')
     return
   }
   if (expenseForm.splitType === 'custom' && !splitSumOk.value) {
-    expenseError.value =
-      'Le quote devono essere valide per questa valuta e la loro somma deve corrispondere esattamente al totale.'
+    expenseError.value = t('sharesInvalid')
     return
   }
   if (expenseForm.splitType === 'subset' && !expenseForm.subsetIds.length) {
-    expenseError.value = 'Seleziona almeno una persona'
+    expenseError.value = t('personRequired')
     return
   }
 
@@ -1753,10 +1781,7 @@ async function saveExpense() {
     showExpenseForm.value = false
     resetExpenseForm()
   } catch (cause: unknown) {
-    expenseError.value = apiErrorMessage(
-      cause,
-      'Errore nel salvataggio. Controlla i dati e riprova.',
-    )
+    expenseError.value = apiErrorMessage(cause, t('expenseSaveError'))
   } finally {
     expenseLoading.value = false
   }
@@ -1770,9 +1795,9 @@ async function deleteExpense(expenseId: number) {
   try {
     if (
       !(await askConfirmation({
-        title: 'Eliminare la spesa?',
-        message: `La spesa “${expense.description}” verrà eliminata e i saldi saranno ricalcolati. Questa azione non può essere annullata.`,
-        confirmLabel: 'Elimina spesa',
+        title: t('deleteExpenseTitle'),
+        message: t('deleteExpenseMessage', { name: expense.description }),
+        confirmLabel: t('deleteExpenseConfirm'),
         destructive: true,
       }))
     )
@@ -1781,8 +1806,8 @@ async function deleteExpense(expenseId: number) {
     await loadGroup()
   } catch {
     await showAlert({
-      title: 'Spesa non eliminata',
-      message: 'Non è stato possibile eliminare la spesa. Riprova.',
+      title: t('expenseNotDeleted'),
+      message: t('expenseDeleteError'),
     })
   } finally {
     deletionPending.value = false
@@ -1795,9 +1820,9 @@ async function deleteMember(memberId: number, name: string) {
   try {
     if (
       !(await askConfirmation({
-        title: 'Rimuovere il partecipante?',
-        message: `Vuoi rimuovere “${name}” dal gruppo? Questa azione non può essere annullata.`,
-        confirmLabel: 'Rimuovi partecipante',
+        title: t('removeMemberTitle'),
+        message: t('removeMemberMessage', { name }),
+        confirmLabel: t('removeMemberConfirm'),
         destructive: true,
       }))
     )
@@ -1806,11 +1831,8 @@ async function deleteMember(memberId: number, name: string) {
     await loadGroup()
   } catch (e: any) {
     await showAlert({
-      title: 'Partecipante non rimosso',
-      message:
-        typeof e?.response?.data?.detail === 'string'
-          ? e.response.data.detail
-          : 'Impossibile rimuovere il partecipante. Riprova.',
+      title: t('memberNotRemoved'),
+      message: apiErrorMessage(e, t('memberRemoveError')),
     })
   } finally {
     deletionPending.value = false
@@ -1821,7 +1843,7 @@ async function addMember() {
   if (group.value?.status !== 'active') return
   addMemberError.value = ''
   if (!newMember.name.trim()) {
-    addMemberError.value = 'Inserisci un nome'
+    addMemberError.value = t('nameRequiredShort')
     return
   }
   try {
@@ -1834,7 +1856,7 @@ async function addMember() {
     showAddMemberForm.value = false
     await loadGroup()
   } catch (e: any) {
-    addMemberError.value = e?.response?.data?.detail || "Errore durante l'aggiunta"
+    addMemberError.value = apiErrorMessage(e, t('memberAddError'))
   }
 }
 
@@ -1857,7 +1879,7 @@ async function shareGroup() {
 
   try {
     await navigator.share({
-      title: group.value?.name || 'Gruppo Equa',
+      title: group.value?.name || t('groupShareTitle'),
       text: shareMessage.value,
       url: groupLink.value,
     })
@@ -1907,10 +1929,13 @@ function saveCurrentMember() {
 
 function settlementLabel(settlement: Settlement) {
   if (settlement.status === 'confirmed')
-    return `Ricezione confermata da ${memberName(settlement.confirmed_by_member_id!)}`
+    return t('receiptConfirmed', { name: memberName(settlement.confirmed_by_member_id!) })
   if (settlement.reported_at)
-    return `Pagamento segnalato da ${memberName(settlement.reported_by_member_id!)}. In attesa che ${memberName(settlement.to_member_id)} confermi la ricezione.`
-  return 'Da pagare'
+    return t('paymentReported', {
+      from: memberName(settlement.reported_by_member_id!),
+      to: memberName(settlement.to_member_id),
+    })
+  return t('toPay')
 }
 
 async function reportSettlement(settlementId: number) {
@@ -1922,8 +1947,7 @@ async function reportSettlement(settlementId: number) {
     trackEvent('settlement_reported')
     await loadBalances()
   } catch (e: any) {
-    settlementError.value =
-      e?.response?.data?.detail || 'Non è stato possibile segnalare il pagamento.'
+    settlementError.value = apiErrorMessage(e, t('reportPaymentError'))
   } finally {
     settlementLoading.value = false
   }
@@ -1938,8 +1962,7 @@ async function confirmSettlement(settlementId: number) {
     trackEvent('settlement_confirmed')
     await loadBalances()
   } catch (e: any) {
-    settlementError.value =
-      e?.response?.data?.detail || 'Non è stato possibile confermare il pagamento.'
+    settlementError.value = apiErrorMessage(e, t('confirmPaymentError'))
   } finally {
     settlementLoading.value = false
   }
@@ -1967,8 +1990,7 @@ async function updateGroupStatus(status: Group['status']) {
     if (activeTab.value === 'balances' || status === 'closing') await loadBalances()
     return true
   } catch (e: any) {
-    statusError.value =
-      e?.response?.data?.detail || 'Non è stato possibile aggiornare lo stato del gruppo.'
+    statusError.value = apiErrorMessage(e, t('statusUpdateError'))
     return false
   } finally {
     statusLoading.value = false
@@ -1979,9 +2001,9 @@ async function startClosing() {
   if (statusLoading.value || balancesLoading.value || balancesError.value) return
   if (
     !(await askConfirmation({
-      title: 'Iniziare la chiusura dei conti?',
-      message: `${balanceMode.value === 'unified' ? `I pagamenti saranno fissati in ${group.value?.currency}, usando i cambi salvati sulle spese.` : 'I pagamenti saranno fissati separatamente per ogni valuta, senza conversioni.'} Spese e partecipanti saranno bloccati. Potrai riaprire i conti se serve una correzione.`,
-      confirmLabel: 'Inizia chiusura',
+      title: t('startClosingTitle'),
+      message: `${balanceMode.value === 'unified' ? t('closingUnifiedMessage', { currency: group.value?.currency || '' }) : t('closingSeparateMessage')} ${t('closingLockMessage')}`,
+      confirmLabel: t('startClosingConfirm'),
     }))
   )
     return
@@ -1992,9 +2014,9 @@ async function closeGroup() {
   if (statusLoading.value) return
   if (
     !(await askConfirmation({
-      title: 'Chiudere il gruppo?',
-      message: 'Segnerai il gruppo come chiuso. Potrai riaprirlo se serve una correzione.',
-      confirmLabel: 'Chiudi gruppo',
+      title: t('closeGroupTitle'),
+      message: t('closeGroupMessage'),
+      confirmLabel: t('closeGroupConfirm'),
     }))
   )
     return
@@ -2005,9 +2027,9 @@ async function reopenGroup() {
   if (statusLoading.value) return
   if (
     !(await askConfirmation({
-      title: 'Riaprire i conti?',
-      message: 'Spese e partecipanti torneranno modificabili.',
-      confirmLabel: 'Riapri conti',
+      title: t('reopenTitle'),
+      message: t('reopenMessage'),
+      confirmLabel: t('reopenConfirm'),
     }))
   )
     return
@@ -2015,4 +2037,7 @@ async function reopenGroup() {
 }
 
 onMounted(loadGroup)
+onUnmounted(() => {
+  document.title = defaultDocumentTitle
+})
 </script>

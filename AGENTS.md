@@ -26,7 +26,7 @@
 
 ## Convenzioni di implementazione
 
-- Frontend: usa `<script setup lang="ts">`, Composition API e tipi espliciti. Mantieni l'UI in italiano.
+- Frontend: usa `<script setup lang="ts">`, Composition API e tipi espliciti. Mantieni l'italiano come lingua predefinita e passa tutti i testi visibili attraverso il layer i18n quando la UI supporta più lingue.
 - Backend: usa Pydantic v2 e route sincrone; valida sempre lato backend, anche se la UI già limita l'azione.
 - Per funzioni legate alla chiusura: la selezione del partecipante è locale e serve solo per attribuire azioni fiduciarie. Token/ruoli separati sono una feature futura della roadmap.
 - Preferisci modifiche mirate; non riscrivere componenti o file non coinvolti dalla richiesta.
@@ -59,4 +59,8 @@
 - Lavora sul branch richiesto dall'utente; se serve crearne uno, usa nomi descrittivi come `feature-...` o `bugfix-...`.
 - Prima di cambiare branch, controlla `git status --short` e preserva modifiche non correlate.
 - Non usare `git reset --hard`, `git checkout --` o comandi distruttivi senza autorizzazione esplicita.
-- Apri i branch partendo da `release-candidate`, se eseguito in Codex Cloud, apri le pull request verso `release-candidate` e non verso `main`.
+- Apri tutti i branch di feature e bugfix da `release-candidate` aggiornato e indirizza le relative pull request a `release-candidate`, anche quando lavori in locale.
+- Usa esclusivamente `release-candidate` come branch sorgente delle pull request di rilascio verso `main`; non aprire pull request dirette da branch di feature o bugfix a `main`.
+- Prima di approvare o unire una pull request verso `main`, verifica che ogni componente interessato abbia una versione SemVer incrementata e che la stessa versione sia dichiarata nell'ultima voce pertinente di `doc/CHANGELOG.md`, con data e modifiche effettive.
+- Non approvare né unire una pull request verso `main` se il check **Validate release metadata** non è superato.
+- I tag `frontend_vX.Y.Z` e `backend_vX.Y.Z` vengono creati automaticamente dal workflow di rilascio dopo il merge su `main`. Non crearli manualmente, salvo recupero esplicito di un workflow fallito dopo aver verificato commit e versione.
