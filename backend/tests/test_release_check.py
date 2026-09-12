@@ -3,7 +3,12 @@ from pathlib import Path
 
 import pytest
 
-from scripts.check_release import parse_changelog, validate_release
+from scripts.check_release import (
+    affected_components,
+    incremented_components,
+    parse_changelog,
+    validate_release,
+)
 
 
 def write_release_files(
@@ -48,10 +53,44 @@ def test_release_can_increment_only_one_component(tmp_path):
         ),
     )
 
-    assert validate_release(tmp_path, {"frontend": "1.8.0", "backend": "1.8.0"}) == {
+    assert validate_release(
+        tmp_path,
+        {"frontend": "1.8.0", "backend": "1.8.0"},
+        {"frontend"},
+    ) == {
         "frontend": "1.8.1",
         "backend": "1.8.0",
     }
+
+
+def test_release_rejects_affected_component_without_increment(tmp_path):
+    write_release_files(
+        tmp_path,
+        backend="1.8.0",
+        heading="## [1.8.1] Frontend",
+        body=(
+            "### Modificato\n\n- Frontend aggiornato.\n\n"
+            "## [1.8.0] Backend - 2026-09-10\n\n"
+            "### Modificato\n\n- Backend precedente."
+        ),
+    )
+
+    with pytest.raises(ValueError, match="backend"):
+        validate_release(
+            tmp_path,
+            {"frontend": "1.8.0", "backend": "1.8.0"},
+            {"frontend", "backend"},
+        )
+
+
+def test_component_changes_and_version_increments_are_reported_independently():
+    assert affected_components(
+        ["frontend/src/App.vue", "doc/CHANGELOG.md", "backend/app/main.py"]
+    ) == {"frontend", "backend"}
+    assert incremented_components(
+        {"frontend": "1.8.2", "backend": "1.8.1"},
+        {"frontend": "1.8.1", "backend": "1.8.1"},
+    ) == {"frontend"}
 
 
 @pytest.mark.parametrize(

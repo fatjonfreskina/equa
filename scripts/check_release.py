@@ -21,6 +21,10 @@ VERSION_FILES = {
         re.compile(r'FastAPI\(title="Equa API", version="(?P<version>\d+\.\d+\.\d+)"\)'),
     ),
 }
+COMPONENT_PATHS = {
+    "frontend": "frontend/",
+    "backend": "backend/",
+}
 HEADING_RE = re.compile(
     r"^## \[(?P<version>\d+\.\d+\.\d+)\] "
     r"(?P<scopes>Frontend|Backend|Frontend; Backend|Backend; Frontend) - "
@@ -60,6 +64,24 @@ def read_versions(root: Path) -> dict[str, str]:
     )
 
 
+def incremented_components(
+    versions: dict[str, str], base_versions: dict[str, str]
+) -> set[str]:
+    return {
+        component
+        for component, version in versions.items()
+        if semantic_version(version) > semantic_version(base_versions[component])
+    }
+
+
+def affected_components(paths: list[str]) -> set[str]:
+    return {
+        component
+        for component, prefix in COMPONENT_PATHS.items()
+        if any(path.startswith(prefix) for path in paths)
+    }
+
+
 def parse_changelog(text: str) -> list[ReleaseEntry]:
     matches = list(HEADING_RE.finditer(text))
     if not matches:
@@ -85,7 +107,9 @@ def parse_changelog(text: str) -> list[ReleaseEntry]:
 
 
 def validate_release(
-    root: Path, base_versions: dict[str, str] | None = None
+    root: Path,
+    base_versions: dict[str, str] | None = None,
+    affected: set[str] | None = None,
 ) -> dict[str, str]:
     versions = read_versions(root)
     entries = parse_changelog((root / "doc/CHANGELOG.md").read_text(encoding="utf-8"))
@@ -104,7 +128,6 @@ def validate_release(
             )
 
     if base_versions is not None:
-        changed = []
         for component, version in versions.items():
             current = semantic_version(version)
             base = semantic_version(base_versions[component])
@@ -112,10 +135,15 @@ def validate_release(
                 raise ValueError(
                     f"La versione {component} regredisce da {base_versions[component]} a {version}"
                 )
-            if current > base:
-                changed.append(component)
+        changed = incremented_components(versions, base_versions)
         if not changed:
             raise ValueError("La PR di release non incrementa alcuna versione")
+        missing = (affected or set()) - changed
+        if missing:
+            raise ValueError(
+                "Componenti modificati senza incremento di versione: "
+                + ", ".join(sorted(missing))
+            )
 
     return versions
 
@@ -135,6 +163,18 @@ def versions_at_ref(root: Path, ref: str) -> dict[str, str]:
     return versions_from_contents(contents)
 
 
+def paths_changed_since(root: Path, ref: str) -> list[str]:
+    result = subprocess.run(
+        ["git", "diff", "--name-only", ref, "HEAD", "--"],
+        cwd=root,
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+    return [path for path in result.stdout.splitlines() if path]
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--base-ref")
@@ -143,12 +183,25 @@ def main() -> None:
 
     root = Path(__file__).resolve().parents[1]
     base_versions = versions_at_ref(root, args.base_ref) if args.base_ref else None
-    versions = validate_release(root, base_versions)
+    affected = (
+        affected_components(paths_changed_since(root, args.base_ref))
+        if args.base_ref
+        else None
+    )
+    versions = validate_release(root, base_versions, affected)
+    changed = (
+        incremented_components(versions, base_versions)
+        if base_versions
+        else set(versions)
+    )
 
     if args.github_output:
         with args.github_output.open("a", encoding="utf-8") as output:
             for component, version in versions.items():
                 output.write(f"{component}_version={version}\n")
+                output.write(
+                    f"{component}_changed={'true' if component in changed else 'false'}\n"
+                )
 
     print(
         "Release valida: "

@@ -19,9 +19,11 @@ jobs:
       - name: Require release-candidate as source
         env:
           HEAD_REF: ${{ github.head_ref }}
+          HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPOSITORY: ${{ github.event.pull_request.base.repo.full_name }}
         run: |
-          if [ "$HEAD_REF" != "release-candidate" ]; then
-            echo "Le PR verso main devono provenire da release-candidate."
+          if [ "$HEAD_REF" != "release-candidate" ] || [ "$HEAD_REPOSITORY" != "$BASE_REPOSITORY" ]; then
+            echo "Le PR verso main devono provenire dal release-candidate di questo repository."
             exit 1
           fi
       - name: Checkout code
@@ -44,15 +46,26 @@ jobs:
           fetch-depth: 0
       - name: Validate release metadata
         id: release
-        run: python scripts/check_release.py --github-output "$GITHUB_OUTPUT"
+        env:
+          PREVIOUS_MAIN: ${{ github.event.before }}
+        run: python scripts/check_release.py --base-ref "$PREVIOUS_MAIN" --github-output "$GITHUB_OUTPUT"
       - name: Create missing component tags
         env:
           FRONTEND_VERSION: ${{ steps.release.outputs.frontend_version }}
           BACKEND_VERSION: ${{ steps.release.outputs.backend_version }}
+          FRONTEND_CHANGED: ${{ steps.release.outputs.frontend_changed }}
+          BACKEND_CHANGED: ${{ steps.release.outputs.backend_changed }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          for tag in "frontend_v$FRONTEND_VERSION" "backend_v$BACKEND_VERSION"; do
+          tags=()
+          if [ "$FRONTEND_CHANGED" = "true" ]; then
+            tags+=("frontend_v$FRONTEND_VERSION")
+          fi
+          if [ "$BACKEND_CHANGED" = "true" ]; then
+            tags+=("backend_v$BACKEND_VERSION")
+          fi
+          for tag in "${tags[@]}"; do
             if git rev-parse --verify "refs/tags/$tag" >/dev/null 2>&1; then
               tagged_commit="$(git rev-list -n 1 "$tag")"
               if [ "$tagged_commit" != "$GITHUB_SHA" ]; then
