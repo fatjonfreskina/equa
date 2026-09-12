@@ -3,16 +3,17 @@
     class="my-4 rounded-xl border border-green-100 bg-green-50 p-4"
     aria-labelledby="next-group-title"
   >
-    <h2 id="next-group-title" class="text-sm font-semibold text-gray-800">Alla prossima uscita?</h2>
+    <h2 id="next-group-title" class="text-sm font-semibold text-gray-800">
+      {{ t('growthTitle') }}
+    </h2>
     <p class="mt-1 text-sm leading-6 text-gray-600">
-      Organizzi tu? Riparti con un nuovo gruppo. Se Equa ti è stata utile, puoi consigliarla agli
-      amici.
+      {{ t('growthText') }}
     </p>
     <div class="mt-3 flex flex-wrap gap-2">
       <RouterLink
         to="/"
         class="min-h-11 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white"
-        >Crea un nuovo gruppo</RouterLink
+        >{{ t('growthNewGroup') }}</RouterLink
       >
       <button
         type="button"
@@ -20,25 +21,25 @@
         class="min-h-11 rounded-lg border border-green-300 bg-white px-4 py-2.5 text-sm font-semibold text-green-800 disabled:opacity-50"
         @click="shareApp"
       >
-        Consiglia Equa
+        {{ t('growthRecommend') }}
       </button>
       <a
         :href="whatsAppUrl"
         target="_blank"
         rel="noopener noreferrer"
         class="min-h-11 px-3 py-2.5 text-sm font-medium text-green-800"
-        >Consiglia su WhatsApp</a
+        >{{ t('growthWhatsApp') }}</a
       >
     </div>
     <p class="mt-2 text-xs text-gray-500">
-      Condividi solo l'app, senza link o dati di questo gruppo.
+      {{ t('growthPrivacy') }}
     </p>
     <p v-if="feedback" class="mt-2 text-sm text-green-800" role="status">{{ feedback }}</p>
     <input
       v-if="showManualLink"
       :value="appUrl"
       readonly
-      aria-label="Link pubblico di Equa da copiare"
+      :aria-label="t('growthPublicLink')"
       class="mt-2 w-full rounded-lg border border-green-200 bg-white px-3 py-2 text-sm"
       @focus="selectLink"
     />
@@ -46,14 +47,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useI18n } from '../utils/i18n'
+
+const { t } = useI18n()
 
 // Never derive referrals from location.href: it can contain a private group UUID.
 const appUrl = new URL('/', window.location.origin).toString()
-const message =
-  'Con Equa dividi le spese di cene e vacanze, senza account. Provala per la prossima uscita!'
-const whatsAppUrl = `https://wa.me/?text=${encodeURIComponent(`${message} ${appUrl}`)}`
+const message = computed(() => t('growthShareMessage'))
+const whatsAppUrl = computed(
+  () => `https://wa.me/?text=${encodeURIComponent(`${message.value} ${appUrl}`)}`,
+)
 const feedback = ref('')
 const showManualLink = ref(false)
 const sharing = ref(false)
@@ -70,8 +75,8 @@ async function shareApp(): Promise<void> {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Equa — Dividi le spese, non le amicizie',
-          text: message,
+          title: t('growthShareTitle'),
+          text: message.value,
           url: appUrl,
         })
         return
@@ -80,11 +85,11 @@ async function shareApp(): Promise<void> {
       }
     }
     try {
-      await navigator.clipboard.writeText(`${message} ${appUrl}`)
-      feedback.value = 'Messaggio copiato: incollalo dove preferisci.'
+      await navigator.clipboard.writeText(`${message.value} ${appUrl}`)
+      feedback.value = t('growthCopied')
     } catch {
       showManualLink.value = true
-      feedback.value = 'Puoi copiare manualmente il link pubblico qui sotto.'
+      feedback.value = t('growthManualCopy')
     }
   } finally {
     sharing.value = false

@@ -266,6 +266,8 @@ Ogni operazione deve avere:
 - [ ] Mostrare conferme dopo le operazioni riuscite.
 - [ ] Rendere espliciti gli errori recuperabili.
 - [x] Confermare le azioni distruttive con il nome dell'elemento.
+- [x] Consentire segnalazioni di bug e suggerimenti senza account, con contatto facoltativo.
+- [x] Raggruppare accesso a lingua, tema e feedback in un contenitore globale modulare.
 
 Sostituire progressivamente gli `alert` con notifiche temporanee accessibili:
 

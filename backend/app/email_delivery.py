@@ -57,11 +57,11 @@ def _valid_url(value: str, allow_http: bool = False) -> bool:
     )
 
 
-def get_email_settings() -> EmailSettings | None:
-    if os.getenv("EMAIL_LINK_ENABLED", "false").lower() not in {"true", "1"}:
+def _get_settings(enabled_name: str, secret_name: str) -> EmailSettings | None:
+    if os.getenv(enabled_name, "false").lower() not in {"true", "1"}:
         return None
     try:
-        secret = os.environ["EMAIL_LINK_SECRET"]
+        secret = os.environ[secret_name]
         service_url = os.environ["EMAIL_SERVICE_URL"].rstrip("/")
         service_token = os.environ["EMAIL_SERVICE_TOKEN"]
         privacy_url = os.environ["EMAIL_PRIVACY_URL"]
@@ -91,6 +91,14 @@ def get_email_settings() -> EmailSettings | None:
         return None
 
 
+def get_email_settings() -> EmailSettings | None:
+    return _get_settings("EMAIL_LINK_ENABLED", "EMAIL_LINK_SECRET")
+
+
+def get_feedback_settings() -> EmailSettings | None:
+    return _get_settings("FEEDBACK_ENABLED", "FEEDBACK_RATE_LIMIT_SECRET")
+
+
 class EmailDeliveryError(Exception):
     pass
 
@@ -102,9 +110,14 @@ class _NoRedirect(HTTPRedirectHandler):
         return None
 
 
-def _send(settings: EmailSettings, payload: dict[str, str]) -> None:
+def _send(
+    settings: EmailSettings,
+    endpoint: str,
+    payload: dict[str, str | None],
+    success_message: str,
+) -> None:
     request = Request(
-        f"{settings.service_url}/forward-email-equa",
+        f"{settings.service_url}/{endpoint}",
         data=json.dumps(payload, separators=(",", ":")).encode("utf-8"),
         headers={
             "Authorization": f"Bearer {settings.service_token}",
@@ -121,7 +134,7 @@ def _send(settings: EmailSettings, payload: dict[str, str]) -> None:
             if response.status != 200 or len(body) > 4096:
                 raise EmailDeliveryError("Invio email non disponibile")
         result = json.loads(body.decode("utf-8"))
-        if result != {"message": "Email sent"}:
+        if result != {"message": success_message}:
             raise EmailDeliveryError("Invio email non disponibile")
     except EmailDeliveryError:
         raise
@@ -140,7 +153,9 @@ def _send(settings: EmailSettings, payload: dict[str, str]) -> None:
 def send_verification_email(settings: EmailSettings, recipient: str, code: str) -> None:
     _send(
         settings,
+        "forward-email-equa",
         {"kind": "verification", "email": recipient, "code": code},
+        "Email sent",
     )
 
 
@@ -149,5 +164,27 @@ def send_group_link_email(
 ) -> None:
     _send(
         settings,
+        "forward-email-equa",
         {"kind": "group_link", "email": recipient, "group_id": group_id},
+        "Email sent",
+    )
+
+
+def send_feedback(
+    settings: EmailSettings,
+    category: str,
+    message: str,
+    contact_email: str | None,
+    locale: str,
+) -> None:
+    _send(
+        settings,
+        "forward-email-equa-feedback",
+        {
+            "category": category,
+            "message": message,
+            "contact_email": contact_email,
+            "locale": locale,
+        },
+        "Feedback sent",
     )

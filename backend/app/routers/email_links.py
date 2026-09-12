@@ -67,6 +67,7 @@ def reserve_limit(
     seconds: int,
     maximum: int,
     now: datetime,
+    detail: str = "Troppe richieste. Attendi prima di richiedere un nuovo codice.",
 ) -> None:
     epoch = datetime(1970, 1, 1)
     bucket = int((now - epoch).total_seconds()) // seconds
@@ -94,7 +95,7 @@ def reserve_limit(
         db.rollback()
         raise HTTPException(
             429,
-            "Troppe richieste. Attendi prima di richiedere un nuovo codice.",
+            detail,
             headers={"Retry-After": str(max(1, int((expires - now).total_seconds())))},
         )
 

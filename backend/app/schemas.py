@@ -1,6 +1,6 @@
 import re
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 from typing import Literal, Optional, List
 from datetime import date, datetime
 from decimal import Decimal
@@ -62,6 +62,35 @@ class EmailLinkRequested(BaseModel):
 class EmailLinkOptions(BaseModel):
     enabled: bool
     privacy_url: Optional[str] = None
+
+
+class FeedbackOptions(BaseModel):
+    enabled: bool
+    privacy_url: Optional[str] = None
+
+
+class FeedbackRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    category: Literal["bug", "feature"]
+    message: str = Field(min_length=10, max_length=2000)
+    contact_email: Optional[str] = Field(default=None, max_length=254)
+    locale: Literal["it", "en"]
+
+    @field_validator("message")
+    @classmethod
+    def valid_message(cls, value: str) -> str:
+        value = value.strip()
+        if len(value) < 10:
+            raise ValueError("Descrivi il problema o il suggerimento")
+        return value
+
+    @field_validator("contact_email")
+    @classmethod
+    def valid_contact_email(cls, value: Optional[str]) -> Optional[str]:
+        if value is None or not value.strip():
+            return None
+        return normalize_contact_email(value)
 
 
 class MemberCreate(BaseModel):

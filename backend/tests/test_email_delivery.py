@@ -133,3 +133,29 @@ def test_transport_failures_hide_private_details(configured, monkeypatch):
             delivery.get_email_settings(), "anna@example.org", "123456"
         )
     assert "secret" not in str(error.value)
+
+
+def test_feedback_uses_dedicated_endpoint_and_contract(configured, monkeypatch):
+    monkeypatch.setenv("FEEDBACK_ENABLED", "true")
+    monkeypatch.setenv("FEEDBACK_RATE_LIMIT_SECRET", "f" * 40)
+    opener, _ = fake_transport(monkeypatch, b'{"message":"Feedback sent"}')
+    settings = delivery.get_feedback_settings()
+
+    delivery.send_feedback(settings, "bug", "A detailed problem", None, "en")
+
+    request = opener.open.call_args.args[0]
+    assert request.full_url.endswith("/forward-email-equa-feedback")
+    assert json.loads(request.data) == {
+        "category": "bug",
+        "message": "A detailed problem",
+        "contact_email": None,
+        "locale": "en",
+    }
+
+
+def test_feedback_configuration_is_independent(configured, monkeypatch):
+    monkeypatch.setenv("EMAIL_LINK_ENABLED", "false")
+    monkeypatch.setenv("FEEDBACK_ENABLED", "true")
+    monkeypatch.setenv("FEEDBACK_RATE_LIMIT_SECRET", "f" * 40)
+    assert delivery.get_email_settings() is None
+    assert delivery.get_feedback_settings() is not None

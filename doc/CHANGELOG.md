@@ -16,6 +16,8 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 - Migrazione `005` e rollback per verifiche temporanee e contatori, comando di pulizia e guida operativa/privacy in `doc/EMAIL_LINK.md`.
 - Azioni di riuso e passaparola per tutti i visitatori dei gruppi chiusi: nuovo gruppo vuoto, condivisione nativa, WhatsApp e copia della sola pagina pubblica di Equa.
 - Test backend e frontend per consenso, validazione, scadenza, tentativi, replay, limiti, guasti del servizio e condivisione senza dati del gruppo.
+- Pannello globale e accessibile che raggruppa lingua, tema e feedback mantenendo componenti e responsabilità separati.
+- Segnalazioni di bug e suggerimenti inoltrate al microservizio tramite backend, con contatto facoltativo, nessun dato automatico del gruppo e limiti persistenti.
 - Anteprima statica riconoscibile dei link condivisi tramite metadati Open Graph e Twitter, senza includere dati del gruppo.
 - Controllo CI delle pull request verso `main` per imporre il passaggio da `release-candidate`, verificare versioni e changelog e creare automaticamente i tag di componente dopo il merge.
 

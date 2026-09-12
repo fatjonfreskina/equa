@@ -120,6 +120,7 @@ Vue 3 · TypeScript · Vite · Tailwind CSS · FastAPI · SQLAlchemy · MySQL
 - [Migrazioni database](backend/migrations/README.md)
 - [Metriche anonime](doc/ANALYTICS.md)
 - [Conservazione del link via email: attivazione e privacy](doc/EMAIL_LINK.md)
+- [Feedback non invasivo: flusso, configurazione e privacy](doc/FEEDBACK.md)
 
 ## Supporta Equa
 
