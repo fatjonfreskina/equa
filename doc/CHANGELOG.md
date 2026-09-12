@@ -23,6 +23,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 ### Corretto
 
 - Gli importi frazionari conservati dalla migrazione multivaluta per JPY, KRW, VND, CLP e ISK non vengono più arrotondati visivamente all'intero.
+- Il controllo di rilascio verifica che ogni componente dichiarato abbia modifiche documentate anche quando frontend e backend usano voci separate del changelog.
 
 ## [1.8.0] Frontend; Backend - 2026-09-10
 
