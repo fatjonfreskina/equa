@@ -1201,7 +1201,7 @@ const showClosingSummary = ref(false)
 const statusLoading = ref(false)
 const statusError = ref('')
 
-const defaultDocumentTitle = 'Equa — Dividi le spese, non le amicizie'
+const defaultDocumentTitle = 'Equa — Spese condivise, senza complicazioni'
 
 watch(
   () => group.value?.name,

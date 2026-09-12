@@ -24,7 +24,7 @@ const messages = {
     notNow: 'Non ora',
     change: 'Cambia',
     loading: 'Caricamento...',
-    tagline: 'Dividi le spese, non le amicizie.',
+    tagline: 'Spese condivise, senza complicazioni.',
     subtitle: 'Semplice, italiano, e gratis per sempre.',
     multiCurrencyNews: 'Novità · Equa parla anche inglese',
     multiCurrencyNewsText:
@@ -270,7 +270,7 @@ const messages = {
     notNow: 'Not now',
     change: 'Change',
     loading: 'Loading...',
-    tagline: 'Split expenses, not friendships.',
+    tagline: 'Shared expenses, without the hassle.',
     subtitle: 'Simple, private, and free forever.',
     multiCurrencyNews: 'New · Equa now speaks English',
     multiCurrencyNewsText:

@@ -128,7 +128,7 @@ it('identifies a shared group in the browser title', async () => {
 
   app?.unmount()
   app = undefined
-  expect(document.title).toBe('Equa — Dividi le spese, non le amicizie')
+  expect(document.title).toBe('Equa — Spese condivise, senza complicazioni')
 })
 
 it('clears only local history and only after confirmation', async () => {

@@ -16,6 +16,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ### Modificato
 
+- Il payoff del brand è ora “Spese condivise, senza complicazioni”, con traduzione inglese coerente e metadati di condivisione aggiornati.
 - Il titolo del browser identifica il gruppo aperto e torna al titolo predefinito quando si lascia la pagina.
 - Le regole operative richiedono versionamento e changelog coerenti prima dell'approvazione di una release verso `main`.
 
