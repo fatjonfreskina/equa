@@ -1,7 +1,7 @@
 <template>
   <button
     type="button"
-    class="theme-toggle flex min-h-11 w-full items-center justify-between rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+    class="theme-toggle flex min-h-11 w-full items-center justify-between bg-transparent px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 focus-visible:relative focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-green-600"
     :aria-pressed="darkTheme"
     @click="toggleTheme"
   >

@@ -19,7 +19,10 @@
           ×
         </button>
       </div>
-      <div class="mt-3 grid gap-3">
+      <div
+        data-testid="preference-controls"
+        class="mt-3 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm divide-y divide-gray-200"
+      >
         <LanguageSwitcher />
         <ThemeSwitcher />
       </div>

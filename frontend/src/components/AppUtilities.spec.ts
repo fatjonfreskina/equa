@@ -65,6 +65,12 @@ it('groups language, theme and feedback while keeping their controls independent
   await flush()
 
   const select = document.querySelector<HTMLSelectElement>('select')!
+  const preferenceControls = document.querySelector<HTMLElement>(
+    '[data-testid=preference-controls]',
+  )!
+  expect(preferenceControls.children).toHaveLength(2)
+  expect(select.className).toContain('appearance-none')
+  expect(document.querySelector('.theme-toggle')?.className).toContain('bg-transparent')
   select.value = 'en'
   select.dispatchEvent(new Event('change'))
   await flush()
