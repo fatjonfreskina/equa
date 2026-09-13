@@ -33,6 +33,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 - Gli importi frazionari conservati dalla migrazione multivaluta per JPY, KRW, VND, CLP e ISK non vengono più arrotondati visivamente all'intero.
 - Il controllo di rilascio verifica che ogni componente dichiarato abbia modifiche documentate anche quando frontend e backend usano voci separate del changelog.
 - Il pannello “Scegli chi sei per vedere il tuo riepilogo” usa nuovamente bordi completi e arrotondati (issue #43).
+- La CTA Buy Me a Coffee mantiene un contrasto netto anche in dark mode e non ripete più l'invito nel testo adiacente.
 
 ## [1.8.0] Frontend; Backend - 2026-09-10
 

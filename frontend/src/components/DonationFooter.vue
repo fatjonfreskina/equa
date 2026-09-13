@@ -17,7 +17,7 @@
         :href="DONATION_URL"
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-block rounded-lg border border-yellow-300 bg-yellow-300 px-3 py-1.5 font-semibold text-gray-900 transition hover:border-yellow-400 hover:bg-yellow-400"
+        class="inline-block rounded-lg border border-amber-400 bg-amber-300 px-3 py-1.5 font-semibold text-gray-950 shadow-sm transition hover:border-amber-500 hover:bg-amber-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600 dark:border-amber-300 dark:bg-amber-300 dark:text-gray-950 dark:hover:border-amber-200 dark:hover:bg-amber-200 dark:focus-visible:outline-amber-300"
         @click="trackEvent('donation_clicked')"
         >{{ t('offerCoffee') }}</a
       >

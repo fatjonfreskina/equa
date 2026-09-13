@@ -26,5 +26,7 @@ it('uses a single safe Buy Me a Coffee link', () => {
   expect(donationLinks).toHaveLength(1)
   expect(donationLinks[0]?.getAttribute('target')).toBe('_blank')
   expect(donationLinks[0]?.getAttribute('rel')).toBe('noopener noreferrer')
+  expect(donationLinks[0]?.className).toContain('dark:bg-amber-300')
+  expect(container.textContent?.match(/caffè/gi) ?? []).toHaveLength(1)
   expect(container.innerHTML).not.toContain('paypal.me')
 })
