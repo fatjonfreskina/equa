@@ -26,11 +26,13 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 - Il payoff del brand è ora “Spese condivise, senza complicazioni”, con traduzione inglese coerente e metadati di condivisione aggiornati.
 - Il titolo del browser identifica il gruppo aperto e torna al titolo predefinito quando si lascia la pagina.
 - Le regole operative richiedono versionamento e changelog coerenti prima dell'approvazione di una release verso `main`.
+- I collegamenti di supporto usano Buy Me a Coffee al posto dei link PayPal, con una CTA unica e riconoscibile (issue #40).
 
 ### Corretto
 
 - Gli importi frazionari conservati dalla migrazione multivaluta per JPY, KRW, VND, CLP e ISK non vengono più arrotondati visivamente all'intero.
 - Il controllo di rilascio verifica che ogni componente dichiarato abbia modifiche documentate anche quando frontend e backend usano voci separate del changelog.
+- Il pannello “Scegli chi sei per vedere il tuo riepilogo” usa nuovamente bordi completi e arrotondati (issue #43).
 
 ## [1.8.0] Frontend; Backend - 2026-09-10
 

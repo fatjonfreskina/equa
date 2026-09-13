@@ -115,7 +115,7 @@ Il caso d'uso principale e un gruppo di persone che usa telefoni diversi durante
 - Aggiunta e rimozione dei partecipanti con vincoli sulle spese esistenti.
 - Modifica dell'email di un partecipante.
 - Totale delle spese nella vista gruppo.
-- Donazione PayPal.
+- Donazione tramite Buy Me a Coffee.
 
 ### 2.2 Modello tecnico attuale
 

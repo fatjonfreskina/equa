@@ -153,7 +153,7 @@ Vue 3 · TypeScript · Vite · Tailwind CSS · FastAPI · SQLAlchemy · MySQL
 
 Equa è gratuita e open source. Se ti ha evitato una discussione sui conti, puoi offrirci un caffè.
 
-[![Offrimi un caffè su PayPal](https://img.shields.io/badge/PayPal-Offrimi_un_caffè-00457C?style=for-the-badge&logo=paypal)](https://paypal.me/fatjonfreskina)
+[![Offrimi un caffè su Buy Me a Coffee](https://img.shields.io/badge/Buy_Me_a_Coffee-Offrimi_un_caffè-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=000000)](https://buymeacoffee.com/fatjonfreskina)
 
 ## Licenza
 

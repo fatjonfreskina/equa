@@ -141,7 +141,7 @@
             {{ t('celebration', { name: group.name }) }}
           </p>
           <a
-            href="https://paypal.me/fatjonfreskina"
+            :href="DONATION_URL"
             target="_blank"
             rel="noopener noreferrer"
             @click="trackEvent('donation_clicked')"
@@ -855,7 +855,7 @@
         </section>
         <div
           v-else-if="!balancesLoading && !balancesError && group.status === 'active'"
-          class="mb-4 flex items-center justify-between gap-3 border-y border-gray-200 bg-white px-4 py-3"
+          class="mb-4 flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3"
         >
           <p class="text-sm text-gray-600">{{ t('chooseIdentity') }}</p>
           <button
@@ -1165,6 +1165,7 @@ import {
   type Split,
 } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
+import { DONATION_URL } from '../config'
 import FeedbackDialog from '../components/FeedbackDialog.vue'
 import EmailLinkCard from '../components/EmailLinkCard.vue'
 import GroupGrowthCard from '../components/GroupGrowthCard.vue'
