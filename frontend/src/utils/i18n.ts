@@ -439,8 +439,8 @@ const messages = {
     copyLink: 'Copy link',
     accountsClosed: 'Balances settled!',
     celebration:
-      'You settled the balances for {name}. If Equa helped, you can buy us a coffee to keep it free.',
-    offerCoffee: '☕ Buy us a coffee',
+      'You settled the balances for {name}. If Equa helped, you can buy me a coffee to keep it free.',
+    offerCoffee: '☕ Buy me a coffee',
     shareSummary: 'Share summary',
     closeSummary: 'Close summary',
     shareSummaryHint: 'Send the group the amounts to pay and the link for updating payments.',
