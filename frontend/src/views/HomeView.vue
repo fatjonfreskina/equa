@@ -12,13 +12,6 @@
         <p class="text-sm text-gray-400">{{ t('subtitle') }}</p>
       </div>
 
-      <StatusBanner tone="success" class="mb-4 px-4 py-3 text-sm">
-        <span class="font-semibold">{{ t('multiCurrencyNews') }}</span>
-        <p class="mt-1">
-          {{ t('multiCurrencyNewsText') }}
-        </p>
-      </StatusBanner>
-
       <!-- Form crea gruppo -->
       <div class="bg-white rounded-2xl shadow p-6 mb-4">
         <h2 class="text-lg font-semibold text-gray-800 mb-4">{{ t('createGroup') }}</h2>
@@ -205,7 +198,6 @@ import { useRouter } from 'vue-router'
 import { groupsApi } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
 import FeedbackDialog from '../components/FeedbackDialog.vue'
-import StatusBanner from '../components/StatusBanner.vue'
 import { useFeedbackDialog } from '../composables/useFeedbackDialog'
 import equaLogo from '../assets/equa-logo.svg'
 import { trackEvent } from '../utils/analytics'

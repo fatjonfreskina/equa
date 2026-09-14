@@ -35,6 +35,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 - Il pannello “Scegli chi sei per vedere il tuo riepilogo” usa nuovamente bordi completi e arrotondati (issue #43).
 - La CTA Buy Me a Coffee mantiene un contrasto netto anche in dark mode e non ripete più l'invito nel testo adiacente.
 - Lingua e tema nel pannello impostazioni condividono un'unica superficie visiva, senza un selettore a pillola annidato.
+- Rimosso dalla home il banner temporaneo “Novità · Equa parla anche inglese”.
 
 ## [1.8.0] Frontend; Backend - 2026-09-10
 

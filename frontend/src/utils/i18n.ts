@@ -82,9 +82,6 @@ const messages = {
     loading: 'Caricamento...',
     tagline: 'Spese condivise, senza complicazioni.',
     subtitle: 'Semplice, italiano, e gratis per sempre.',
-    multiCurrencyNews: 'Novità · Equa parla anche inglese',
-    multiCurrencyNewsText:
-      'Puoi cambiare lingua in qualsiasi momento: la preferenza resta solo su questo dispositivo.',
     createGroup: 'Crea un gruppo',
     groupName: 'Nome del gruppo',
     groupNamePlaceholder: 'Es. Vacanza in Sardegna',
@@ -382,9 +379,6 @@ const messages = {
     loading: 'Loading...',
     tagline: 'Shared expenses, without the hassle.',
     subtitle: 'Simple, private, and free forever.',
-    multiCurrencyNews: 'New · Equa now speaks English',
-    multiCurrencyNewsText:
-      'Switch language at any time: your preference stays only on this device.',
     createGroup: 'Create a group',
     groupName: 'Group name',
     groupNamePlaceholder: 'E.g. Sardinia holiday',
