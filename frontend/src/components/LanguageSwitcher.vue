@@ -1,17 +1,20 @@
 <template>
-  <label
-    class="language-switcher flex items-center rounded-full border border-gray-200 bg-white p-1 text-xs shadow-sm"
-  >
-    <span class="sr-only">{{ t('language') }}</span>
-    <select
-      :value="locale"
-      class="cursor-pointer rounded-full bg-transparent px-2 py-1.5 font-semibold text-gray-700 outline-none focus-visible:ring-2 focus-visible:ring-green-600"
-      :aria-label="t('language')"
-      @change="setLocale(($event.target as HTMLSelectElement).value as AppLocale)"
-    >
-      <option value="it">IT · {{ t('italian') }}</option>
-      <option value="en">EN · {{ t('english') }}</option>
-    </select>
+  <label class="language-switcher flex min-h-11 w-full items-center justify-between px-3 py-2">
+    <span class="text-sm font-semibold text-gray-700">{{ t('language') }}</span>
+    <span class="relative flex items-center">
+      <select
+        :value="locale"
+        class="cursor-pointer appearance-none bg-transparent py-1 pl-2 pr-6 text-right text-sm font-semibold text-gray-700 outline-none focus-visible:ring-2 focus-visible:ring-green-600"
+        :aria-label="t('language')"
+        @change="setLocale(($event.target as HTMLSelectElement).value as AppLocale)"
+      >
+        <option value="it">IT · {{ t('italian') }}</option>
+        <option value="en">EN · {{ t('english') }}</option>
+      </select>
+      <span class="pointer-events-none absolute right-1 text-xs text-gray-500" aria-hidden="true"
+        >⌄</span
+      >
+    </span>
   </label>
 </template>
 

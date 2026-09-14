@@ -8,15 +8,19 @@
 
     <div v-else-if="group">
       <!-- Promemoria mostrato solo subito dopo la creazione del gruppo -->
-      <div
+      <dialog
         v-if="showShareDialog"
-        class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 p-4"
+        ref="shareDialogElement"
+        class="fixed inset-0 m-0 h-[100dvh] max-h-none w-full max-w-none items-end justify-center border-0 bg-black/40 p-4 open:flex backdrop:bg-transparent sm:items-center"
         role="dialog"
         aria-modal="true"
         aria-labelledby="share-reminder-title"
         @click.self="closeShareDialog"
+        @cancel.prevent="closeShareDialog"
       >
-        <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+        <div
+          class="max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-xl"
+        >
           <div class="flex items-start justify-between gap-4">
             <div>
               <p class="text-2xl" aria-hidden="true">🔗</p>
@@ -109,8 +113,16 @@
           <p class="mt-4 break-all rounded-lg bg-gray-50 p-3 text-xs text-gray-500">
             {{ groupLink }}
           </p>
+          <EmailLinkCard :group-id="groupId" />
+          <button
+            type="button"
+            class="mt-3 min-h-11 w-full text-sm font-medium text-gray-600"
+            @click="closeShareDialog"
+          >
+            Continua al gruppo
+          </button>
         </div>
-      </div>
+      </dialog>
 
       <div
         v-if="showCelebration"
@@ -129,7 +141,7 @@
             {{ t('celebration', { name: group.name }) }}
           </p>
           <a
-            href="https://paypal.me/fatjonfreskina"
+            :href="DONATION_URL"
             target="_blank"
             rel="noopener noreferrer"
             @click="trackEvent('donation_clicked')"
@@ -285,6 +297,8 @@
           </button>
         </div>
       </StatusBanner>
+
+      <GroupGrowthCard v-if="group.status === 'closed'" />
 
       <!-- Tabs -->
       <div class="flex gap-2 mb-6 border-b border-gray-200">
@@ -786,7 +800,7 @@
         </div>
         <section
           v-if="!balancesLoading && !balancesError && group.status !== 'closed' && currentMemberId"
-          class="mb-4 border-y border-gray-200 bg-white px-4 py-4"
+          class="mb-4 rounded-xl border border-gray-200 bg-white px-4 py-4"
         >
           <div class="flex flex-wrap items-baseline justify-between gap-2">
             <h2 class="font-semibold text-gray-800">{{ t('yourSummary') }}</h2>
@@ -841,7 +855,7 @@
         </section>
         <div
           v-else-if="!balancesLoading && !balancesError && group.status === 'active'"
-          class="mb-4 flex items-center justify-between gap-3 border-y border-gray-200 bg-white px-4 py-3"
+          class="mb-4 flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3"
         >
           <p class="text-sm text-gray-600">{{ t('chooseIdentity') }}</p>
           <button
@@ -1127,7 +1141,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import {
+  ref,
+  reactive,
+  computed,
+  onMounted,
+  onUnmounted,
+  watch,
+  watchPostEffect,
+  nextTick,
+} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { apiErrorMessage } from '../api/errors'
 import {
@@ -1142,7 +1165,10 @@ import {
   type Split,
 } from '../api/groups'
 import DonationFooter from '../components/DonationFooter.vue'
+import { DONATION_URL } from '../config'
 import FeedbackDialog from '../components/FeedbackDialog.vue'
+import EmailLinkCard from '../components/EmailLinkCard.vue'
+import GroupGrowthCard from '../components/GroupGrowthCard.vue'
 import StatusBadge from '../components/StatusBadge.vue'
 import StatusBanner from '../components/StatusBanner.vue'
 import { useFeedbackDialog } from '../composables/useFeedbackDialog'
@@ -1185,6 +1211,11 @@ const loading = ref(true)
 const error = ref('')
 const copied = ref(false)
 const showShareDialog = ref(route.query.created === '1')
+const shareDialogElement = ref<HTMLDialogElement | null>(null)
+watchPostEffect(() => {
+  const element = shareDialogElement.value
+  if (showShareDialog.value && element && !element.open) element.showModal()
+})
 const savedLocally = ref(route.query.created === '1' || isRecentGroup(groupId))
 const activeTab = ref('expenses')
 const balancesLoading = ref(false)
@@ -1864,6 +1895,7 @@ function openShareDialog() {
 }
 
 function closeShareDialog() {
+  shareDialogElement.value?.close()
   showShareDialog.value = false
   if (route.query.created === '1') {
     router.replace({ query: { ...route.query, created: undefined } })

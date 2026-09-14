@@ -52,7 +52,34 @@ HOST_PORT=3306
 DB_NAME=equa
 SECRET_KEY=una-stringa-random-lunga
 ALLOW_ORIGINS=http://localhost:5173
+
+# Microservizio email condiviso. EMAIL_SERVICE_TOKEN deve coincidere con
+# EQUA_TOKEN configurato in python-email-service (almeno 32 caratteri casuali).
+EMAIL_SERVICE_URL=https://email.example.com
+EMAIL_SERVICE_TOKEN=sostituisci-con-un-token-casuale-di-almeno-32-caratteri
+EMAIL_SERVICE_TIMEOUT=10
+EMAIL_SERVICE_ALLOW_HTTP=false
+EMAIL_PRIVACY_URL=https://example.com/privacy
+
+# Invio facoltativo del link del gruppo via email.
+EMAIL_LINK_ENABLED=false
+EMAIL_LINK_SECRET=sostituisci-con-un-segreto-casuale-di-almeno-32-caratteri
+
+# Segnalazioni bug e proposte dall'interfaccia.
+FEEDBACK_ENABLED=false
+FEEDBACK_RATE_LIMIT_SECRET=sostituisci-con-un-altro-segreto-di-almeno-32-caratteri
 ```
+
+Mantieni entrambe le funzioni disattivate finché il microservizio non è stato
+configurato e distribuito. Per uno sviluppo locale con un servizio HTTP imposta
+`EMAIL_SERVICE_ALLOW_HTTP=true`; in produzione usa HTTPS. I due segreti di rate
+limit devono essere casuali e distinti, mentre `EMAIL_SERVICE_TOKEN` è il solo
+valore condiviso con il microservizio. Non committare mai il file `.env`.
+
+Nel `.env` di `python-email-service` servono inoltre `EQUA_TOKEN`,
+`EQUA_PUBLIC_URL`, `EQUA_PRIVACY_URL` ed `EQUA_FEEDBACK_RECEIVER`, oltre alla
+configurazione SMTP. Consulta la documentazione dedicata per flusso, privacy e
+check di deploy.
 
 Poi avvia l’API:
 
@@ -119,12 +146,14 @@ Vue 3 · TypeScript · Vite · Tailwind CSS · FastAPI · SQLAlchemy · MySQL
 - [Spese, cambi e bilanci multi-valuta](doc/MULTICURRENCY.md)
 - [Migrazioni database](backend/migrations/README.md)
 - [Metriche anonime](doc/ANALYTICS.md)
+- [Conservazione del link via email: attivazione e privacy](doc/EMAIL_LINK.md)
+- [Feedback non invasivo: flusso, configurazione e privacy](doc/FEEDBACK.md)
 
 ## Supporta Equa
 
 Equa è gratuita e open source. Se ti ha evitato una discussione sui conti, puoi offrirci un caffè.
 
-[![Offrimi un caffè su PayPal](https://img.shields.io/badge/PayPal-Offrimi_un_caffè-00457C?style=for-the-badge&logo=paypal)](https://paypal.me/fatjonfreskina)
+[![Offrimi un caffè su Buy Me a Coffee](https://img.shields.io/badge/Buy_Me_a_Coffee-Offrimi_un_caffè-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=000000)](https://buymeacoffee.com/fatjonfreskina)
 
 ## Licenza
 

@@ -11,38 +11,23 @@
       <span class="text-gray-300 mx-1">·</span>
       <span>v{{ APP_VERSION }}</span>
     </p>
-    <div class="flex items-center justify-center gap-2 flex-wrap">
+    <div class="flex flex-wrap items-center justify-center gap-2">
       <span>{{ t('useful') }}</span>
-      <div class="flex gap-1">
-        <a
-          v-for="amount in amounts"
-          :key="amount.label"
-          :href="`https://paypal.me/fatjonfreskina/${amount.value}EUR`"
-          target="_blank"
-          @click="trackEvent('donation_clicked')"
-          class="inline-block bg-green-50 hover:bg-green-100 text-green-700 font-medium rounded-lg px-2.5 py-1 transition border border-green-200"
-          >{{ amount.label }}</a
-        >
-        <a
-          href="https://paypal.me/fatjonfreskina"
-          target="_blank"
-          @click="trackEvent('donation_clicked')"
-          class="inline-block bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium rounded-lg px-2.5 py-1 transition border border-gray-200"
-          >{{ t('customAmount') }}</a
-        >
-      </div>
+      <a
+        :href="DONATION_URL"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-block rounded-lg border border-amber-400 bg-amber-300 px-3 py-1.5 font-semibold text-gray-950 shadow-sm transition hover:border-amber-500 hover:bg-amber-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600 dark:border-amber-300 dark:bg-amber-300 dark:text-gray-950 dark:hover:border-amber-200 dark:hover:bg-amber-200 dark:focus-visible:outline-amber-300"
+        @click="trackEvent('donation_clicked')"
+        >{{ t('offerCoffee') }}</a
+      >
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { APP_VERSION } from '../config'
+import { APP_VERSION, DONATION_URL } from '../config'
 import { trackEvent } from '../utils/analytics'
 import { useI18n } from '../utils/i18n'
 const { t } = useI18n()
-const amounts = [
-  { label: '☕ 2€', value: 2 },
-  { label: '🍕 3€', value: 3 },
-  { label: '🍷 5€', value: 5 },
-]
 </script>
