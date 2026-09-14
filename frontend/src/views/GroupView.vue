@@ -800,7 +800,7 @@
         </div>
         <section
           v-if="!balancesLoading && !balancesError && group.status !== 'closed' && currentMemberId"
-          class="mb-4 border-y border-gray-200 bg-white px-4 py-4"
+          class="mb-4 rounded-xl border border-gray-200 bg-white px-4 py-4"
         >
           <div class="flex flex-wrap items-baseline justify-between gap-2">
             <h2 class="font-semibold text-gray-800">{{ t('yourSummary') }}</h2>
