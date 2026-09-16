@@ -87,17 +87,23 @@ const privacyUrl = ref<string | null>(null)
 const feedbackCategory = ref<FeedbackCategory | null>(null)
 const status = ref('')
 
-onMounted(async () => {
+onMounted(() => {
   document.addEventListener('keydown', onKeydown)
   document.addEventListener('pointerdown', onPointerdown)
+  void refreshFeedbackOptions()
+})
+
+async function refreshFeedbackOptions(): Promise<void> {
   try {
     const { data } = await feedbackApi.options()
     feedbackEnabled.value = data.enabled
     privacyUrl.value = data.privacy_url
   } catch {
+    feedbackEnabled.value = false
+    privacyUrl.value = null
     // Utilities remain usable against an older backend.
   }
-})
+}
 
 onBeforeUnmount(() => {
   document.removeEventListener('keydown', onKeydown)
@@ -108,6 +114,7 @@ async function toggle(): Promise<void> {
   open.value = !open.value
   status.value = ''
   if (open.value) {
+    await refreshFeedbackOptions()
     await nextTick()
     panel.value?.querySelector<HTMLElement>('button, select')?.focus()
   }

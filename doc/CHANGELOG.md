@@ -36,6 +36,8 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 - La CTA Buy Me a Coffee mantiene un contrasto netto anche in dark mode e non ripete più l'invito nel testo adiacente.
 - Lingua e tema nel pannello impostazioni condividono un'unica superficie visiva, senza un selettore a pillola annidato.
 - Rimosso dalla home il banner temporaneo “Novità · Equa parla anche inglese”.
+- Il menu impostazioni aggiorna la disponibilità del feedback a ogni apertura, anche dopo una modifica della configurazione backend.
+- Il dialog del codice email viene ripristinato, con il focus corretto, quando si torna su Chrome dopo aver aperto l'app email su mobile.
 
 ## [1.8.0] Frontend; Backend - 2026-09-10
 

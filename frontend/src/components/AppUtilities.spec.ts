@@ -119,3 +119,19 @@ it('keeps preferences usable and hides feedback against an older backend', async
   expect(document.body.textContent).toContain('Tema scuro')
   expect(document.body.textContent).not.toContain('Segnala problema')
 })
+
+it('refreshes feedback availability whenever the utilities panel opens', async () => {
+  vi.mocked(feedbackApi.options)
+    .mockResolvedValueOnce({ data: { enabled: false, privacy_url: null } } as never)
+    .mockResolvedValueOnce({
+      data: { enabled: true, privacy_url: 'https://equa.example/privacy' },
+    } as never)
+  await mount()
+  expect(document.body.textContent).not.toContain('Segnala problema')
+
+  document.querySelector<HTMLButtonElement>('[aria-controls=app-utilities-panel]')!.click()
+  await flush()
+
+  expect(feedbackApi.options).toHaveBeenCalledTimes(2)
+  expect(document.body.textContent).toContain('Segnala problema')
+})

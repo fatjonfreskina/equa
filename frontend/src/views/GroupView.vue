@@ -1902,6 +1902,18 @@ function closeShareDialog() {
   }
 }
 
+async function restoreShareDialogAfterResume(): Promise<void> {
+  if (!showShareDialog.value || document.visibilityState === 'hidden') return
+  await nextTick()
+  const element = shareDialogElement.value
+  if (!element) return
+  if (!element.open) element.showModal()
+  await nextTick()
+  element
+    .querySelector<HTMLInputElement>('input[autocomplete="one-time-code"], input[type="email"]')
+    ?.focus()
+}
+
 function saveGroupLocally() {
   if (!group.value) return
   saveRecentGroup(group.value)
@@ -2037,8 +2049,14 @@ async function reopenGroup() {
   await updateGroupStatus('active')
 }
 
-onMounted(loadGroup)
+onMounted(() => {
+  document.addEventListener('visibilitychange', restoreShareDialogAfterResume)
+  window.addEventListener('pageshow', restoreShareDialogAfterResume)
+  void loadGroup()
+})
 onUnmounted(() => {
+  document.removeEventListener('visibilitychange', restoreShareDialogAfterResume)
+  window.removeEventListener('pageshow', restoreShareDialogAfterResume)
   document.title = defaultDocumentTitle
 })
 </script>
