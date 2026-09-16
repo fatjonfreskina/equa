@@ -1,4 +1,6 @@
-from pydantic import BaseModel, Field, field_validator
+import re
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 from typing import Literal, Optional, List
 from datetime import date, datetime
 from decimal import Decimal
@@ -6,6 +8,89 @@ from decimal import Decimal
 from .currency import MAX_AMOUNT, latest_expense_date, validate_currency, validate_rate
 
 # --- Member ---
+
+
+def normalize_contact_email(value: str) -> str:
+    value = value.strip()
+    if len(value) > 254 or value.count("@") != 1:
+        raise ValueError("Inserisci un indirizzo email valido")
+    local, domain = value.rsplit("@", 1)
+    try:
+        domain = domain.encode("idna").decode("ascii").lower()
+    except UnicodeError:
+        raise ValueError("Inserisci un indirizzo email valido") from None
+    if (
+        not re.fullmatch(r"[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]{1,64}", local)
+        or local.startswith(".")
+        or local.endswith(".")
+        or ".." in local
+        or len(local + "@" + domain) > 254
+        or "." not in domain
+        or any(
+            not re.fullmatch(r"[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?", label)
+            for label in domain.split(".")
+        )
+    ):
+        raise ValueError("Inserisci un indirizzo email valido")
+    return local + "@" + domain
+
+
+class EmailLinkRequest(BaseModel):
+    email: str = Field(max_length=254)
+
+    @field_validator("email")
+    @classmethod
+    def valid_email(cls, value: str) -> str:
+        return normalize_contact_email(value)
+
+
+class EmailLinkToken(BaseModel):
+    challenge_token: str = Field(
+        min_length=100, max_length=2048, pattern=r"^[A-Za-z0-9_=-]+$"
+    )
+
+
+class EmailLinkConfirmation(EmailLinkToken):
+    code: str = Field(pattern=r"^[0-9]{6}$")
+
+
+class EmailLinkRequested(BaseModel):
+    challenge_token: str
+    expires_in: int
+
+
+class EmailLinkOptions(BaseModel):
+    enabled: bool
+    privacy_url: Optional[str] = None
+
+
+class FeedbackOptions(BaseModel):
+    enabled: bool
+    privacy_url: Optional[str] = None
+
+
+class FeedbackRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    category: Literal["bug", "feature"]
+    message: str = Field(min_length=10, max_length=2000)
+    contact_email: Optional[str] = Field(default=None, max_length=254)
+    locale: Literal["it", "en"]
+
+    @field_validator("message")
+    @classmethod
+    def valid_message(cls, value: str) -> str:
+        value = value.strip()
+        if len(value) < 10:
+            raise ValueError("Descrivi il problema o il suggerimento")
+        return value
+
+    @field_validator("contact_email")
+    @classmethod
+    def valid_contact_email(cls, value: Optional[str]) -> Optional[str]:
+        if value is None or not value.strip():
+            return None
+        return normalize_contact_email(value)
 
 
 class MemberCreate(BaseModel):

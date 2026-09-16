@@ -7,6 +7,33 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
+## [1.9.0] Frontend; Backend - 2026-09-16
+
+### Aggiunto
+
+- Email facoltativa nel pannello di condivisione per conservare il link del gruppo, con codice di verifica nello stesso browser, annullamento e gestione degli errori. Nessun account, newsletter o nuovo tracking.
+- Invio tramite endpoint dedicato del microservizio email condiviso, disattivato per default; token cifrati solo in memoria nel browser, nessun recapito salvato nei gruppi e limiti anti-abuso persistenti.
+- Migrazione `005` e rollback per verifiche temporanee e contatori, comando di pulizia e guida operativa/privacy in `doc/EMAIL_LINK.md`.
+- Azioni di riuso e passaparola per tutti i visitatori dei gruppi chiusi: nuovo gruppo vuoto, condivisione nativa, WhatsApp e copia della sola pagina pubblica di Equa.
+- Test backend e frontend per consenso, validazione, scadenza, tentativi, replay, limiti, guasti del servizio e condivisione senza dati del gruppo.
+- Pannello globale e accessibile che raggruppa lingua, tema e feedback mantenendo componenti e responsabilità separati.
+- Segnalazioni di bug e suggerimenti inoltrate al microservizio tramite backend, con contatto facoltativo, nessun dato automatico del gruppo e limiti persistenti.
+- Pagina bilingue `/privacy`, collegata dal footer e utilizzabile come informativa per email e feedback.
+
+### Modificato
+
+- I collegamenti di supporto usano Buy Me a Coffee al posto dei link PayPal, con una CTA unica e riconoscibile (issue #40).
+- Lingua e tema nel pannello impostazioni condividono un'unica superficie visiva, senza un selettore a pillola annidato.
+- Rimosso dalla home il banner temporaneo “Novità · Equa parla anche inglese”.
+
+### Corretto
+
+- I pannelli “Scegli chi sei per vedere il tuo riepilogo” e “Il tuo riepilogo” usano bordi completi e arrotondati coerenti (issue #43).
+- La CTA Buy Me a Coffee mantiene un contrasto netto anche in dark mode e non ripete più l'invito nel testo adiacente.
+- Il menu impostazioni aggiorna la disponibilità del feedback a ogni apertura, anche dopo una modifica della configurazione backend.
+- Il dialog del codice email viene ripristinato, con il focus corretto, quando si torna su Chrome dopo aver aperto l'app email su mobile.
+- Il pulsante per proseguire dal dialog di condivisione del nuovo gruppo rispetta ora la lingua selezionata.
+
 ## [1.8.1] Frontend; Backend - 2026-09-12
 
 ### Aggiunto

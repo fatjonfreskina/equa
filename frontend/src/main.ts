@@ -12,5 +12,7 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 initAnalytics()
-router.afterEach((to) => trackPageview(to.path.startsWith('/group/') ? '/group' : '/'))
+router.afterEach((to) => {
+  if (to.path !== '/privacy') trackPageview(to.path.startsWith('/group/') ? '/group' : '/')
+})
 app.mount('#app')

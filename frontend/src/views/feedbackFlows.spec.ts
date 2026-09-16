@@ -4,6 +4,7 @@ import { createMemoryHistory, createRouter } from 'vue-router'
 import HomeView from './HomeView.vue'
 import GroupView from './GroupView.vue'
 import { groupsApi, type Group } from '../api/groups'
+import { setLocale } from '../utils/i18n'
 import { getRecentGroups, saveRecentGroup } from '../utils/recentGroups'
 
 vi.mock('../utils/analytics', () => ({ trackEvent: vi.fn() }))
@@ -17,6 +18,10 @@ vi.mock('../api/groups', () => ({
     getExchangeRate: vi.fn(),
     addExpenseEqual: vi.fn(),
     updateStatus: vi.fn(),
+    emailLinkOptions: vi.fn(),
+    requestEmailLink: vi.fn(),
+    confirmEmailLink: vi.fn(),
+    cancelEmailLink: vi.fn(),
   },
 }))
 
@@ -112,6 +117,12 @@ beforeEach(() => {
   vi.mocked(groupsApi.addExpenseEqual).mockResolvedValue({} as never)
   vi.mocked(groupsApi.deleteExpense).mockResolvedValue({} as never)
   vi.mocked(groupsApi.deleteMember).mockResolvedValue({} as never)
+  vi.mocked(groupsApi.emailLinkOptions).mockResolvedValue({ data: { enabled: false } } as never)
+  vi.mocked(groupsApi.requestEmailLink).mockResolvedValue({
+    data: { challenge_token: 'challenge-token', expires_in: 900 },
+  } as never)
+  vi.mocked(groupsApi.confirmEmailLink).mockResolvedValue({} as never)
+  vi.mocked(groupsApi.cancelEmailLink).mockResolvedValue({} as never)
 })
 
 afterEach(() => {
@@ -120,6 +131,7 @@ afterEach(() => {
   document.body.replaceChildren()
   document.title = ''
   localStorage.clear()
+  setLocale('it')
 })
 
 it('identifies a shared group in the browser title', async () => {
@@ -140,6 +152,71 @@ it('clears only local history and only after confirmation', async () => {
   await click('Cancella tutto')
   await click('Cancella cronologia')
   expect(getRecentGroups()).toHaveLength(0)
+})
+
+it.each(['active', 'closing', 'closed'] as const)(
+  'shows reuse and public sharing only for closed groups (%s)',
+  async (status) => {
+    vi.mocked(groupsApi.get).mockResolvedValue({ data: { ...group, status } } as never)
+    await mount(GroupView)
+    expect(document.body.textContent?.includes('Consiglia Equa')).toBe(status === 'closed')
+  },
+)
+
+it('keeps group creation and sharing usable when email is disabled', async () => {
+  await mount(GroupView, '/group/test-group?created=1')
+  expect(document.body.textContent).toContain('Condividi il link del gruppo')
+  expect(document.body.textContent).not.toContain('Conserva via email')
+  await click('Continua al gruppo')
+  expect(document.querySelector('[aria-labelledby=share-reminder-title]')).toBeNull()
+})
+
+it('translates the continue action in the created-group sharing dialog', async () => {
+  setLocale('en')
+  await mount(GroupView, '/group/test-group?created=1')
+  expect(document.body.textContent).toContain('Continue to group')
+  expect(document.body.textContent).not.toContain('Continua al gruppo')
+  await click('Continue to group')
+  expect(document.querySelector('[aria-labelledby=share-reminder-title]')).toBeNull()
+})
+
+it('uses a native modal for the share/email panel and allows Escape cancellation', async () => {
+  await mount(GroupView, '/group/test-group?created=1')
+  const modal = document.querySelector<HTMLDialogElement>(
+    'dialog[aria-labelledby=share-reminder-title]',
+  )!
+  expect(modal.open).toBe(true)
+  modal.dispatchEvent(new Event('cancel', { cancelable: true }))
+  await flush()
+  expect(document.querySelector('[aria-labelledby=share-reminder-title]')).toBeNull()
+})
+
+it('restores the email code dialog and focus after returning from another mobile app', async () => {
+  vi.mocked(groupsApi.emailLinkOptions).mockResolvedValue({
+    data: { enabled: true, privacy_url: 'https://equa.example/privacy' },
+  } as never)
+  await mount(GroupView, '/group/test-group?created=1')
+  await click('Conserva via email')
+  const email = document.querySelector<HTMLInputElement>('input[type=email]')!
+  email.value = 'anna@example.org'
+  email.dispatchEvent(new Event('input'))
+  email.closest('form')!.dispatchEvent(new Event('submit', { cancelable: true }))
+  await flush()
+
+  const code = document.querySelector<HTMLInputElement>('input[autocomplete=one-time-code]')!
+  const modal = document.querySelector<HTMLDialogElement>(
+    'dialog[aria-labelledby=share-reminder-title]',
+  )!
+  expect(code).not.toBeNull()
+  modal.close()
+  expect(modal.open).toBe(false)
+
+  document.dispatchEvent(new Event('visibilitychange'))
+  await flush()
+
+  expect(modal.open).toBe(true)
+  expect(document.activeElement).toBe(code)
+  expect(groupsApi.cancelEmailLink).not.toHaveBeenCalled()
 })
 
 it('removes one recent group only after confirmation', async () => {
