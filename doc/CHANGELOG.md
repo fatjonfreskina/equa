@@ -38,6 +38,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 - Rimosso dalla home il banner temporaneo “Novità · Equa parla anche inglese”.
 - Il menu impostazioni aggiorna la disponibilità del feedback a ogni apertura, anche dopo una modifica della configurazione backend.
 - Il dialog del codice email viene ripristinato, con il focus corretto, quando si torna su Chrome dopo aver aperto l'app email su mobile.
+- Aggiunta la pagina bilingue `/privacy`, collegata dal footer e utilizzabile come informativa per email e feedback.
 
 ## [1.8.0] Frontend; Backend - 2026-09-10
 

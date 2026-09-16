@@ -82,6 +82,44 @@ const messages = {
     loading: 'Caricamento...',
     tagline: 'Spese condivise, senza complicazioni.',
     subtitle: 'Semplice, italiano, e gratis per sempre.',
+    privacyTitle: 'Informativa privacy',
+    privacyUpdated: 'Ultimo aggiornamento: 16 settembre 2026',
+    privacyIntro:
+      'Questa pagina descrive quali dati Equa tratta e come vengono usati. Equa funziona senza account, ma i dati inseriti nei gruppi e alcuni dati tecnici sono comunque necessari per fornire e proteggere il servizio.',
+    privacyGroupsTitle: 'Gruppi e spese',
+    privacyGroupsText:
+      'Il server conserva nome e descrizione del gruppo, partecipanti, spese, suddivisioni, valute, saldi e stato dei pagamenti. Inserisci soltanto dati che puoi condividere con gli altri partecipanti.',
+    privacyGroupLinkText:
+      'Il link del gruppo consente di leggere e modificare i dati: trattalo come un’informazione riservata e condividilo solo con le persone interessate.',
+    privacyLocalTitle: 'Dati salvati sul dispositivo',
+    privacyLocalText:
+      'Lingua, tema e cronologia dei gruppi recenti sono salvati nel browser. La cronologia contiene solo metadati del gruppo e può essere rimossa dalla home o cancellando i dati del sito.',
+    privacyEmailTitle: 'Conservazione facoltativa del link via email',
+    privacyEmailText:
+      'Se scegli questa funzione, indirizzo, codice e link vengono trasmessi al backend Equa, al microservizio email e al provider SMTP. L’indirizzo non viene aggiunto al gruppo né salvato nelle nuove tabelle; la verifica scade dopo 15 minuti e i contatori anti-abuso usano chiavi pseudonime.',
+    privacyFeedbackTitle: 'Feedback facoltativo',
+    privacyFeedbackText:
+      'Il feedback include categoria, messaggio, lingua ed eventuale email di contatto fornita volontariamente. Equa non allega automaticamente link, UUID, nomi o importi del gruppo. Il messaggio viene inoltrato alla casella configurata e non salvato nel database Equa.',
+    privacyTechnicalTitle: 'Sicurezza e log tecnici',
+    privacyTechnicalText:
+      'Server, reverse proxy e provider possono trattare dati tecnici necessari a connessione, sicurezza e limiti anti-abuso. I log applicativi del microservizio email registrano endpoint, metodo, stato e tipo di errore, senza payload, destinatari, codici o token.',
+    privacyAnalyticsTitle: 'Metriche opzionali',
+    privacyAnalyticsText:
+      'Se il gestore abilita Umami, Equa invia pageview normalizzate ed eventi aggregati. Non invia UUID o link del gruppo, nomi, email, descrizioni, partecipanti o importi. Umami può trattare metadati tecnici standard come hostname, lingua, referrer e risoluzione dello schermo.',
+    privacyProvidersTitle: 'Servizi esterni',
+    privacyProvidersText:
+      'Hosting, reverse proxy, provider SMTP e, se abilitato, Umami trattano i dati necessari ai rispettivi servizi secondo le configurazioni e informative del gestore dell’istanza.',
+    privacyRetentionTitle: 'Conservazione',
+    privacyRetentionText:
+      'I dati del gruppo restano sul server dell’istanza. Preferenze e cronologia locale restano nel browser finché non vengono cancellate. Challenge email e contatori hanno scadenze tecniche e devono essere rimossi dal job di pulizia configurato dal gestore.',
+    privacyChoicesTitle: 'Le tue scelte',
+    privacyChoicesText:
+      'Puoi usare Equa senza fornire un’email, senza inviare feedback e senza salvare il gruppo tra i recenti. Puoi cancellare la cronologia locale e chiedere al gestore dell’istanza informazioni, accesso o interventi sui dati conservati dal server.',
+    privacyContactTitle: 'Contatti e responsabilità dell’istanza',
+    privacyContactText:
+      'Il gestore della specifica istanza deve indicare i propri recapiti, le basi giuridiche e i tempi di conservazione applicabili prima di un uso pubblico. Il repository del progetto raccoglie documentazione tecnica e segnalazioni sul software.',
+    privacyProjectLink: 'Repository e documentazione di Equa',
+    privacyBackHome: '← Torna alla home',
     createGroup: 'Crea un gruppo',
     groupName: 'Nome del gruppo',
     groupNamePlaceholder: 'Es. Vacanza in Sardegna',
@@ -379,6 +417,44 @@ const messages = {
     loading: 'Loading...',
     tagline: 'Shared expenses, without the hassle.',
     subtitle: 'Simple, private, and free forever.',
+    privacyTitle: 'Privacy notice',
+    privacyUpdated: 'Last updated: 16 September 2026',
+    privacyIntro:
+      'This page describes what data Equa processes and how it is used. Equa works without accounts, but group data and some technical data are still required to provide and protect the service.',
+    privacyGroupsTitle: 'Groups and expenses',
+    privacyGroupsText:
+      'The server stores the group name and description, participants, expenses, splits, currencies, balances, and payment status. Enter only data that you can share with the other participants.',
+    privacyGroupLinkText:
+      'The group link allows people to read and modify its data. Treat it as confidential information and share it only with the intended participants.',
+    privacyLocalTitle: 'Data stored on your device',
+    privacyLocalText:
+      'Language, theme, and recent-group history are stored in the browser. The history contains only group metadata and can be removed from the home page or by clearing site data.',
+    privacyEmailTitle: 'Optional group-link email',
+    privacyEmailText:
+      'If you choose this feature, the address, code, and link are sent through the Equa backend, email microservice, and SMTP provider. The address is not added to the group or stored in the new tables; verification expires after 15 minutes and abuse counters use pseudonymous keys.',
+    privacyFeedbackTitle: 'Optional feedback',
+    privacyFeedbackText:
+      'Feedback includes its category, message, interface language, and any contact email you provide voluntarily. Equa does not automatically attach group links, UUIDs, names, or amounts. The message is forwarded to the configured mailbox and is not stored in the Equa database.',
+    privacyTechnicalTitle: 'Security and technical logs',
+    privacyTechnicalText:
+      'Servers, reverse proxies, and providers may process technical data needed for connectivity, security, and abuse prevention. Email-service application logs record endpoint, method, status, and error type without payloads, recipients, codes, or tokens.',
+    privacyAnalyticsTitle: 'Optional metrics',
+    privacyAnalyticsText:
+      'If the operator enables Umami, Equa sends normalized pageviews and aggregate events. It does not send group UUIDs or links, names, email addresses, descriptions, participants, or amounts. Umami may process standard technical metadata such as hostname, language, referrer, and screen resolution.',
+    privacyProvidersTitle: 'External services',
+    privacyProvidersText:
+      'Hosting, reverse proxy, SMTP provider, and Umami when enabled process the data required for their services according to the instance operator’s configuration and notices.',
+    privacyRetentionTitle: 'Retention',
+    privacyRetentionText:
+      'Group data remains on the instance server. Local preferences and history remain in the browser until cleared. Email challenges and counters have technical expiry times and must be removed by the cleanup job configured by the operator.',
+    privacyChoicesTitle: 'Your choices',
+    privacyChoicesText:
+      'You can use Equa without providing an email address, sending feedback, or saving a group among recent items. You can clear local history and ask the instance operator for information, access, or action concerning server-side data.',
+    privacyContactTitle: 'Contact and instance responsibility',
+    privacyContactText:
+      'The operator of each instance must publish its contact details, legal bases, and applicable retention periods before public use. The project repository contains technical documentation and accepts software-related reports.',
+    privacyProjectLink: 'Equa repository and documentation',
+    privacyBackHome: '← Back to home',
     createGroup: 'Create a group',
     groupName: 'Group name',
     groupNamePlaceholder: 'E.g. Sardinia holiday',

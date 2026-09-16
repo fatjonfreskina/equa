@@ -10,6 +10,8 @@
       >
       <span class="text-gray-300 mx-1">·</span>
       <span>v{{ APP_VERSION }}</span>
+      <span class="text-gray-300 mx-1">·</span>
+      <a href="/privacy" class="text-green-700 hover:underline">{{ t('feedbackPrivacy') }}</a>
     </p>
     <div class="flex flex-wrap items-center justify-center gap-2">
       <span>{{ t('useful') }}</span>

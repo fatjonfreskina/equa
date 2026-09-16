@@ -59,7 +59,7 @@ EMAIL_SERVICE_URL=https://email.example.com
 EMAIL_SERVICE_TOKEN=sostituisci-con-un-token-casuale-di-almeno-32-caratteri
 EMAIL_SERVICE_TIMEOUT=10
 EMAIL_SERVICE_ALLOW_HTTP=false
-EMAIL_PRIVACY_URL=https://example.com/privacy
+EMAIL_PRIVACY_URL=http://localhost:5173/privacy
 
 # Invio facoltativo del link del gruppo via email.
 EMAIL_LINK_ENABLED=false
