@@ -25,6 +25,9 @@ ERROR_CODES = {
     "Solo chi riceve può confermare questo pagamento": "SETTLEMENT_WRONG_RECEIVER",
     "Un pagamento supera il limite di importo consentito": "AMOUNT_LIMIT_EXCEEDED",
     "L'importo convertito supera il limite consentito": "AMOUNT_LIMIT_EXCEEDED",
+    "Feedback non disponibile.": "FEEDBACK_UNAVAILABLE",
+    "Troppe segnalazioni. Riprova più tardi.": "FEEDBACK_RATE_LIMIT",
+    "Invio del feedback non riuscito. Riprova più tardi.": "FEEDBACK_DELIVERY_FAILED",
 }
 
 
