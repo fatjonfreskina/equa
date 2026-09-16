@@ -4,6 +4,7 @@ import { createMemoryHistory, createRouter } from 'vue-router'
 import HomeView from './HomeView.vue'
 import GroupView from './GroupView.vue'
 import { groupsApi, type Group } from '../api/groups'
+import { setLocale } from '../utils/i18n'
 import { getRecentGroups, saveRecentGroup } from '../utils/recentGroups'
 
 vi.mock('../utils/analytics', () => ({ trackEvent: vi.fn() }))
@@ -130,6 +131,7 @@ afterEach(() => {
   document.body.replaceChildren()
   document.title = ''
   localStorage.clear()
+  setLocale('it')
 })
 
 it('identifies a shared group in the browser title', async () => {
@@ -166,6 +168,15 @@ it('keeps group creation and sharing usable when email is disabled', async () =>
   expect(document.body.textContent).toContain('Condividi il link del gruppo')
   expect(document.body.textContent).not.toContain('Conserva via email')
   await click('Continua al gruppo')
+  expect(document.querySelector('[aria-labelledby=share-reminder-title]')).toBeNull()
+})
+
+it('translates the continue action in the created-group sharing dialog', async () => {
+  setLocale('en')
+  await mount(GroupView, '/group/test-group?created=1')
+  expect(document.body.textContent).toContain('Continue to group')
+  expect(document.body.textContent).not.toContain('Continua al gruppo')
+  await click('Continue to group')
   expect(document.querySelector('[aria-labelledby=share-reminder-title]')).toBeNull()
 })
 

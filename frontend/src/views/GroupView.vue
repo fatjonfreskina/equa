@@ -119,7 +119,7 @@
             class="mt-3 min-h-11 w-full text-sm font-medium text-gray-600"
             @click="closeShareDialog"
           >
-            Continua al gruppo
+            {{ t('continueToGroup') }}
           </button>
         </div>
       </dialog>

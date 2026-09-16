@@ -167,6 +167,7 @@ const messages = {
     customAmount: 'Libero',
     shareGroupLink: 'Condividi il link del gruppo',
     closeShareReminder: 'Chiudi promemoria condivisione',
+    continueToGroup: 'Continua al gruppo',
     shareReminder:
       'Invialo ai partecipanti e conservalo in una chat: senza il link non sarà possibile ritrovare questo gruppo su un altro dispositivo.',
     share: 'Condividi…',
@@ -502,6 +503,7 @@ const messages = {
     customAmount: 'Custom',
     shareGroupLink: 'Share the group link',
     closeShareReminder: 'Close sharing reminder',
+    continueToGroup: 'Continue to group',
     shareReminder:
       'Send it to the participants and keep it in a chat: without the link you cannot find this group on another device.',
     share: 'Share…',

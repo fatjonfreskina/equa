@@ -7,7 +7,7 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
-## [1.8.1] Frontend; Backend - 2026-09-12
+## [1.9.0] Frontend; Backend - 2026-09-16
 
 ### Aggiunto
 
@@ -18,6 +18,26 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 - Test backend e frontend per consenso, validazione, scadenza, tentativi, replay, limiti, guasti del servizio e condivisione senza dati del gruppo.
 - Pannello globale e accessibile che raggruppa lingua, tema e feedback mantenendo componenti e responsabilità separati.
 - Segnalazioni di bug e suggerimenti inoltrate al microservizio tramite backend, con contatto facoltativo, nessun dato automatico del gruppo e limiti persistenti.
+- Pagina bilingue `/privacy`, collegata dal footer e utilizzabile come informativa per email e feedback.
+
+### Modificato
+
+- I collegamenti di supporto usano Buy Me a Coffee al posto dei link PayPal, con una CTA unica e riconoscibile (issue #40).
+- Lingua e tema nel pannello impostazioni condividono un'unica superficie visiva, senza un selettore a pillola annidato.
+- Rimosso dalla home il banner temporaneo “Novità · Equa parla anche inglese”.
+
+### Corretto
+
+- I pannelli “Scegli chi sei per vedere il tuo riepilogo” e “Il tuo riepilogo” usano bordi completi e arrotondati coerenti (issue #43).
+- La CTA Buy Me a Coffee mantiene un contrasto netto anche in dark mode e non ripete più l'invito nel testo adiacente.
+- Il menu impostazioni aggiorna la disponibilità del feedback a ogni apertura, anche dopo una modifica della configurazione backend.
+- Il dialog del codice email viene ripristinato, con il focus corretto, quando si torna su Chrome dopo aver aperto l'app email su mobile.
+- Il pulsante per proseguire dal dialog di condivisione del nuovo gruppo rispetta ora la lingua selezionata.
+
+## [1.8.1] Frontend; Backend - 2026-09-12
+
+### Aggiunto
+
 - Anteprima statica riconoscibile dei link condivisi tramite metadati Open Graph e Twitter, senza includere dati del gruppo.
 - Controllo CI delle pull request verso `main` per imporre il passaggio da `release-candidate`, verificare versioni e changelog e creare automaticamente i tag di componente dopo il merge.
 
@@ -26,19 +46,11 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 - Il payoff del brand è ora “Spese condivise, senza complicazioni”, con traduzione inglese coerente e metadati di condivisione aggiornati.
 - Il titolo del browser identifica il gruppo aperto e torna al titolo predefinito quando si lascia la pagina.
 - Le regole operative richiedono versionamento e changelog coerenti prima dell'approvazione di una release verso `main`.
-- I collegamenti di supporto usano Buy Me a Coffee al posto dei link PayPal, con una CTA unica e riconoscibile (issue #40).
 
 ### Corretto
 
 - Gli importi frazionari conservati dalla migrazione multivaluta per JPY, KRW, VND, CLP e ISK non vengono più arrotondati visivamente all'intero.
 - Il controllo di rilascio verifica che ogni componente dichiarato abbia modifiche documentate anche quando frontend e backend usano voci separate del changelog.
-- I pannelli “Scegli chi sei per vedere il tuo riepilogo” e “Il tuo riepilogo” usano bordi completi e arrotondati coerenti (issue #43).
-- La CTA Buy Me a Coffee mantiene un contrasto netto anche in dark mode e non ripete più l'invito nel testo adiacente.
-- Lingua e tema nel pannello impostazioni condividono un'unica superficie visiva, senza un selettore a pillola annidato.
-- Rimosso dalla home il banner temporaneo “Novità · Equa parla anche inglese”.
-- Il menu impostazioni aggiorna la disponibilità del feedback a ogni apertura, anche dopo una modifica della configurazione backend.
-- Il dialog del codice email viene ripristinato, con il focus corretto, quando si torna su Chrome dopo aver aperto l'app email su mobile.
-- Aggiunta la pagina bilingue `/privacy`, collegata dal footer e utilizzabile come informativa per email e feedback.
 
 ## [1.8.0] Frontend; Backend - 2026-09-10
 
