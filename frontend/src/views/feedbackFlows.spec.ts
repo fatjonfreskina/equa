@@ -348,6 +348,35 @@ it('saves the automatic rate preview without asking the provider again', async (
   expect(groupsApi.getExchangeRate).toHaveBeenCalledTimes(1)
 })
 
+it('saves one expense paid by multiple participants', async () => {
+  await mount(GroupView)
+  await click('+ Aggiungi spesa')
+
+  const setValue = (selector: string, value: string) => {
+    const element = document.querySelector<HTMLInputElement>(selector)!
+    element.value = value
+    element.dispatchEvent(new Event('input', { bubbles: true }))
+  }
+  setValue('#expense-description', 'Cena 🍕')
+  setValue('#expense-amount', '20')
+  await click('Più persone')
+  setValue('[aria-label="Importo pagato da Anna in EUR"]', '12')
+  setValue('[aria-label="Importo pagato da Luca in EUR"]', '8')
+
+  await click('Salva')
+
+  expect(groupsApi.addExpenseEqual).toHaveBeenCalledExactlyOnceWith(
+    'test-group',
+    expect.objectContaining({
+      paid_by_member_id: 1,
+      payments: [
+        { member_id: 1, amount: 12 },
+        { member_id: 2, amount: 8 },
+      ],
+    }),
+  )
+})
+
 it.each([
   ['closing', 'Segna come chiuso', 'Chiudi gruppo', 'closed'],
   ['closed', 'Riapri conti', 'Riapri conti', 'active'],

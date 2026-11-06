@@ -50,6 +50,32 @@ def validate_participants(group: models.Group, payer_id: int, member_ids: list[i
         )
 
 
+def expense_payments(group: models.Group, payload, currency):
+    payments = payload.payments or [
+        schemas.ExpensePaymentCreate(
+            member_id=payload.paid_by_member_id, amount=payload.amount
+        )
+    ]
+    payment_ids = [payment.member_id for payment in payments]
+    validate_participants(group, payload.paid_by_member_id, payment_ids)
+    if payload.paid_by_member_id != payment_ids[0]:
+        raise HTTPException(
+            status_code=400,
+            detail="Il pagante principale deve essere il primo versamento",
+        )
+    try:
+        for payment in payments:
+            validate_money(payment.amount, currency)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if sum((payment.amount for payment in payments), Decimal("0")) != payload.amount:
+        raise HTTPException(
+            status_code=400,
+            detail="La somma dei versamenti non corrisponde al totale",
+        )
+    return [(payment.member_id, payment.amount) for payment in payments]
+
+
 def expense_currency(group, payload, existing=None):
     currency = payload.currency or (existing.currency if existing else group.currency)
     try:
@@ -151,6 +177,7 @@ def custom_shares(group, payload, currency):
 
 def save_expense(group, payload, currency, shares, db, existing=None):
     fields = resolve_exchange_fields(group, payload, currency, existing)
+    payments = expense_payments(group, payload, currency)
     expense = existing or models.Expense(group_id=group.id)
     expense.paid_by_member_id = payload.paid_by_member_id
     expense.description = payload.description
@@ -160,6 +187,15 @@ def save_expense(group, payload, currency, shares, db, existing=None):
     expense.splits = [
         models.ExpenseSplit(member_id=mid, share_amount=amount)
         for mid, amount in shares
+    ]
+    if existing is not None:
+        # Flush removals before inserts so the per-expense/member uniqueness
+        # constraint also works when the same payer remains after an edit.
+        expense.payments.clear()
+        db.flush()
+    expense.payments = [
+        models.ExpensePayment(member_id=mid, amount=amount)
+        for mid, amount in payments
     ]
     db.add(expense)
     db.commit()
@@ -242,6 +278,9 @@ def delete_expense(group_id: str, expense_id: int, db: Session = Depends(get_db)
     # on existing MySQL databases whose foreign keys do not use ON DELETE CASCADE.
     db.query(models.ExpenseSplit).filter(
         models.ExpenseSplit.expense_id == expense.id
+    ).delete(synchronize_session=False)
+    db.query(models.ExpensePayment).filter(
+        models.ExpensePayment.expense_id == expense.id
     ).delete(synchronize_session=False)
     db.delete(expense)
     db.commit()

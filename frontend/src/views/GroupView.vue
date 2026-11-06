@@ -499,11 +499,26 @@
             >
               {{ rateError }} {{ t('rateMissingHint') }}
             </p>
-            <div>
-              <label for="expense-payer" class="block text-sm font-medium text-gray-700 mb-1">{{
-                t('paidBy')
-              }}</label>
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-700">{{ t('paidBy') }}</label>
+              <div class="flex gap-2">
+                <button
+                  type="button"
+                  v-for="mode in payerModes"
+                  :key="mode"
+                  @click="payerMode = mode"
+                  :class="[
+                    'flex-1 rounded-lg border py-2 text-sm font-medium transition',
+                    payerMode === mode
+                      ? 'border-green-600 bg-green-600 text-white'
+                      : 'border-gray-300 bg-white text-gray-600 hover:border-green-400',
+                  ]"
+                >
+                  {{ mode === 'single' ? t('singlePayer') : t('multiplePayers') }}
+                </button>
+              </div>
               <select
+                v-if="payerMode === 'single'"
                 id="expense-payer"
                 v-model="expenseForm.paid_by_member_id"
                 class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
@@ -513,6 +528,37 @@
                   {{ member.name }}
                 </option>
               </select>
+              <div v-else class="space-y-2">
+                <div
+                  v-for="member in group.members"
+                  :key="member.id"
+                  class="flex items-center gap-2"
+                >
+                  <span class="flex-1 text-sm text-gray-700">{{ member.name }}</span>
+                  <input
+                    v-model="expenseForm.payerAmounts[member.id]"
+                    type="number"
+                    min="0"
+                    :step="currencyStep(expenseForm.currency)"
+                    :placeholder="currencyDecimals(expenseForm.currency) ? '0.00' : '0'"
+                    :aria-label="
+                      t('paidAmountOf', { name: member.name, currency: expenseForm.currency })
+                    "
+                    class="w-24 border border-gray-300 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+                  />
+                </div>
+                <p
+                  :class="paymentSumOk ? 'text-green-600' : 'text-red-500'"
+                  class="text-xs text-right"
+                >
+                  {{
+                    t('paymentsTotal', {
+                      sum: formatCurrency(paymentSum, expenseForm.currency),
+                      total: formatCurrency(expenseForm.amount || 0, expenseForm.currency),
+                    })
+                  }}
+                </p>
+              </div>
             </div>
 
             <!-- Tipo di divisione -->
@@ -629,7 +675,7 @@
               <p class="font-medium text-gray-800">{{ expense.description }}</p>
               <p class="text-sm text-gray-500">
                 {{ t('paidBy') }}
-                <span class="font-medium">{{ memberName(expense.paid_by_member_id) }}</span>
+                <span class="font-medium">{{ expensePayers(expense) }}</span>
               </p>
               <p class="mt-1 text-xs text-gray-400">
                 {{ formatExpenseDate(expense.expense_date || expense.created_at.slice(0, 10)) }}
@@ -1255,12 +1301,15 @@ const showExpenseForm = ref(false)
 const editingExpenseId = ref<number | null>(null)
 const expenseLoading = ref(false)
 const expenseError = ref('')
+const payerModes = ['single', 'multiple'] as const
+const payerMode = ref<(typeof payerModes)[number]>('single')
 const expenseForm = reactive({
   description: '',
   amount: '',
   currency: 'EUR',
   expense_date: todayDate(),
   paid_by_member_id: '' as number | string,
+  payerAmounts: {} as Record<number, string>,
   splitType: 'equal',
   customSplits: {} as Record<number, string>,
   subsetIds: [] as number[],
@@ -1408,6 +1457,23 @@ const splitSum = computed(() => {
   return Object.values(expenseForm.customSplits).reduce((acc, v) => acc + (parseFloat(v) || 0), 0)
 })
 
+const paymentSum = computed(() => {
+  return Object.values(expenseForm.payerAmounts).reduce(
+    (acc, value) => acc + (parseFloat(value) || 0),
+    0,
+  )
+})
+
+const paymentSumOk = computed(() => {
+  const values = Object.values(expenseForm.payerAmounts)
+  const factor = 10 ** currencyDecimals(expenseForm.currency)
+  return (
+    values.filter((value) => Number(value) > 0).length >= 2 &&
+    values.every((value) => validCurrencyAmount(Number(value || 0), true)) &&
+    Math.round(paymentSum.value * factor) === Math.round(Number(expenseForm.amount) * factor)
+  )
+})
+
 const splitSumOk = computed(() => {
   const factor = 10 ** currencyDecimals(expenseForm.currency)
   return (
@@ -1483,6 +1549,19 @@ function memberName(id: number) {
   return group.value?.members.find((m) => m.id === id)?.name || t('unknown')
 }
 
+function expensePayers(expense: Expense) {
+  const payments = expense.payments?.length
+    ? expense.payments
+    : [{ member_id: expense.paid_by_member_id, amount: expense.amount }]
+  return payments
+    .map((payment) =>
+      payments.length === 1
+        ? memberName(payment.member_id)
+        : `${memberName(payment.member_id)} (${formatCurrency(payment.amount, expense.currency)})`,
+    )
+    .join(', ')
+}
+
 function displayMemberName(id: number) {
   return currentMemberId.value === id ? t('you') : memberName(id)
 }
@@ -1542,6 +1621,8 @@ function resetExpenseForm() {
   expenseForm.currency = group.value?.currency || 'EUR'
   expenseForm.expense_date = todayDate()
   expenseForm.paid_by_member_id = ''
+  expenseForm.payerAmounts = {}
+  payerMode.value = 'single'
   expenseForm.splitType = 'equal'
   expenseForm.customSplits = {}
   expenseForm.subsetIds = []
@@ -1642,7 +1723,14 @@ function openEditExpenseForm(expense: Expense) {
   expenseForm.amount = String(expense.amount)
   expenseForm.currency = expense.currency || group.value.currency
   expenseForm.expense_date = expense.expense_date || expense.created_at.slice(0, 10)
-  expenseForm.paid_by_member_id = expense.paid_by_member_id
+  const payments = expense.payments?.length
+    ? expense.payments
+    : [{ member_id: expense.paid_by_member_id, amount: expense.amount }]
+  payerMode.value = payments.length > 1 ? 'multiple' : 'single'
+  expenseForm.paid_by_member_id = payments[0]!.member_id
+  payments.forEach((payment) => {
+    expenseForm.payerAmounts[payment.member_id] = String(payment.amount)
+  })
   expenseForm.splitType = 'custom'
   expense.splits.forEach((s) => {
     expenseForm.customSplits[s.member_id] = String(s.share_amount)
@@ -1691,6 +1779,20 @@ function expenseSplits(): Split[] {
   }))
 }
 
+function expensePayments() {
+  if (payerMode.value === 'single') {
+    return [
+      {
+        member_id: Number(expenseForm.paid_by_member_id),
+        amount: Number(expenseForm.amount),
+      },
+    ]
+  }
+  return Object.entries(expenseForm.payerAmounts)
+    .filter(([, value]) => Number(value) > 0)
+    .map(([id, value]) => ({ member_id: Number(id), amount: Number(value) }))
+}
+
 async function saveExpense() {
   if (expenseLoading.value) return
   expenseError.value = ''
@@ -1725,8 +1827,12 @@ async function saveExpense() {
     expenseError.value = t('rateInvalid')
     return
   }
-  if (!expenseForm.paid_by_member_id) {
+  if (payerMode.value === 'single' && !expenseForm.paid_by_member_id) {
     expenseError.value = t('payerRequired')
+    return
+  }
+  if (payerMode.value === 'multiple' && !paymentSumOk.value) {
+    expenseError.value = t('paymentsInvalid')
     return
   }
   if (expenseForm.splitType === 'custom' && !splitSumOk.value) {
@@ -1740,8 +1846,10 @@ async function saveExpense() {
 
   expenseLoading.value = true
   try {
+    const payments = expensePayments()
     const data: ExpenseInput = {
-      paid_by_member_id: Number(expenseForm.paid_by_member_id),
+      paid_by_member_id: payments[0]!.member_id,
+      payments,
       description: expenseForm.description.trim(),
       amount: Number(expenseForm.amount),
       currency: expenseForm.currency,

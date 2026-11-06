@@ -21,6 +21,11 @@ export interface Split {
   share_amount: number | string
 }
 
+export interface ExpensePayment {
+  member_id: number
+  amount: number | string
+}
+
 export type BalanceMode = 'separate' | 'unified'
 export type ExchangeRateSource = 'identity' | 'frankfurter' | 'manual'
 
@@ -34,6 +39,7 @@ export interface ExchangeRate {
 
 export interface ExpenseInput {
   paid_by_member_id: number
+  payments?: ExpensePayment[]
   description: string
   amount: number
   currency?: string
@@ -57,6 +63,7 @@ export interface Expense {
   converted_amount: string | null
   created_at: string
   splits: Split[]
+  payments?: ExpensePayment[]
 }
 
 export interface Group {

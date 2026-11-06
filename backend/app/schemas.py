@@ -94,7 +94,7 @@ class FeedbackRequest(BaseModel):
 
 
 class MemberCreate(BaseModel):
-    name: str
+    name: str = Field(min_length=1, max_length=100)
     email: Optional[str] = None
 
 
@@ -108,7 +108,7 @@ class MemberOut(BaseModel):
 
 
 class MemberUpdate(BaseModel):
-    name: Optional[str] = None
+    name: Optional[str] = Field(default=None, min_length=1, max_length=100)
     email: Optional[str] = None
 
 
@@ -128,6 +128,19 @@ class SplitOut(BaseModel):
         from_attributes = True
 
 
+class ExpensePaymentCreate(BaseModel):
+    member_id: int
+    amount: Decimal = Field(gt=0, le=MAX_AMOUNT, allow_inf_nan=False)
+
+
+class ExpensePaymentOut(BaseModel):
+    member_id: int
+    amount: Decimal
+
+    class Config:
+        from_attributes = True
+
+
 # --- Expense ---
 
 
@@ -135,6 +148,7 @@ class ExpenseFields(BaseModel):
     paid_by_member_id: int
     description: str = Field(min_length=1, max_length=200)
     amount: Decimal = Field(gt=0, le=MAX_AMOUNT, allow_inf_nan=False)
+    payments: Optional[List[ExpensePaymentCreate]] = None
     currency: Optional[str] = None
     expense_date: Optional[date] = None
     exchange_rate: Optional[Decimal] = None
@@ -177,6 +191,7 @@ class ExpenseOut(BaseModel):
     converted_amount: Optional[Decimal] = None
     created_at: datetime
     splits: List[SplitOut]
+    payments: List[ExpensePaymentOut]
 
     class Config:
         from_attributes = True
@@ -202,8 +217,8 @@ class ExchangeRateOut(BaseModel):
 
 
 class GroupCreate(BaseModel):
-    name: str
-    description: Optional[str] = None
+    name: str = Field(min_length=1, max_length=100)
+    description: Optional[str] = Field(default=None, max_length=500)
     currency: str = "EUR"
     members: List[MemberCreate]
 

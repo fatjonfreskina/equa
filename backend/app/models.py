@@ -1,7 +1,18 @@
 import uuid
 from datetime import date, datetime
-from sqlalchemy import Column, String, Integer, Numeric, Date, DateTime, ForeignKey
+
+from sqlalchemy import (
+    Column,
+    Date,
+    DateTime,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import relationship
+
 from .database import Base
 
 
@@ -45,6 +56,7 @@ class Member(Base):
 
     group = relationship("Group", back_populates="members")
     expenses_paid = relationship("Expense", back_populates="paid_by")
+    payments_made = relationship("ExpensePayment", back_populates="member")
     splits = relationship(
         "ExpenseSplit", back_populates="member", cascade="all, delete-orphan"
     )
@@ -70,6 +82,9 @@ class Expense(Base):
     splits = relationship(
         "ExpenseSplit", back_populates="expense", cascade="all, delete-orphan"
     )
+    payments = relationship(
+        "ExpensePayment", back_populates="expense", cascade="all, delete-orphan"
+    )
 
     @property
     def converted_amount(self):
@@ -90,6 +105,21 @@ class ExpenseSplit(Base):
 
     expense = relationship("Expense", back_populates="splits")
     member = relationship("Member", back_populates="splits")
+
+
+class ExpensePayment(Base):
+    __tablename__ = "expense_payments"
+    __table_args__ = (
+        UniqueConstraint("expense_id", "member_id", name="uq_expense_payment_member"),
+    )
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    expense_id = Column(Integer, ForeignKey("expenses.id"), nullable=False)
+    member_id = Column(Integer, ForeignKey("members.id"), nullable=False)
+    amount = Column(Numeric(10, 2), nullable=False)
+
+    expense = relationship("Expense", back_populates="payments")
+    member = relationship("Member", back_populates="payments_made")
 
 
 class Settlement(Base):
