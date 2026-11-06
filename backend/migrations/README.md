@@ -31,3 +31,11 @@ La migrazione `005_email_link_challenges.sql`, da eseguire una sola volta dopo l
 Prima del rollback `005_email_link_challenges_rollback.sql`, arresta il backend aggiornato (altrimenti `create_all()` ricreerebbe le tabelle) e distribuisci la versione precedente. Il rollback elimina soltanto codici pendenti e contatori temporanei: i gruppi restano intatti. Procedi poi con `004`, `003`, `002`, `001` solo se intendi annullare anche quelle funzionalità.
 
 L'invio è disattivato per default. Configurazione del microservizio, informativa privacy e pulizia periodica sono descritti in [`doc/EMAIL_LINK.md`](../../doc/EMAIL_LINK.md). Le migrazioni non inviano email.
+
+## Pagatori multipli e Unicode completo (006)
+
+Esegui `006_add_expense_payments_utf8mb4.sql` una sola volta dopo la `005`, con un backup e prima del deploy del backend aggiornato. La migrazione crea i versamenti dei paganti, converte ogni spesa storica in un singolo versamento pari al totale e porta database e tabelle a `utf8mb4`, necessario per salvare emoji e l'intero intervallo Unicode. Ferma le scritture durante migrazione e deploy.
+
+Il backend continua a valorizzare `expenses.paid_by_member_id` con il primo pagante per compatibilità, ma i saldi usano `expense_payments`. Ogni spesa deve avere almeno un versamento, senza partecipanti duplicati, e la somma dei versamenti deve coincidere con il totale.
+
+Prima del rollback `006_add_expense_payments_utf8mb4_rollback.sql`, arresta il backend aggiornato e distribuisci la versione precedente. Il rollback si interrompe se esiste una spesa con più paganti, perché non sarebbe rappresentabile dal vecchio schema. La codifica `utf8mb4` viene mantenuta: riportarla a una codifica più limitata potrebbe perdere definitivamente i testi Unicode già salvati.

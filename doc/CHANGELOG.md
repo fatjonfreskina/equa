@@ -7,6 +7,17 @@ Il versionamento segue [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
+## [Unreleased]
+
+### Aggiunto
+
+- Spese pagate da più partecipanti, con importi individuali, validazione della somma e calcolo dei saldi basato sui versamenti (issue #45).
+- Supporto completo alle emoji nei nomi di gruppi e partecipanti, nelle descrizioni e nelle spese tramite connessione e migrazione `utf8mb4` (issue #46).
+
+### Modificato
+
+- Migrazione `006` con conversione delle spese storiche a un singolo versamento e rollback protetto quando esistono spese con più paganti.
+
 ## [1.9.0] Frontend; Backend - 2026-09-16
 
 ### Aggiunto

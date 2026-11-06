@@ -36,7 +36,18 @@ def calculate_balances(
                 currency,
             )
         net = nets.setdefault(currency, {mid: Decimal("0") for mid in member_names})
-        net[expense.paid_by_member_id] += amount
+        payments = [(payment.member_id, payment.amount) for payment in expense.payments]
+        if not payments:
+            # Compatibility for objects created by old tests and databases before 006.
+            payments = [(expense.paid_by_member_id, expense.amount)]
+        if mode == "unified" and expense.currency != target_currency:
+            payments = allocate_amounts(
+                [(mid, paid * expense.exchange_rate) for mid, paid in payments],
+                amount,
+                currency,
+            )
+        for mid, paid in payments:
+            net[mid] += paid
         for mid, share in shares:
             net[mid] -= share
 

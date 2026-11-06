@@ -13,7 +13,10 @@ HOST_PORT = os.getenv("HOST_PORT")
 DB_NAME = os.getenv("DB_NAME")
 
 # Create DB URL
-DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASS}@{HOST_NAME}:{HOST_PORT}/{DB_NAME}"
+DATABASE_URL = (
+    f"mysql+pymysql://{DB_USER}:{DB_PASS}@{HOST_NAME}:{HOST_PORT}/{DB_NAME}"
+    "?charset=utf8mb4"
+)
 
 engine = create_engine(
     DATABASE_URL,
